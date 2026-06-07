@@ -25,6 +25,7 @@
 | 输出端 | 复盘报告、知识预测方向、内容整合 | Dataview 看板 + 定时 Claude 复盘 | 🟡 V2（Mac pipeline） |
 
 > 处理中枢：一台**常开 Mac** —— 交互用插件，批处理与定时复盘用脚本。
+> 额外来源：NotebookLM 的 AI 产出可经浏览器扩展一键存入 `20_Sources/NotebookLM/`（见文档索引）。
 
 > Obsidian 本身是**静态知识库**，没有 AI 对话能力 —— 必须外接 API 才能激活分析端。
 > 这是整个第二阶段的技术核心，单独立项推进。
@@ -33,6 +34,7 @@
 
 - **[Obsidian 接入 AI API 方案（专项）](docs/obsidian-ai-integration.md)** —— 插件选型、工作流设计、笔记结构规范、AI 任务路由、关键决策点、分阶段落地。
 - **[落地路径：iOS + Mac + Obsidian Sync](docs/setup-ios-mac.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Mac pipeline 脚本骨架，可直接照做。
+- **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
 
 ## 路线图
 

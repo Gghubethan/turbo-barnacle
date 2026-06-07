@@ -119,7 +119,7 @@ modified: 2026-06-02
 type: fleeting        # fleeting | literature | permanent | moc | source | output
 status: inbox         # inbox | processing | done | review
 tags: []
-source: 捷径          # 捷径 | 飞书 | 微信 | web | pdf | 手动
+source: 捷径          # 捷径 | 飞书 | 微信 | web | pdf | notebooklm | 手动
 aliases: []
 related: []           # [[双链]]，连接发现的落点
 ai_processed: false   # 是否已被 AI 处理
