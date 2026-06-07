@@ -1,7 +1,7 @@
 # NotebookLM → Obsidian：把 NotebookLM 产出一键抓进知识库
 
 > 适用：把 NotebookLM 里 AI 生成的内容（简报 Briefing Doc、学习指南、摘要、置顶对话答案等）导入 Obsidian。
-> 已确认走 **Chrome/Edge 浏览器扩展一键** 路径；处理中枢为常开 Mac（见 [setup-ios-mac.md](setup-ios-mac.md)）。
+> 已确认走 **Chrome/Edge 浏览器扩展一键** 路径；处理中枢为常开 Windows PC（见 [setup-ios-windows.md](setup-ios-windows.md)）。
 
 ## 可行性结论（2026-06 核实）
 
@@ -16,7 +16,7 @@
 
 最接近"直抓"的体验：在 NotebookLM 页面点一下，内容直接以 Markdown 落进 vault。
 
-**Step 1 — Obsidian(Mac) 装 Local REST API 插件**（开源：`coddingtonbear/obsidian-local-rest-api`，可信）
+**Step 1 — Obsidian(Windows PC) 装 Local REST API 插件**（开源：`coddingtonbear/obsidian-local-rest-api`，可信）
 1. 社区插件搜 **Local REST API**，安装并启用。
 2. 复制生成的 **API Key**。默认端点 HTTPS `https://127.0.0.1:27124`（自签证书），可选 HTTP `http://127.0.0.1:27123`；建议只听 localhost。
 
@@ -35,7 +35,7 @@
 ## 兜底方案
 
 **A. 批量导出扩展（无需 Local REST API）**
-装导出类扩展（**NotebookLM Export Pro / NotebookLM Ultra Exporter / NoteBookLM Exporter**），一键把 notes / 对话 / 来源导成 **Markdown / PDF / Word** 文件 → 移进 vault；或丢进 `~/iCloud/KB-Drop/` 让 Mac pipeline 自动归档（见 setup-ios-mac.md §3/§5）。适合一次性搬运整本。
+装导出类扩展（**NotebookLM Export Pro / NotebookLM Ultra Exporter / NoteBookLM Exporter**），一键把 notes / 对话 / 来源导成 **Markdown / PDF / Word** 文件 → 移进 vault；或丢进 OneDrive 的 `KB-Drop/` 让 Windows pipeline 自动归档（见 setup-ios-windows.md §3/§5）。适合一次性搬运整本。
 
 **B. 官方原生导出（零扩展，最稳）**
 - Studio 面板某条 Note/Report 的 **⋮ → Export to Google Docs**（含表格的转 Google Sheets）→ 再从 Google Docs 下载/复制为 Markdown 进 Obsidian。
@@ -72,7 +72,7 @@ ai_processed: false
 
 ## V2 备选（本次不做）
 
-常开 Mac 上用 **`notebooklm-py`** / **`notebooklm-rest-api`** 定时把笔记拉进 vault，可纳入 setup-ios-mac.md §5 的 pipeline。但它用未公开接口、需存 Google 登录态、易失效、ToS 灰色——等扩展路径跑顺、确有批量自动化需求时再评估。
+常开 Windows PC 上用 **`notebooklm-py`** / **`notebooklm-rest-api`** 定时把笔记拉进 vault，可纳入 setup-ios-windows.md §5 的 pipeline。但它用未公开接口、需存 Google 登录态、易失效、ToS 灰色——等扩展路径跑顺、确有批量自动化需求时再评估。
 
 ## 参考来源
 

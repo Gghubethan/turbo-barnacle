@@ -1,30 +1,30 @@
-# 落地路径：iOS 捕获 + Mac 处理中枢 + Obsidian Sync
+# 落地路径：iOS 捕获 + Windows 处理中枢 + Obsidian Sync
 
-> 基于已确定的选择：**手机 iOS（捷径）/ 常开 Mac / Obsidian Sync**。
+> 基于已确定的选择：**手机 iOS（捷径）/ 常开 Windows PC / Obsidian Sync**。
 > 本文把[专项方案](obsidian-ai-integration.md)里的并列选项收敛成一条可照做的路径。
 
 ## 收敛后的技术栈
 
 | 模块 | 确定方案 |
 | --- | --- |
-| 输入端 | iOS 捷径 + Advanced URI（文字/语音转写直写 Inbox）；图片/PDF/录音 → iCloud 投放文件夹 → Mac 归档 |
-| 存储端 | Obsidian + Obsidian Sync（Mac ⇄ iPhone，端到端加密） |
-| 处理中枢 | 常开 Mac：交互用插件，批处理/定时复盘用脚本 |
-| 分析端 | Copilot（交互）+ Mac pipeline（自动）；Claude 质量活 / DeepSeek 批量活 |
+| 输入端 | iOS 捷径 + Advanced URI（文字/语音转写直写 Inbox）；图片/PDF/录音 → OneDrive 投放文件夹 → Windows 归档 |
+| 存储端 | Obsidian + Obsidian Sync（Windows ⇄ iPhone，端到端加密） |
+| 处理中枢 | 常开 Windows PC：交互用插件，批处理/定时复盘用脚本 |
+| 分析端 | Copilot（交互）+ Windows pipeline（自动）；Claude 质量活 / DeepSeek 批量活 |
 | 输出端 | Dataview 看板 + 定时 Claude 复盘 → `70_Output/` |
 
 ---
 
 ## 第 1 步：Obsidian + Sync + 文件夹
 
-1. Mac 与 iPhone 都装 Obsidian。
+1. Windows PC 与 iPhone 都装 Obsidian。
 2. 开通 **Obsidian Sync**，建远程 vault，两端连同一个 vault。
 3. 建文件夹结构（同专项方案 4.1 节）：`00_Inbox` … `90_Archive` + `_attachments` + `_templates`。
 
 ## 第 2 步：核心插件 + frontmatter 模板
 
 社区插件安装：`Copilot`、`Templater`、`QuickAdd`、`Dataview`、`Advanced URI`。
-（移动端这几个都能用；Templater 的 user script 仅在 Mac 跑 —— 正好放处理中枢。）
+（移动端这几个都能用；Templater 的 user script 仅在桌面端跑 —— 正好放 Windows 处理中枢。）
 
 `_templates/permanent.md`（Templater 模板）：
 ```markdown
@@ -60,8 +60,8 @@ obsidian://advanced-uri?vault=你的vault名&filepath=00_Inbox/{当天日期}.md
 5. 加到主屏/锁屏/分享表单，随手可记。
 
 - **语音**：捷径加「听写文本」动作 → 转成文字后同上 append。
-- **图片 / PDF / 录音（二进制）**：捷径「存储文件」到 iCloud 的 `KB-Drop/` 文件夹 → 由第 5 步 Mac 脚本自动归档进 vault 的 `_attachments/` 并建一条索引笔记。
-  > 为什么二进制不直接写 vault：Obsidian Sync 的 vault 在 iOS App 沙盒里，捷径无法直接写入二进制文件。走「iCloud 投放 + Mac 中转」最稳，正好用上常开 Mac。
+- **图片 / PDF / 录音（二进制）**：捷径「存储文件」到 **OneDrive** 的 `KB-Drop/` 文件夹 → 由第 5 步 Windows 脚本自动归档进 vault 的 `_attachments/` 并建一条索引笔记。
+  > 为什么二进制不直接写 vault：Obsidian Sync 的 vault 在 iOS App 沙盒里，捷径无法直接写入二进制文件。走「云盘投放 + 电脑中转」最稳，正好用上常开 Windows。**OneDrive** 在 Windows 上最原生（iPhone 装 OneDrive App 即可让捷径存入）；也可用 iCloud Drive（需在 Windows 装 **iCloud for Windows**）。
 
 ## 第 4 步：Copilot 接 Claude + DeepSeek
 
@@ -71,19 +71,19 @@ Copilot 设置里配两个供应商：
 - **语义问答（QA/RAG）需要 embedding**：DeepSeek 无 embedding 接口 —— 用 OpenAI `text-embedding-3-small`，或装 `Smart Connections` 单独做语义层。
 - ⚠️ **Key 安全**：key 存在 vault 配置里会随 Sync 同步（Sync 是端到端加密，可接受），但**不要把 vault 推到公开 git 仓库**。
 
-## 第 5 步（V2）：Mac 上的 pipeline 脚本
+## 第 5 步（V2）：Windows 上的 pipeline 脚本
 
-放常开 Mac 上，用 `launchd`/`cron` 定时跑。职责：**自动三分 + 定时复盘**。
+放常开 Windows PC 上，用**任务计划程序（Task Scheduler）**定时跑。职责：**自动三分 + 定时复盘**。
 
-依赖：`pip install anthropic openai watchdog python-frontmatter`
+依赖：`pip install -r pipeline/requirements.txt`
 
-完整可运行版本见 **[`pipeline/triage.py`](../pipeline/triage.py)**（含容错、`--dry-run`、`--review` 周复盘、自动加载 `.env`）；下面是核心骨架：
+完整可运行版本见 **[`pipeline/triage.py`](../pipeline/triage.py)**（含容错、`--dry-run`、`--review` 周复盘、自动加载 `.env`、跨平台路径）；下面是核心骨架：
 ```python
 import os, glob, frontmatter
 from openai import OpenAI            # 指到 DeepSeek（兼容 OpenAI）
 from anthropic import Anthropic
 
-VAULT = os.path.expanduser("~/路径/你的vault")
+VAULT = os.environ["VAULT_PATH"]                     # 如 C:/Users/你/Documents/vault
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "")   # 设为最新 Claude Opus 模型ID
 deepseek = OpenAI(base_url="https://api.deepseek.com", api_key=os.environ["DEEPSEEK_API_KEY"])
 claude   = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -115,12 +115,12 @@ def weekly_review():
     )
     write_output("70_Output", msg.content[0].text)
 ```
-- **Key 放 Mac 环境变量**（`~/.zshrc` 或 launchd plist），不要写进笔记或提交 git。
-- **二进制归档**：另写一个监听 `~/iCloud/KB-Drop/` 的小脚本，把图片/PDF 移进 `_attachments/`，录音跑 Whisper 转写后建 Inbox 笔记。
+- **Key 放 Windows 环境变量**（系统「环境变量」设置，或 `pipeline/.env`），不要写进笔记或提交 git。
+- **二进制归档**：另写一个监听 **OneDrive 的 `KB-Drop/`** 的小脚本，把图片/PDF 移进 `_attachments/`，录音跑 Whisper 转写后建 Inbox 笔记。
 
 ---
 
 ## 建议节奏
 
-- **本周**：第 1–4 步（纯插件 MVP）—— 手机能随手收集，Mac 用 Copilot 整理。
+- **本周**：第 1–4 步（纯插件 MVP）—— 手机能随手收集，电脑用 Copilot 整理。
 - **下周**：第 5 步 pipeline —— 自动三分 + 周复盘落到 `70_Output/`。

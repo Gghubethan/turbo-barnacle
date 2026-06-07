@@ -19,12 +19,12 @@
 
 | 模块 | 说明 | 工具 | 状态 |
 | --- | --- | --- | --- |
-| 输入端 | 图片、语音、文字、PDF、Markdown，手机上传 | **iOS 捷径 + Advanced URI**（二进制经 iCloud→Mac 归档） | 🟢 方案已定 |
-| 存储端 | 所有内容归入 Obsidian，分类管理 | **Obsidian + Obsidian Sync**（Mac ⇄ iPhone） | 🟢 方案已定·待搭建 |
-| 分析端 | AI 调用 API 做整理、归纳、预测 | Copilot（交互）+ Mac pipeline（自动）；Claude/DeepSeek 按任务 | 🟢 方案已定·待接入 |
-| 输出端 | 复盘报告、知识预测方向、内容整合 | Dataview 看板 + 定时 Claude 复盘 | 🟡 V2（Mac pipeline） |
+| 输入端 | 图片、语音、文字、PDF、Markdown，手机上传 | **iOS 捷径 + Advanced URI**（二进制经 OneDrive→Windows 归档） | 🟢 方案已定 |
+| 存储端 | 所有内容归入 Obsidian，分类管理 | **Obsidian + Obsidian Sync**（Windows ⇄ iPhone） | 🟢 方案已定·待搭建 |
+| 分析端 | AI 调用 API 做整理、归纳、预测 | Copilot（交互）+ Windows pipeline（自动）；Claude/DeepSeek 按任务 | 🟢 方案已定·待接入 |
+| 输出端 | 复盘报告、知识预测方向、内容整合 | Dataview 看板 + 定时 Claude 复盘 | 🟡 V2（Windows pipeline） |
 
-> 处理中枢：一台**常开 Mac** —— 交互用插件，批处理与定时复盘用脚本。
+> 处理中枢：一台**常开 Windows PC** —— 交互用插件，批处理与定时复盘用脚本。
 > 额外来源：NotebookLM 的 AI 产出可经浏览器扩展一键存入 `20_Sources/NotebookLM/`（见文档索引）。
 
 > Obsidian 本身是**静态知识库**，没有 AI 对话能力 —— 必须外接 API 才能激活分析端。
@@ -33,7 +33,7 @@
 ## 文档索引
 
 - **[Obsidian 接入 AI API 方案（专项）](docs/obsidian-ai-integration.md)** —— 插件选型、工作流设计、笔记结构规范、AI 任务路由、关键决策点、分阶段落地。
-- **[落地路径：iOS + Mac + Obsidian Sync](docs/setup-ios-mac.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Mac pipeline 脚本骨架，可直接照做。
+- **[落地路径：iOS + Windows + Obsidian Sync](docs/setup-ios-windows.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Windows pipeline 脚本骨架，可直接照做。
 - **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
 
 ## 路线图

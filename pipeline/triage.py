@@ -100,7 +100,7 @@ def iter_unprocessed():
 
 def ensure_defaults(path: Path, post: frontmatter.Post) -> None:
     """NotebookLM 来源补默认元数据。"""
-    if "20_Sources/NotebookLM" in str(path):
+    if "20_Sources/NotebookLM" in path.as_posix():  # as_posix 保证 Windows 反斜杠也匹配
         post.setdefault("type", "source")
         post.setdefault("source", "notebooklm")
 
