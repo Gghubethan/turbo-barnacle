@@ -16,13 +16,18 @@
 
 最接近"直抓"的体验：在 NotebookLM 页面点一下，内容直接以 Markdown 落进 vault。
 
-**Step 1 — Obsidian(Mac) 装 Local REST API 插件**
+**Step 1 — Obsidian(Mac) 装 Local REST API 插件**（开源：`coddingtonbear/obsidian-local-rest-api`，可信）
 1. 社区插件搜 **Local REST API**，安装并启用。
-2. 复制生成的 **API Key**；端点默认绑定本机 `127.0.0.1`（建议保持只连 localhost）。
+2. 复制生成的 **API Key**。默认端点 HTTPS `https://127.0.0.1:27124`（自签证书），可选 HTTP `http://127.0.0.1:27123`；建议只听 localhost。
 
-**Step 2 — Chrome/Edge 装「Save to Obsidian」类扩展**
-1. 应用商店装一个**能对接 Local REST API** 的 NotebookLM→Obsidian 扩展（认准"需要 Obsidian Local REST API 插件"这一条）。
-2. 扩展设置里填 Local REST API 的地址 + Step 1 的 token，目标文件夹设为 `20_Sources/NotebookLM/`。
+**Step 2 — Chrome/Edge 装对接 Local REST API 的扩展**
+候选（认准"需要 Obsidian Local REST API 插件"这一条）：
+- **Obsidian AI Exporter** —— 支持把 Gemini/Claude/ChatGPT/Perplexity/**NotebookLM** 的对话经 Local REST API 存进 vault。
+- **NotebookLM Hub – Import, Sync & Export** —— 经 Local REST API 双向同步。
+- **NotebookLM to Obsidian Sync**。
+
+配置：端点填 `https://127.0.0.1:27124`，Authorization 用 Step 1 的 API Key（Bearer），目标文件夹设为 `20_Sources/NotebookLM/`。
+> ⚠️ 这些扩展多为闭源、我无法逐行审计 —— 装前在商店页看权限：理应只需访问 `notebooklm.google.com` 与本机；若要求"读取并更改你在所有网站上的数据"要警惕。真正可信的是开源的 Local REST API 插件（它才是持有 token 的一端）。
 
 **Step 3 — 一键保存**
 在 NotebookLM 打开某条笔记/简报/对话 → 点扩展的「Save to Obsidian」→ 内容以 Markdown 写入 vault，表格/公式/列表格式保留。
@@ -42,7 +47,7 @@
 | --- | --- |
 | 目标目录 | `20_Sources/NotebookLM/`（NotebookLM 产出是对来源的合成，归 source 类） |
 | frontmatter | 沿用 [obsidian-ai-integration.md §4.2](obsidian-ai-integration.md)；`type: source`，`source: notebooklm`（已加入受控词表） |
-| 后处理 | 导入后交给 Mac pipeline 的 `triage.py`（setup-ios-mac.md §5）自动打标、建 `related` 双链 |
+| 后处理 | 导入后由 **[`pipeline/triage.py`](../pipeline/triage.py)** 自动打标 / 归位 / 摘要；语义 `related` 连接交给 Smart Connections |
 
 建议 frontmatter（导入后补全）：
 ```yaml

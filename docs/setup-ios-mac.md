@@ -77,7 +77,7 @@ Copilot 设置里配两个供应商：
 
 依赖：`pip install anthropic openai watchdog python-frontmatter`
 
-骨架（`pipeline/triage.py`）：
+完整可运行版本见 **[`pipeline/triage.py`](../pipeline/triage.py)**（含容错、`--dry-run`、`--review` 周复盘、自动加载 `.env`）；下面是核心骨架：
 ```python
 import os, glob, frontmatter
 from openai import OpenAI            # 指到 DeepSeek（兼容 OpenAI）
