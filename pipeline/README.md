@@ -26,6 +26,14 @@ python triage.py --review   # 生成近 7 天复盘到 70_Output/
 - 语义 `related` 连接建议交给 Obsidian 的 **Smart Connections** 插件（embedding），此脚本不做。
 - `VAULT_PATH` 在 Windows 用正斜杠最省事，如 `C:/Users/你/Documents/vault`。
 
+## 测试
+
+```powershell
+python -m pytest tests/ -v
+```
+
+测试不碰网络（模型调用全部 mock），用临时目录模拟 vault，验证打标、归位、重名、坏 YAML 容错与 dry-run 语义。改动 `triage.py` 后先跑这个。
+
 ## 定时（Windows 任务计划程序）
 
 用「任务计划程序」(Task Scheduler) 建两个任务，或用 `schtasks`（每 30 分钟三分；周一 08:00 复盘）：

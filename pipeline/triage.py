@@ -22,7 +22,6 @@ import datetime as dt
 import json
 import os
 import re
-import shutil
 import sys
 from pathlib import Path
 
@@ -92,8 +91,13 @@ def iter_unprocessed():
         base = VAULT / rel
         if not base.exists():
             continue
-        for path in base.rglob("*.md"):
-            post = frontmatter.load(path)
+        # sorted() 先固化文件列表：处理过程中会移动文件，不能边 rglob 边改目录
+        for path in sorted(base.rglob("*.md")):
+            try:
+                post = frontmatter.load(path)
+            except Exception as e:  # 单个坏 YAML 不应放倒整次运行
+                print(f"[skip] {path.name}: frontmatter 解析失败: {e}", file=sys.stderr)
+                continue
             if not post.get("ai_processed"):
                 yield path, post
 
@@ -101,8 +105,9 @@ def iter_unprocessed():
 def ensure_defaults(path: Path, post: frontmatter.Post) -> None:
     """NotebookLM 来源补默认元数据。"""
     if "20_Sources/NotebookLM" in path.as_posix():  # as_posix 保证 Windows 反斜杠也匹配
-        post.setdefault("type", "source")
-        post.setdefault("source", "notebooklm")
+        # frontmatter.Post 没有 setdefault，要落到 .metadata 这个 dict 上
+        post.metadata.setdefault("type", "source")
+        post.metadata.setdefault("source", "notebooklm")
 
 
 def safe_target(folder: str, source) -> str:
@@ -122,6 +127,13 @@ def unique_path(dest_dir: Path, name: str) -> Path:
     return dest
 
 
+def write_note(dest: Path, post: frontmatter.Post) -> None:
+    """临时文件 + os.replace 原子落盘：中途崩溃不会留下半截笔记。"""
+    tmp = dest.with_name(dest.name + ".triage-tmp")
+    tmp.write_text(frontmatter.dumps(post), encoding="utf-8")
+    os.replace(tmp, dest)
+
+
 def process_one(path: Path, post: frontmatter.Post, dry_run: bool) -> None:
     ensure_defaults(path, post)
     meta = classify(post.content)
@@ -132,17 +144,19 @@ def process_one(path: Path, post: frontmatter.Post, dry_run: bool) -> None:
     post["ai_processed"] = True
     post["ai_model"] = DEEPSEEK_MODEL
     if meta.get("summary"):
-        post.setdefault("summary", meta["summary"])
+        post.metadata.setdefault("summary", meta["summary"])
 
     folder = safe_target(meta.get("folder", ""), post.get("source"))
-    dest = unique_path(VAULT / folder, path.name)
+    target_dir = VAULT / folder
+    # 已在目标目录就原地更新，否则 unique_path 会把文件自身当冲突、改名成 -1
+    dest = path if path.parent == target_dir else unique_path(target_dir, path.name)
     print(f"[triage] {path.relative_to(VAULT)} → {dest.relative_to(VAULT)}  tags={post['tags']}")
     if dry_run:
         return
     dest.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(frontmatter.dumps(post), encoding="utf-8")  # 先写回元数据
+    write_note(dest, post)  # 新内容先在目标位置落稳
     if dest != path:
-        shutil.move(str(path), str(dest))
+        path.unlink()  # 目标写成功后才删源文件，最坏情况是留下重复而非丢数据
 
 
 def run_triage(dry_run: bool) -> int:
