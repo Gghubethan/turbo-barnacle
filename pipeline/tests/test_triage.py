@@ -251,6 +251,7 @@ def test_dry_run_prints_disclaimer(vault, capsys):
 def lock_path(tmp_path, monkeypatch):
     p = tmp_path / ".triage.lock"
     monkeypatch.setattr(triage, "LOCK_PATH", p)
+    monkeypatch.setattr(triage, "_lock_token", None)
     return p
 
 
@@ -283,6 +284,23 @@ def test_stale_lock_taken_over(lock_path, capsys):
     assert triage.acquire_lock() is True
     assert "陈旧锁" in capsys.readouterr().err
     triage.release_lock()
+
+
+def test_release_own_lock_deletes_file(lock_path):
+    assert triage.acquire_lock() is True
+    triage.release_lock()
+    assert not lock_path.exists()
+
+
+def test_release_does_not_delete_taken_over_lock(lock_path):
+    """A 持锁超时被 B 接管后，A 退出时不能删掉 B 的锁。"""
+    assert triage.acquire_lock() is True
+    lock_path.write_text("pid=999 uuid=接管者B的token\n", encoding="utf-8")
+
+    triage.release_lock()
+
+    assert lock_path.exists()  # B 的锁原样保留，单实例保护不被破坏
+    assert "接管者B" in lock_path.read_text(encoding="utf-8")
 
 
 def test_main_releases_lock_on_normal_exit(vault, lock_path, monkeypatch):
