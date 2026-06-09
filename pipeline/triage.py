@@ -10,7 +10,7 @@ triage.py — 个人知识库 Inbox / NotebookLM 自动三分 + 定时复盘。
 
 用法：
   python triage.py            # 处理 00_Inbox + 20_Sources/NotebookLM
-  python triage.py --dry-run  # 只打印将要做的改动，不落盘
+  python triage.py --dry-run  # 只列出将处理的文件：不调用模型、不写盘
   python triage.py --review   # 生成本周复盘（需 ANTHROPIC_API_KEY + CLAUDE_MODEL）
 
 环境变量见 .env.example（会自动加载同目录 .env）。
@@ -23,6 +23,8 @@ import json
 import os
 import re
 import sys
+import time
+import uuid
 from pathlib import Path
 
 import frontmatter  # python-frontmatter
@@ -46,6 +48,54 @@ ALLOWED_FOLDERS = [                                         # 受控目标目录
     "30_Projects", "40_Areas", "50_Resources", "60_MOC",
 ]
 
+API_TIMEOUT = float(os.environ.get("API_TIMEOUT", "60"))         # 单次请求超时（秒）
+REVIEW_TIMEOUT = float(os.environ.get("REVIEW_TIMEOUT", "120"))  # 复盘输入长，放宽
+API_MAX_RETRIES = int(os.environ.get("API_MAX_RETRIES", "2"))    # SDK 自带指数退避
+
+LOCK_PATH = Path(__file__).with_name(".triage.lock")
+LOCK_STALE_SECONDS = 2 * 60 * 60  # 超过视为进程被强杀留下的死锁，可接管
+
+
+# ---- 单实例锁 -------------------------------------------------------------
+_lock_token = None  # 本实例持有的锁内容；释放时校验，防止误删接管者的锁
+
+
+def acquire_lock() -> bool:
+    """O_CREAT|O_EXCL 原子建锁；拿不到返回 False，陈旧锁接管后重试一次。"""
+    global _lock_token
+    token = f"pid={os.getpid()} uuid={uuid.uuid4()}"
+    for _ in range(2):
+        try:
+            fd = os.open(LOCK_PATH, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(fd, "w") as f:
+                f.write(token + "\n")
+            _lock_token = token
+            return True
+        except FileExistsError:
+            try:
+                age = time.time() - LOCK_PATH.stat().st_mtime
+            except FileNotFoundError:
+                continue  # 对方刚好释放了，重试创建
+            if age < LOCK_STALE_SECONDS:
+                return False
+            print(f"[lock] 锁已存在 {age / 3600:.1f} 小时，视为陈旧锁接管", file=sys.stderr)
+            LOCK_PATH.unlink(missing_ok=True)
+    return False
+
+
+def release_lock() -> None:
+    """只释放自己的锁：超时被接管后，锁已归新实例所有，不能删。"""
+    global _lock_token
+    if _lock_token is None:
+        return
+    try:
+        owned = LOCK_PATH.read_text(encoding="utf-8").strip() == _lock_token
+    except FileNotFoundError:
+        owned = False
+    if owned:
+        LOCK_PATH.unlink(missing_ok=True)
+    _lock_token = None
+
 
 def today() -> str:
     return dt.date.today().isoformat()
@@ -62,10 +112,23 @@ CLASSIFY_SYSTEM = (
 )
 
 
+_deepseek = None
+
+
+def deepseek_client():
+    """复用同一个 client；超时与有限重试交给 SDK（指数退避）。"""
+    global _deepseek
+    if _deepseek is None:
+        from openai import OpenAI  # 兼容 OpenAI 的 DeepSeek
+        _deepseek = OpenAI(
+            base_url="https://api.deepseek.com", api_key=DEEPSEEK_KEY,
+            timeout=API_TIMEOUT, max_retries=API_MAX_RETRIES,
+        )
+    return _deepseek
+
+
 def classify(content: str) -> dict:
-    from openai import OpenAI  # 兼容 OpenAI 的 DeepSeek
-    client = OpenAI(base_url="https://api.deepseek.com", api_key=DEEPSEEK_KEY)
-    resp = client.chat.completions.create(
+    resp = deepseek_client().chat.completions.create(
         model=DEEPSEEK_MODEL,
         temperature=0,
         messages=[
@@ -135,6 +198,9 @@ def write_note(dest: Path, post: frontmatter.Post) -> None:
 
 
 def process_one(path: Path, post: frontmatter.Post, dry_run: bool) -> None:
+    if dry_run:  # 不调模型、不写盘，只报告会扫到哪些文件
+        print(f"[dry-run] 将处理 {path.relative_to(VAULT)}")
+        return
     ensure_defaults(path, post)
     meta = classify(post.content)
     post["tags"] = sorted(set((post.get("tags") or []) + meta.get("tags", [])))
@@ -151,8 +217,6 @@ def process_one(path: Path, post: frontmatter.Post, dry_run: bool) -> None:
     # 已在目标目录就原地更新，否则 unique_path 会把文件自身当冲突、改名成 -1
     dest = path if path.parent == target_dir else unique_path(target_dir, path.name)
     print(f"[triage] {path.relative_to(VAULT)} → {dest.relative_to(VAULT)}  tags={post['tags']}")
-    if dry_run:
-        return
     dest.parent.mkdir(parents=True, exist_ok=True)
     write_note(dest, post)  # 新内容先在目标位置落稳
     if dest != path:
@@ -162,7 +226,9 @@ def process_one(path: Path, post: frontmatter.Post, dry_run: bool) -> None:
 def run_triage(dry_run: bool) -> int:
     if not VAULT.exists():
         sys.exit(f"VAULT_PATH 不存在: {VAULT}")
-    if not DEEPSEEK_KEY:
+    if dry_run:
+        print("[dry-run] 未调用模型，分类/目标目录不可信，仅验证扫描范围与零写盘。")
+    elif not DEEPSEEK_KEY:
         sys.exit("缺少 DEEPSEEK_API_KEY")
     n = 0
     for path, post in iter_unprocessed():
@@ -171,11 +237,20 @@ def run_triage(dry_run: bool) -> int:
             n += 1
         except Exception as e:  # 单条失败不影响整体
             print(f"[skip] {path.name}: {e}", file=sys.stderr)
-    print(f"[triage] 处理 {n} 条" + ("（dry-run）" if dry_run else ""))
+    if dry_run:
+        print(f"[dry-run] 共 {n} 条待处理（未调用模型、未写盘）")
+    else:
+        print(f"[triage] 处理 {n} 条")
     return n
 
 
 # ---- 周复盘（Claude） ----------------------------------------------------
+def anthropic_client():
+    from anthropic import Anthropic
+    return Anthropic(api_key=ANTHROPIC_KEY,
+                     timeout=REVIEW_TIMEOUT, max_retries=API_MAX_RETRIES)
+
+
 def recent_notes(days: int = 7):
     cutoff = dt.date.today() - dt.timedelta(days=days)
     out = []
@@ -197,7 +272,6 @@ def weekly_review() -> None:
         sys.exit("缺少 ANTHROPIC_API_KEY")
     if not CLAUDE_MODEL:
         sys.exit("缺少 CLAUDE_MODEL（填最新 Claude Opus 模型ID）")
-    from anthropic import Anthropic
     notes = recent_notes(7)
     if not notes:
         print("[review] 近 7 天没有笔记，跳过")
@@ -211,7 +285,7 @@ def weekly_review() -> None:
         "1) 本周主题脉络；2) 值得深挖/容易遗漏的连接；3) 下周知识预测方向（3 条）。\n\n"
         + digest[:60000]
     )
-    msg = Anthropic(api_key=ANTHROPIC_KEY).messages.create(
+    msg = anthropic_client().messages.create(
         model=CLAUDE_MODEL, max_tokens=2000,
         messages=[{"role": "user", "content": prompt}],
     )
@@ -231,10 +305,18 @@ def weekly_review() -> None:
 # ---- CLI -----------------------------------------------------------------
 def main() -> None:
     ap = argparse.ArgumentParser(description="知识库自动三分 + 周复盘")
-    ap.add_argument("--dry-run", action="store_true", help="只预览，不写盘")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="只列出将处理的文件，不调用模型、不写盘")
     ap.add_argument("--review", action="store_true", help="生成本周复盘")
     args = ap.parse_args()
-    weekly_review() if args.review else run_triage(args.dry_run)
+    if not acquire_lock():
+        # 定时任务撞上未结束的上一轮属正常情况，按成功退出
+        print("[lock] 已有实例在运行（.triage.lock 未过期），本次跳过", file=sys.stderr)
+        return
+    try:
+        weekly_review() if args.review else run_triage(args.dry_run)
+    finally:
+        release_lock()
 
 
 if __name__ == "__main__":
