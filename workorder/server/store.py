@@ -84,6 +84,18 @@ class NotFound(LookupError):
     """资源不存在，HTTP 层应返回 404。"""
 
 
+class FileResponse:
+    """处理函数返回它即触发文件下载（绕过默认 JSON 序列化）。
+
+    文本默认以 ``utf-8-sig`` 编码（带 BOM），便于 Excel 正确识别中文。
+    """
+
+    def __init__(self, text, filename, content_type="text/csv; charset=utf-8"):
+        self.body = text.encode("utf-8-sig") if isinstance(text, str) else text
+        self.filename = filename
+        self.content_type = content_type
+
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS products (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,

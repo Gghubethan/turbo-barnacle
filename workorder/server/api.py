@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
-from .store import Store, ValidationError, NotFound
+from .store import Store, ValidationError, NotFound, FileResponse
 
 WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 MODULES_DIR = Path(__file__).resolve().parent / "modules"
@@ -196,6 +196,17 @@ def make_handler(store: Store):
             self.end_headers()
             self.wfile.write(body)
 
+        def _send_file(self, status: int, fr: FileResponse):
+            from urllib.parse import quote
+            self.send_response(status)
+            self.send_header("Content-Type", fr.content_type)
+            # filename* 用 RFC 5987 编码，兼容中文文件名
+            self.send_header("Content-Disposition",
+                             f"attachment; filename*=UTF-8''{quote(fr.filename)}")
+            self.send_header("Content-Length", str(len(fr.body)))
+            self.end_headers()
+            self.wfile.write(fr.body)
+
         def _read_body(self) -> dict:
             length = int(self.headers.get("Content-Length", 0) or 0)
             if not length:
@@ -244,7 +255,10 @@ def make_handler(store: Store):
                 body = self._read_body() if method in ("POST", "PUT", "PATCH") else {}
                 req = {"body": body, "query": parse_qs(parsed.query)}
                 status, payload = handler(req, params)
-                self._send_json(status, payload)
+                if isinstance(payload, FileResponse):
+                    self._send_file(status, payload)
+                else:
+                    self._send_json(status, payload)
             except ValidationError as e:
                 self._send_json(400, {"error": str(e)})
             except NotFound as e:
