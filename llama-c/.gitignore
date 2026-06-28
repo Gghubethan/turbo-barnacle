@@ -1,0 +1,7 @@
+# build output
+build/
+
+# exported models / tokenizers are large and produced locally
+*.bin
+test/tiny.bin
+test/tiny_tok.bin
