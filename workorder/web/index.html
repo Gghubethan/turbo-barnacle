@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>黑湖工单系统</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">湖</div>
+    <div>
+      <h1>黑湖工单系统</h1>
+    </div>
+    <span class="sub">数字化车间 · 工单全流程协同</span>
+  </header>
+
+  <nav class="tabs">
+    <button data-view="dashboard" class="active">生产看板</button>
+    <button data-view="orders">工单管理</button>
+    <button data-view="exceptions">异常处理</button>
+    <button data-view="products">产品档案</button>
+  </nav>
+
+  <main>
+    <!-- 看板 -->
+    <section id="dashboard" class="view active">
+      <div class="stats" id="stat-cards"></div>
+      <div class="card" style="padding:18px;">
+        <div class="section-title"><h2>工单状态分布</h2></div>
+        <div class="status-grid" id="status-grid"></div>
+      </div>
+    </section>
+
+    <!-- 工单 -->
+    <section id="orders" class="view">
+      <div class="toolbar">
+        <select id="filter-status">
+          <option value="all">全部状态</option>
+        </select>
+        <input id="search" class="grow" placeholder="搜索工单号 / 产品 / 负责人…" />
+        <button class="btn ghost" id="btn-refresh">刷新</button>
+        <button class="btn" id="btn-new-order">+ 新建工单</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>工单号</th><th>产品</th><th class="num">计划/完成</th>
+              <th>进度</th><th>优先级</th><th>状态</th>
+              <th class="hide-sm">负责人</th><th class="hide-sm">计划完工</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody"></tbody>
+        </table>
+        <div class="empty" id="orders-empty" style="display:none;">暂无工单</div>
+      </div>
+    </section>
+
+    <!-- 异常 -->
+    <section id="exceptions" class="view">
+      <div class="toolbar">
+        <select id="filter-exc">
+          <option value="">全部</option>
+          <option value="open">待处理</option>
+          <option value="resolved">已处理</option>
+        </select>
+        <span class="grow"></span>
+        <button class="btn" id="btn-new-exc">+ 上报异常</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>关联工单</th><th>类型</th><th>描述</th><th>上报人</th><th>状态</th><th></th></tr>
+          </thead>
+          <tbody id="exc-tbody"></tbody>
+        </table>
+        <div class="empty" id="exc-empty" style="display:none;">暂无异常</div>
+      </div>
+    </section>
+
+    <!-- 产品 -->
+    <section id="products" class="view">
+      <div class="toolbar">
+        <span class="grow"></span>
+        <button class="btn" id="btn-new-product">+ 新建产品</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>编码</th><th>名称</th><th>规格</th><th>单位</th><th>创建时间</th></tr></thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+        <div class="empty" id="products-empty" style="display:none;">暂无产品</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 工单详情抽屉 -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer">
+    <header>
+      <h3 id="drawer-title">工单详情</h3>
+      <button class="close-x" data-close-drawer>&times;</button>
+    </header>
+    <div class="body" id="drawer-body"></div>
+  </aside>
+
+  <!-- 通用弹窗（表单注入） -->
+  <div class="modal" id="modal">
+    <header><h3 id="modal-title"></h3><button class="close-x" data-close-modal>&times;</button></header>
+    <div class="body" id="modal-body"></div>
+    <footer>
+      <button class="btn subtle" data-close-modal>取消</button>
+      <button class="btn" id="modal-submit">确定</button>
+    </footer>
+  </div>
+
+  <div id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

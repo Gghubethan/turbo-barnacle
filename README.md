@@ -36,6 +36,10 @@
 - **[落地路径：iOS + Windows + Obsidian Sync](docs/setup-ios-windows.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Windows pipeline 脚本骨架，可直接照做。
 - **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
 
+## 子项目
+
+- **[workorder — 黑湖工单系统（复刻）](workorder/README.md)** —— 对标黑湖科技「黑湖工单」的轻量复刻：工单建单/派工/报工/完工全流程 + 异常处理 + 生产看板。纯 Python 标准库 + 原生前端，`python3 app.py` 开箱即跑。
+
 ## 路线图
 
 - [ ] **MVP**：建 vault + 文件夹规范 + frontmatter 模板 + Copilot 接 Claude/DeepSeek + 单一 Inbox + 手机捕获到 Inbox
