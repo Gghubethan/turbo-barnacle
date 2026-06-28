@@ -96,7 +96,26 @@ python3 tools/export_tokenizer.py /path/to/tokenizer.model tokenizer.bin
   -t <float>  温度，0 = 贪心（默认 1.0）
   -p <float>  top-p nucleus 采样（默认 0.9）
   -s <int>    随机种子（默认按时间）
+  -m <mode>   generate（默认）或 chat
+  -y <text>   chat 模式的 system prompt
 ```
+
+### 交互式对话（chat 模式）
+
+用 LLaMA-2 chat 模板（`[INST] <<SYS>>...<</SYS>> ... [/INST]`）多轮对话。
+**KV 缓存跨轮保留**——历史对话不重复计算，新一轮用户输入直接追加到当前位置：
+
+```bash
+./build/llama llama2_7b_chat_q8.bin -z tokenizer.bin -m chat \
+    -y "You are a helpful assistant." -t 0.7
+
+you> 用一句话解释什么是量化
+bot> ...
+you> 那 int8 和 int4 有什么区别
+bot> ...
+```
+
+> chat 模式建议使用 LLaMA-2 **chat** 权重（`Llama-2-7b-chat-hf`）。
 
 ## 模型文件格式（version 2）
 

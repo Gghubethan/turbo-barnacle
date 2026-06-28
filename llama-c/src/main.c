@@ -79,6 +79,69 @@ static void generate(Transformer *t, Tokenizer *tok, Sampler *sampler,
     free(prompt_tokens);
 }
 
+/* Read a line from stdin into buf (without the trailing newline). Returns 0 on
+ * EOF/empty so the caller can end the chat. */
+static int read_line(const char *prompt, char *buf, size_t size) {
+    fprintf(stderr, "%s", prompt);
+    fflush(stderr);
+    if (!fgets(buf, size, stdin)) return 0;
+    buf[strcspn(buf, "\n")] = '\0';
+    return buf[0] != '\0';
+}
+
+/* Interactive multi-turn chat using the LLaMA-2 chat template. The KV cache is
+ * never reset between turns, so prior dialogue is not recomputed — each new
+ * user message is simply appended at the current position. */
+static void chat(Transformer *t, Tokenizer *tok, Sampler *sampler,
+                 const char *system_prompt, int steps) {
+    char user[2048];
+    char rendered[4096];
+    int *prompt_tokens = malloc(8192 * sizeof(int));
+    int n_prompt = 0, user_idx = 0;
+    int user_turn = 1;          /* start by asking the user */
+    int token = 0, next = 0, pos = 0;
+
+    while (pos < steps) {
+        if (user_turn) {
+            if (!read_line("\nyou> ", user, sizeof(user))) break;
+
+            if (pos == 0 && system_prompt && system_prompt[0]) {
+                snprintf(rendered, sizeof(rendered),
+                         "[INST] <<SYS>>\n%s\n<</SYS>>\n\n%s [/INST]",
+                         system_prompt, user);
+            } else {
+                snprintf(rendered, sizeof(rendered), "[INST] %s [/INST]", user);
+            }
+            /* each user turn opens with BOS, mirroring the </s><s> turn break */
+            tokenizer_encode(tok, rendered, /*bos=*/1, /*eos=*/0,
+                             prompt_tokens, &n_prompt);
+            user_idx = 0;
+            user_turn = 0;
+            fprintf(stderr, "bot> ");
+        }
+
+        /* feed the prompt first, then the model's own previous prediction */
+        if (user_idx < n_prompt) token = prompt_tokens[user_idx++];
+        else                     token = next;
+
+        if (token == 2) {               /* assistant emitted EOS -> turn over */
+            user_turn = 1;
+            continue;
+        }
+
+        float *logits = model_forward(t, token, pos);
+        pos++;
+        next = sampler_sample(sampler, logits);
+
+        /* once the prompt is consumed, `next` is part of the reply */
+        if (user_idx >= n_prompt && next != 2)
+            emit(tokenizer_decode(tok, token, next));
+        if (next == 2) printf("\n");
+    }
+    printf("\n");
+    free(prompt_tokens);
+}
+
 static void usage(const char *prog) {
     fprintf(stderr,
         "usage: %s <model.bin> [options]\n"
@@ -87,7 +150,9 @@ static void usage(const char *prog) {
         "  -n <int>    max steps to run (default: 256)\n"
         "  -t <float>  temperature, 0 = greedy (default: 1.0)\n"
         "  -p <float>  top-p nucleus sampling (default: 0.9)\n"
-        "  -s <int>    RNG seed (default: time-based)\n",
+        "  -s <int>    RNG seed (default: time-based)\n"
+        "  -m <mode>   'generate' (default) or 'chat'\n"
+        "  -y <text>   system prompt for chat mode\n",
         prog);
     exit(EXIT_FAILURE);
 }
@@ -98,6 +163,8 @@ int main(int argc, char **argv) {
     const char *model_path = argv[1];
     const char *tok_path = "tokenizer.bin";
     const char *prompt = "";
+    const char *mode = "generate";
+    const char *system_prompt = "";
     int steps = 256;
     float temperature = 1.0f;
     float topp = 0.9f;
@@ -113,6 +180,8 @@ int main(int argc, char **argv) {
             case 't': temperature = atof(val); break;
             case 'p': topp = atof(val); break;
             case 's': seed = strtoull(val, NULL, 10); break;
+            case 'm': mode = val; break;
+            case 'y': system_prompt = val; break;
             default: usage(argv[0]);
         }
     }
@@ -138,7 +207,10 @@ int main(int argc, char **argv) {
         transformer.config.n_heads, transformer.config.n_kv_heads,
         transformer.config.vocab_size, transformer.config.seq_len);
 
-    generate(&transformer, &tokenizer, &sampler, prompt, steps);
+    if (strcmp(mode, "chat") == 0)
+        chat(&transformer, &tokenizer, &sampler, system_prompt, steps);
+    else
+        generate(&transformer, &tokenizer, &sampler, prompt, steps);
 
     sampler_free(&sampler);
     tokenizer_free(&tokenizer);
