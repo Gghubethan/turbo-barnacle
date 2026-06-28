@@ -27,6 +27,8 @@
   const bookById = (id) => db.books.find(b => b.id === id);
   const memberById = (id) => db.members.find(m => m.id === id);
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const accentColor = () => getComputedStyle(document.body).getPropertyValue("--cyan").trim() || "#22e0ff";
+  const accentColor2 = () => getComputedStyle(document.body).getPropertyValue("--violet").trim() || "#9a6bff";
   const fmtCover = (b) => `<div class="cover" style="background:linear-gradient(135deg,${b.cover[0]},${b.cover[1]})">${esc(b.title[0])}</div>`;
   function bookStatusTag(b) {
     if (b.available === 0) return `<span class="tag tag--red">已借罄</span>`;
@@ -531,10 +533,43 @@
       }
       data.forEach((d, i) => { ctx.beginPath(); ctx.arc(X(i), Y(d[key]), 3, 0, 7); ctx.fillStyle = color; ctx.fill(); });
     }
-    line("borrow", "#22e0ff", true);
-    line("ret", "#9a6bff", false);
+    line("borrow", accentColor(), true);
+    line("ret", accentColor2(), false);
     ctx.fillStyle = "rgba(123,139,181,.8)"; ctx.font = "11px monospace"; ctx.textAlign = "center";
     data.forEach((d, i) => ctx.fillText(d.d, X(i), H - 6));
+  }
+
+  /* ---------- 雷达图(canvas) ---------- */
+  function drawRadar(id, labels, values) {
+    const c = $("#" + id); if (!c) return;
+    const dpr = devicePixelRatio || 1, rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr; c.height = rect.height * dpr;
+    const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height, cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 26;
+    const n = labels.length, max = Math.max(1, ...values);
+    const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+    // 网格环
+    ctx.strokeStyle = "rgba(120,170,255,.12)"; ctx.lineWidth = 1;
+    for (let g = 1; g <= 4; g++) {
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) { const a = ang(i % n), r = R * g / 4; const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+    }
+    // 轴 + 标签
+    ctx.fillStyle = "rgba(123,139,181,.85)"; ctx.font = "11px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (let i = 0; i < n; i++) {
+      const a = ang(i); const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.strokeStyle = "rgba(120,170,255,.1)"; ctx.stroke();
+      ctx.fillText(labels[i], cx + Math.cos(a) * (R + 14), cy + Math.sin(a) * (R + 12));
+    }
+    // 数据多边形
+    const accent = accentColor();
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) { const a = ang(i % n), r = R * values[i % n] / max; const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.closePath();
+    ctx.fillStyle = accent + "33"; ctx.fill();
+    ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.shadowColor = accent; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+    for (let i = 0; i < n; i++) { const a = ang(i), r = R * values[i] / max; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 3, 0, 7); ctx.fillStyle = accent; ctx.fill(); }
   }
 
   function animateRing(ringId, numId, target, scale, suffix) {
@@ -586,6 +621,10 @@
   function memberDetail(id) {
     const m = memberById(id); if (!m) return;
     const loans = db.loans.filter(l => l.member === id);
+    // 借阅画像：按分类统计该读者历史借阅
+    const labels = db.categories.map(c => c.name);
+    const counts = labels.map(name => loans.filter(l => { const b = bookById(l.book); return b && b.cat === name; }).length);
+    const hasProfile = counts.some(v => v > 0);
     openDrawer("读者档案", `
       <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px">
         <div class="op__avatar" style="width:60px;height:60px;border-radius:14px;font-size:24px">${esc(m.name[0])}</div>
@@ -600,6 +639,12 @@
         <dt>信用积分</dt><dd style="color:var(--cyan);font-family:var(--mono)">${m.credit}</dd>
       </dl>
       <div class="panel" style="margin-top:18px">
+        <div class="panel__head"><h3>借阅画像 · 分类偏好</h3><span class="more">PROFILE</span></div>
+        ${hasProfile
+          ? `<canvas id="memRadar" style="width:100%;height:220px"></canvas>`
+          : `<div class="empty" style="padding:24px">暂无足够借阅数据生成画像</div>`}
+      </div>
+      <div class="panel" style="margin-top:14px">
         <div class="panel__head"><h3>借阅记录</h3></div>
         ${loans.length ? loans.map(l => { const b = bookById(l.book);
           return `<div class="feed__row"><span class="feed__dot" style="background:${l.status === "overdue" ? "var(--red)" : l.status === "returned" ? "var(--green)" : "var(--cyan)"}"></span>
@@ -608,6 +653,7 @@
         }).join("") : `<div class="empty" style="padding:20px">暂无借阅记录</div>`}
       </div>
       <div class="drawer__foot"><button class="btn btn--ghost" onclick="NEXUS.closeDrawer()">关闭</button></div>`);
+    if (hasProfile) requestAnimationFrame(() => drawRadar("memRadar", labels, counts));
   }
 
   function openBookForm(id) {
@@ -741,6 +787,31 @@
     else if (mem) { render("members"); memberDetail(mem.id); }
     else toast("未找到匹配：" + q, "warn");
   }
+
+  /* ============================================================
+     强调色主题
+     ============================================================ */
+  const THEMES = [
+    { id: "aurora", name: "极光蓝" }, { id: "magenta", name: "品红" },
+    { id: "emerald", name: "翡翠" }, { id: "amber", name: "琥珀" },
+  ];
+  function applyTheme(id) {
+    if (id && id !== "aurora") document.body.dataset.accent = id;
+    else delete document.body.dataset.accent;
+    try { localStorage.setItem("nexus-accent", id || "aurora"); } catch (e) {}
+  }
+  function setTheme(id) {
+    applyTheme(id);
+    const t = THEMES.find(x => x.id === id);
+    toast("主题已切换：" + (t ? t.name : id), "ok");
+    if (current === "dashboard" || current === "analytics") render(current); // 重绘 canvas 取新色
+  }
+  function cycleTheme() {
+    const cur = localStorage.getItem("nexus-accent") || "aurora";
+    const i = THEMES.findIndex(t => t.id === cur);
+    setTheme(THEMES[(i + 1) % THEMES.length].id);
+  }
+  function initTheme() { try { applyTheme(localStorage.getItem("nexus-accent")); } catch (e) {} }
 
   /* ============================================================
      通知中心
@@ -880,6 +951,7 @@
       { group: "数据", icon: "ico-download", label: "导出书目 · CSV", hint: "Export", run: () => exportCatalogCSV() },
       { group: "数据", icon: "ico-download", label: "导出流通记录 · CSV", hint: "Export", run: () => exportLoansCSV() },
       { group: "数据", icon: "ico-download", label: "全量备份 · JSON", hint: "Backup", run: () => exportBackup() },
+      ...THEMES.map(t => ({ group: "主题", icon: "ico-grid", label: "强调色 · " + t.name, hint: t.id, run: () => setTheme(t.id) })),
     ];
   }
   function openCmdk() {
@@ -951,6 +1023,7 @@
     $("#cmdkBtn").addEventListener("click", () => CMDK.el ? closeCmdk() : openCmdk());
     $("#bellBtn").addEventListener("click", e => { e.stopPropagation(); toggleNotifs(); });
     $("#exportBtn").addEventListener("click", openExportMenu);
+    $("#themeBtn").addEventListener("click", cycleTheme);
     document.addEventListener("click", e => {
       if (popoverEl && !popoverEl.contains(e.target) && !e.target.closest("#bellBtn")) { popoverEl.remove(); popoverEl = null; }
     });
@@ -969,5 +1042,5 @@
     exportCatalogCSV, exportLoansCSV, exportBackup, importBackup };
 
   // 启动
-  particles(); liveClock(); bind(); boot();
+  initTheme(); particles(); liveClock(); bind(); boot();
 })();

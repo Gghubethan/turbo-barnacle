@@ -24,6 +24,10 @@
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
 }
 *{box-sizing:border-box}
+/* 强调色主题 */
+body[data-accent="magenta"]{--cyan:#ff4fd8;--blue:#c44bff;--violet:#7a4bff;--glow-cyan:0 0 22px rgba(255,79,216,.45)}
+body[data-accent="emerald"]{--cyan:#1ff0a8;--blue:#22c3ff;--violet:#4be0a0;--glow-cyan:0 0 22px rgba(31,240,168,.45)}
+body[data-accent="amber"]{--cyan:#ffc24b;--blue:#ff7a3d;--violet:#ff5a7a;--glow-cyan:0 0 22px rgba(255,194,75,.45)}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{
