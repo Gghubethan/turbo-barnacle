@@ -245,9 +245,13 @@
         <div class="toolbar">
           ${cats.map((c, i) => `<button class="chip ${i === 0 ? "is-active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}
           <div class="spacer"></div>
+          <div class="segmented" id="catViewToggle">
+            <button data-mode="table" class="${catMode === "table" ? "is-active" : ""}"><i class="ico ico-grid"></i>表格</button>
+            <button data-mode="cards" class="${catMode === "cards" ? "is-active" : ""}"><i class="ico ico-book"></i>画廊</button>
+          </div>
           <input class="mini-input" id="catSearch" placeholder="筛选书名 / 作者…" style="width:200px" />
         </div>
-        <div class="table-wrap">
+        <div id="catTableWrap" class="table-wrap" ${catMode === "cards" ? "hidden" : ""}>
           <table id="bookTable">
             <thead><tr>
               <th data-sort="title">书目</th><th data-sort="cat">分类</th><th data-sort="year">年份</th>
@@ -256,6 +260,7 @@
             <tbody id="bookBody"></tbody>
           </table>
         </div>
+        <div id="catCards" class="book-cards" ${catMode === "table" ? "hidden" : ""}></div>
       </div>`;
     },
 
@@ -413,17 +418,25 @@
       animateRing("catRing", "catRingNum", db.categories.reduce((s, c) => s + c.count, 0), 100, "");
     },
     catalog() {
-      renderBookTable();
-      $("#catSearch").addEventListener("input", renderBookTable);
+      renderCatalog();
+      $("#catSearch").addEventListener("input", renderCatalog);
       $$(".chip").forEach(c => c.addEventListener("click", () => {
         $$(".chip").forEach(x => x.classList.remove("is-active"));
-        c.classList.add("is-active"); renderBookTable();
+        c.classList.add("is-active"); renderCatalog();
       }));
       $$("#bookTable thead th[data-sort]").forEach(th => th.addEventListener("click", () => {
         const k = th.dataset.sort;
         sortState.dir = sortState.key === k ? -sortState.dir : 1;
-        sortState.key = k; renderBookTable();
+        sortState.key = k; renderCatalog();
       }));
+      $("#catViewToggle").addEventListener("click", e => {
+        const b = e.target.closest("button"); if (!b) return;
+        catMode = b.dataset.mode;
+        $$("#catViewToggle button").forEach(x => x.classList.toggle("is-active", x === b));
+        $("#catTableWrap").hidden = catMode !== "table";
+        $("#catCards").hidden = catMode !== "cards";
+        renderCatalog();
+      });
     },
     analytics() {
       $$(".barchart .col i").forEach(el => {
@@ -438,7 +451,8 @@
   };
 
   let sortState = { key: "title", dir: 1 };
-  function renderBookTable() {
+  let catMode = "table";
+  function filteredBooks() {
     const cat = $(".chip.is-active")?.dataset.cat || "全部";
     const q = ($("#catSearch")?.value || "").trim().toLowerCase();
     let list = db.books.filter(b =>
@@ -447,6 +461,34 @@
     );
     const { key, dir } = sortState;
     list.sort((a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0) * dir);
+    return list;
+  }
+  function renderCatalog() {
+    if (catMode === "cards") renderBookCards(); else renderBookTable();
+  }
+  function renderBookCards() {
+    const list = filteredBooks();
+    const host = $("#catCards"); if (!host) return;
+    if (!list.length) { host.innerHTML = `<div class="empty" style="grid-column:1/-1">无匹配书目</div>`; return; }
+    host.innerHTML = list.map(b => `
+      <div class="bcard" onclick="NEXUS.bookDetail('${b.id}')">
+        <div class="bcard__top" style="background:linear-gradient(140deg,${b.cover[0]},${b.cover[1]})">
+          <span class="bcard__zone">${b.zone}</span>
+          <span class="bcard__big">${esc(b.title[0])}</span>
+        </div>
+        <div class="bcard__body">
+          <div class="bcard__title">${esc(b.title)}</div>
+          <div class="bcard__sub">${esc(b.author)} · ${esc(b.cat)}</div>
+          <div class="bcard__foot">${bookStatusTag(b)}<span style="color:var(--amber);font-size:12px">★ ${b.rating}</span></div>
+        </div>
+      </div>`).join("");
+  }
+  function renderBookTable() {
+    const list = filteredBooks();
+    $$("#bookTable thead th[data-sort]").forEach(th => {
+      th.classList.remove("sort-asc", "sort-desc");
+      if (th.dataset.sort === sortState.key) th.classList.add(sortState.dir === 1 ? "sort-asc" : "sort-desc");
+    });
     const body = $("#bookBody");
     if (!list.length) { body.innerHTML = `<tr><td colspan="8"><div class="empty">无匹配书目</div></td></tr>`; return; }
     body.innerHTML = list.map(b => `
@@ -700,6 +742,81 @@
   }
 
   /* ============================================================
+     命令面板 ⌘K / Ctrl+K
+     ============================================================ */
+  const CMDK = { el: null, items: [], active: 0 };
+  function cmdkActions() {
+    return [
+      { group: "导航", icon: "ico-grid", label: "前往 · 控制中枢", hint: "Dashboard", run: () => render("dashboard") },
+      { group: "导航", icon: "ico-book", label: "前往 · 书目矩阵", hint: "Catalog", run: () => render("catalog") },
+      { group: "导航", icon: "ico-user", label: "前往 · 读者档案", hint: "Members", run: () => render("members") },
+      { group: "导航", icon: "ico-swap", label: "前往 · 流通调度", hint: "Circulation", run: () => render("circulation") },
+      { group: "导航", icon: "ico-chart", label: "前往 · 数据透析", hint: "Analytics", run: () => render("analytics") },
+      { group: "导航", icon: "ico-shelf", label: "前往 · 馆藏拓扑", hint: "Shelf", run: () => render("shelf") },
+      { group: "操作", icon: "ico-plus", label: "新增书目", hint: "New book", run: () => openBookForm() },
+      { group: "操作", icon: "ico-plus", label: "注册读者", hint: "New member", run: () => openMemberForm() },
+      { group: "操作", icon: "ico-swap", label: "登记借阅", hint: "New loan", run: () => openLoanForm() },
+      { group: "操作", icon: "ico-reset", label: "重置演示数据", hint: "Reset", run: () => { State.reset(); render(current); toast("演示数据已重置", "ok"); } },
+    ];
+  }
+  function openCmdk() {
+    if (CMDK.el) return;
+    const el = document.createElement("div");
+    el.className = "cmdk";
+    el.innerHTML = `
+      <div class="cmdk__mask" data-cmclose></div>
+      <div class="cmdk__box">
+        <div class="cmdk__input"><i class="ico ico-search"></i><input id="cmdkInput" placeholder="输入命令、视图或书名…" /></div>
+        <div class="cmdk__list" id="cmdkList"></div>
+        <div class="cmdk__foot"><span><kbd>↑↓</kbd>选择</span><span><kbd>↵</kbd>执行</span><span><kbd>esc</kbd>关闭</span></div>
+      </div>`;
+    document.body.appendChild(el);
+    CMDK.el = el;
+    el.querySelector("[data-cmclose]").addEventListener("click", closeCmdk);
+    const input = $("#cmdkInput");
+    input.addEventListener("input", () => buildCmdkList(input.value));
+    input.addEventListener("keydown", cmdkKeys);
+    buildCmdkList("");
+    setTimeout(() => input.focus(), 0);
+  }
+  function closeCmdk() { if (CMDK.el) { CMDK.el.remove(); CMDK.el = null; CMDK.items = []; CMDK.active = 0; } }
+  function buildCmdkList(q) {
+    q = q.trim().toLowerCase();
+    let items = cmdkActions().filter(a => !q || a.label.toLowerCase().includes(q) || a.hint.toLowerCase().includes(q));
+    if (q) {
+      db.books.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)).slice(0, 6)
+        .forEach(b => items.push({ group: "书目", icon: "ico-book", label: b.title, hint: b.author, run: () => { render("catalog"); bookDetail(b.id); } }));
+      db.members.filter(m => m.name.toLowerCase().includes(q)).slice(0, 4)
+        .forEach(m => items.push({ group: "读者", icon: "ico-user", label: m.name, hint: m.dept, run: () => { render("members"); memberDetail(m.id); } }));
+    }
+    CMDK.items = items; CMDK.active = 0;
+    const list = $("#cmdkList");
+    if (!items.length) { list.innerHTML = `<div class="empty" style="padding:30px">无匹配项</div>`; return; }
+    let html = "", lastG = "";
+    items.forEach((it, i) => {
+      if (it.group !== lastG) { html += `<div class="cmdk__group">${it.group}</div>`; lastG = it.group; }
+      html += `<div class="cmdk__item ${i === 0 ? "is-active" : ""}" data-i="${i}"><i class="ico ${it.icon}"></i><span>${esc(it.label)}</span><small>${esc(it.hint)}</small></div>`;
+    });
+    list.innerHTML = html;
+    $$("#cmdkList .cmdk__item").forEach(node => {
+      node.addEventListener("mouseenter", () => setCmdkActive(+node.dataset.i));
+      node.addEventListener("click", () => runCmdk(+node.dataset.i));
+    });
+  }
+  function setCmdkActive(i) {
+    CMDK.active = i;
+    $$("#cmdkList .cmdk__item").forEach(n => n.classList.toggle("is-active", +n.dataset.i === i));
+  }
+  function runCmdk(i) { const it = CMDK.items[i]; if (it) { closeCmdk(); it.run(); } }
+  function cmdkKeys(e) {
+    if (e.key === "ArrowDown") { e.preventDefault(); setCmdkActive(Math.min(CMDK.items.length - 1, CMDK.active + 1)); scrollCmdk(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setCmdkActive(Math.max(0, CMDK.active - 1)); scrollCmdk(); }
+    else if (e.key === "Enter") { e.preventDefault(); runCmdk(CMDK.active); }
+    else if (e.key === "Escape") { e.preventDefault(); closeCmdk(); }
+  }
+  function scrollCmdk() { const n = $(`#cmdkList .cmdk__item[data-i="${CMDK.active}"]`); if (n) n.scrollIntoView({ block: "nearest" }); }
+
+  /* ============================================================
      绑定 & 启动
      ============================================================ */
   function bind() {
@@ -708,10 +825,12 @@
     });
     $$("[data-close]").forEach(el => el.addEventListener("click", closeDrawer));
     $("#seedBtn").addEventListener("click", () => { State.reset(); toast("演示数据已重置", "ok"); render(current); });
+    $("#cmdkBtn").addEventListener("click", () => CMDK.el ? closeCmdk() : openCmdk());
     const gs = $("#globalSearch");
     gs.addEventListener("keydown", e => { if (e.key === "Enter") globalSearch(gs.value); });
     document.addEventListener("keydown", e => {
-      if (e.key === "/" && document.activeElement !== gs) { e.preventDefault(); gs.focus(); }
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); CMDK.el ? closeCmdk() : openCmdk(); return; }
+      if (e.key === "/" && document.activeElement !== gs && !CMDK.el) { e.preventDefault(); gs.focus(); }
       if (e.key === "Escape") closeDrawer();
     });
   }
