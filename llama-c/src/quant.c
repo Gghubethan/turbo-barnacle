@@ -1,6 +1,28 @@
 #include "quant.h"
 #include <math.h>
 
+#if defined(__AVX2__)
+#include <immintrin.h>
+_Static_assert(GS % 16 == 0, "AVX2 int8 path needs GS to be a multiple of 16");
+
+/* Signed int8 dot product over `n` elements (n a multiple of 16) -> int32.
+ * Widen bytes to int16, multiply-add adjacent pairs into int32 lanes, then
+ * horizontally reduce. Matches the scalar accumulation exactly (no rounding). */
+static inline int32_t dot_i8_avx2(const int8_t *a, const int8_t *b, int n) {
+    __m256i acc = _mm256_setzero_si256();
+    for (int k = 0; k < n; k += 16) {
+        __m256i a16 = _mm256_cvtepi8_epi16(_mm_loadu_si128((const __m128i *)(a + k)));
+        __m256i b16 = _mm256_cvtepi8_epi16(_mm_loadu_si128((const __m128i *)(b + k)));
+        acc = _mm256_add_epi32(acc, _mm256_madd_epi16(a16, b16));
+    }
+    __m128i s = _mm_add_epi32(_mm256_castsi256_si128(acc),
+                              _mm256_extracti128_si256(acc, 1));
+    s = _mm_hadd_epi32(s, s);
+    s = _mm_hadd_epi32(s, s);
+    return _mm_cvtsi128_si32(s);
+}
+#endif
+
 void dequantize(const QuantizedTensor *qt, float *out, int n) {
     for (int i = 0; i < n; i++) {
         out[i] = qt->q[i] * qt->s[i / GS];
@@ -53,10 +75,14 @@ void matmul_q8(float *out, const QuantizedTensor *x, const QuantizedTensor *w,
         const float  *xs = x->s;
 
         for (int g = 0; g < n; g += GS) {
+#if defined(__AVX2__)
+            int32_t ig = dot_i8_avx2(wq + g, xq + g, GS);
+#else
             int32_t ig = 0;
             for (int k = 0; k < GS; k++) {
                 ig += (int32_t)wq[g + k] * (int32_t)xq[g + k];
             }
+#endif
             val += (float)ig * ws[g / GS] * xs[g / GS];
         }
         out[i] = val;
