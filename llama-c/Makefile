@@ -19,7 +19,7 @@ SRC     := src/quant.c src/model.c src/tokenizer.c src/sampler.c src/main.c
 HDR     := src/quant.h src/model.h src/tokenizer.h src/sampler.h
 BIN     := build/llama
 
-.PHONY: all omp debug test clean
+.PHONY: all omp debug test check clean
 
 all: $(BIN)
 
@@ -32,6 +32,14 @@ omp: clean $(BIN)
 
 debug: CFLAGS := -O0 -g -fsanitize=address,undefined -Wall -Wextra -std=gnu11 -DGS=$(GS)
 debug: clean $(BIN)
+
+# Numerical unit tests for the int8 quantization path.
+check: build/test_quant
+	./build/test_quant
+
+build/test_quant: test/test_quant.c src/quant.c src/quant.h
+	@mkdir -p build
+	$(CC) $(CFLAGS) test/test_quant.c src/quant.c -o $@ $(LDFLAGS)
 
 # Builds a tiny synthetic model + tokenizer and runs the engine end to end.
 test: $(BIN)

@@ -32,7 +32,8 @@ llama-c/
 │   ├── export.py            HF LLaMA-2 权重 → int8 .bin
 │   └── export_tokenizer.py  tokenizer.model → tokenizer.bin
 ├── test/
-│   └── make_tiny_model.py   生成微型合成模型，端到端冒烟测试
+│   ├── make_tiny_model.py   生成微型合成模型，端到端冒烟测试
+│   └── test_quant.c         int8 量化数值单元测试（对比 fp32）
 └── Makefile
 ```
 
@@ -45,7 +46,13 @@ cd llama-c
 make            # 优化构建 -> build/llama
 make omp        # 额外开启 OpenMP 多线程（推荐 7B）
 make debug      # -O0 + AddressSanitizer/UBSan，用于排错
+make check      # int8 量化数值单元测试（matmul_q8 对比 fp32 参考）
 ```
+
+> `make check` 用随机数据验证 int8 路径的**数值正确性**：分组量化往返误差在
+> `scale/2` 界内，量化矩阵乘相对 fp32 参考的 L2 相对误差 < 3%（实测约 0.5%）。
+> GitHub Actions（`.github/workflows/llama-c.yml`）在每次改动 `llama-c/` 时自动跑
+> 构建 + 单元测试 + 端到端冒烟测试 + ASan/UBSan。
 
 ### 2. 不下载真模型，先跑通流程
 
