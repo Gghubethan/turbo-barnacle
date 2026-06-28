@@ -53,11 +53,15 @@ nav.tabs {
   display: flex; gap: 4px; padding: 0 24px;
   background: var(--panel); border-bottom: 1px solid var(--line);
   position: sticky; top: 56px; z-index: 40;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: thin;
 }
+nav.tabs::-webkit-scrollbar { height: 4px; }
+nav.tabs::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 nav.tabs button {
   background: none; border: none; cursor: pointer;
   padding: 13px 16px; font-size: 14px; color: var(--muted);
   border-bottom: 2px solid transparent; font-weight: 500;
+  white-space: nowrap; flex: 0 0 auto;
 }
 nav.tabs button.active { color: var(--brand); border-bottom-color: var(--brand); }
 nav.tabs button:hover { color: var(--brand); }
