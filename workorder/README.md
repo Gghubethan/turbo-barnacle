@@ -38,6 +38,10 @@ python3 app.py --host 0.0.0.0  # 监听所有网卡，局域网/平板可访问
 | **异常处理** | 按类型（设备/物料/质量/工艺/其他）上报，闭环处理并记录处理结果 |
 | **产品档案** | 维护产品编码、名称、规格、单位 |
 | **员工班组** | 维护员工角色（操作工/质检员/班组长/计划员/管理员）与班组，支持停用/启用 |
+| **计划排产** | 甘特看板：工单按计划周期排到时间轴，按车间分组、状态着色，支持产线排产 |
+| **工序管理** | 工单拆工序、按工序报工，跟踪每道工序进度与状态（待开工/进行中/已完成） |
+| **设备管理** | 设备台账 + 点检/保养/维修记录，设备状态（运行中/闲置/保养中/故障）流转 |
+| **报表中心** | 日产量趋势、质检合格率趋势、工单状态分布、车间产出、物料出入库汇总（纯 CSS/SVG 图表） |
 
 > **生产闭环**：工单 → 领料（出库）→ 报工 → 质检 → 完工，物料库存与质量数据随工单沉淀，
 > 看板实时反映合格率与库存预警 —— 对齐黑湖「小工单」「生产 + 质量 + 库存」一体化的产品定位。
@@ -60,17 +64,34 @@ python3 app.py --host 0.0.0.0  # 监听所有网卡，局域网/平板可访问
 workorder/
 ├── app.py              # 启动入口（argparse + 起服务）
 ├── server/
-│   ├── store.py        # 数据访问 + 业务逻辑（状态机/报工/异常/统计）
-│   └── api.py          # HTTP 路由 + JSON REST + 静态资源服务
+│   ├── store.py        # 核心数据访问 + 业务逻辑（状态机/报工/异常/库存/质检/统计）
+│   ├── api.py          # HTTP 路由 + JSON REST + 静态资源 + 功能模块自动加载
+│   └── modules/        # 功能模块插件（约定式自动发现，零中心化注册）
+│       ├── CONTRACT.md # 模块开发契约（后端/前端/测试约定）
+│       ├── planning.py # 计划排产
+│       ├── routing.py  # 工序管理
+│       ├── equipment.py# 设备管理
+│       └── reports.py  # 报表中心
 ├── web/                # 原生前端 SPA
 │   ├── index.html
-│   ├── app.js
-│   └── styles.css
-└── tests/              # pytest：业务逻辑 + HTTP 端到端
+│   ├── app.js          # 含插件机制：动态加载 web/modules/*.js 注册标签页
+│   ├── styles.css
+│   └── modules/        # 功能模块前端（planning.js / routing.js / equipment.js / reports.js）
+└── tests/              # pytest：业务逻辑 + HTTP 端到端 + 各功能模块
     ├── test_store.py    # 工单/报工/异常/状态机
     ├── test_modules.py  # 员工/物料库存/质检
-    └── test_http.py     # HTTP 端到端
+    ├── test_http.py     # HTTP 端到端
+    ├── test_planning.py # 计划排产
+    ├── test_routing.py  # 工序管理
+    ├── test_equipment.py# 设备管理
+    └── test_reports.py  # 报表中心
 ```
+
+### 插件式功能模块
+
+`server/modules/` 与 `web/modules/` 下的模块**约定式自动加载**，新增模块无需改动任何中心文件：
+后端自动 import 各模块的建表 SQL 与路由，前端通过 `/api/modules` 动态加载并注册标签页。
+开发约定见 [`server/modules/CONTRACT.md`](server/modules/CONTRACT.md)。
 
 ## REST API
 

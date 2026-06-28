@@ -720,5 +720,56 @@ $("#modal-submit").addEventListener("click", async () => {
   }
 });
 
+// ── 插件机制：功能模块通过 web/modules/*.js 动态注册自己的标签页 ──────────────
+// 后端 /api/modules 列出可加载的脚本；每个脚本调用 WO.registerModule({...}) 注册一个 tab。
+window.WO = {
+  // 给模块复用的工具，避免各模块重复造轮子
+  api, toast, esc, fmt, openModal,
+  $, $$,
+  modules: {},
+
+  registerModule(def) {
+    // def: { id, label, refresh(container), order? }
+    if (this.modules[def.id]) return;
+    this.modules[def.id] = def;
+    const nav = $("nav.tabs");
+    const btn = document.createElement("button");
+    btn.dataset.view = def.id;
+    btn.textContent = def.label;
+    nav.appendChild(btn);
+
+    const sec = document.createElement("section");
+    sec.id = def.id;
+    sec.className = "view";
+    sec.innerHTML = '<div class="empty">加载中…</div>';
+    $("main").appendChild(sec);
+
+    btn.addEventListener("click", () => {
+      $$("nav.tabs button").forEach((b) => b.classList.remove("active"));
+      $$(".view").forEach((v) => v.classList.remove("active"));
+      btn.classList.add("active");
+      sec.classList.add("active");
+      Promise.resolve()
+        .then(() => def.refresh && def.refresh(sec))
+        .catch((e) => toast(e.message, true));
+    });
+  },
+};
+
+async function loadPlugins() {
+  let files = [];
+  try { files = await api("/modules"); } catch (_) { return; }
+  for (const file of files) {
+    await new Promise((resolve) => {
+      const s = document.createElement("script");
+      s.src = "modules/" + file;
+      s.onload = resolve;
+      s.onerror = () => { console.warn("模块加载失败:", file); resolve(); };
+      document.body.appendChild(s);
+    });
+  }
+}
+
 // ── 启动 ────────────────────────────────────────────────────────────────
 loadDashboard();
+loadPlugins();

@@ -6,7 +6,9 @@
 
 from __future__ import annotations
 
+import importlib
 import json
+import pkgutil
 import re
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,6 +17,8 @@ from urllib.parse import urlparse, parse_qs
 from .store import Store, ValidationError, NotFound
 
 WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+MODULES_DIR = Path(__file__).resolve().parent / "modules"
+WEB_MODULES_DIR = WEB_DIR / "modules"
 
 _CONTENT_TYPES = {
     ".html": "text/html; charset=utf-8",
@@ -126,11 +130,56 @@ def build_router(store: Store) -> Router:
     r.add("POST", r"/api/exceptions/(?P<id>\d+)/resolve",
           lambda req, p: (200, store.resolve_exception(int(p["id"]), req["body"])))
 
+    # 前端插件清单：列出 web/modules 下的 *.js，供 SPA 动态加载
+    r.add("GET", r"/api/modules", lambda req, p: (200, _list_web_modules()))
+
     return r
+
+
+def _list_web_modules() -> list[str]:
+    if not WEB_MODULES_DIR.is_dir():
+        return []
+    return sorted(f.name for f in WEB_MODULES_DIR.glob("*.js"))
+
+
+def discover_modules():
+    """导入 server/modules 下的全部功能模块（约定式插件，零中心化注册）。"""
+    if not MODULES_DIR.is_dir():
+        return []
+    mods = []
+    for finfo in pkgutil.iter_modules([str(MODULES_DIR)]):
+        if finfo.name.startswith("_"):
+            continue
+        mods.append(importlib.import_module(f"server.modules.{finfo.name}"))
+    return mods
+
+
+def load_feature_modules(store: Store, router: Router) -> list[str]:
+    """应用各功能模块的建表 SQL，并把它们的路由挂到 router 上。"""
+    mods = discover_modules()
+    schema_parts = [m.SCHEMA for m in mods if getattr(m, "SCHEMA", "").strip()]
+    if schema_parts:
+        with store._conn() as conn:
+            conn.executescript("\n".join(schema_parts))
+    for m in mods:
+        for method, pattern, handler in (m.routes(store) if hasattr(m, "routes") else []):
+            router.add(method, pattern, handler)
+    return [m.__name__.rsplit(".", 1)[-1] for m in mods]
+
+
+def seed_feature_modules(store: Store) -> None:
+    """调用各功能模块的（幂等）演示数据填充。"""
+    for m in discover_modules():
+        if hasattr(m, "seed"):
+            try:
+                m.seed(store)
+            except Exception as e:  # noqa: BLE001 —— 单个模块种子失败不应阻断启动
+                print(f"[wo] 模块 {m.__name__} 种子数据失败：{e}")
 
 
 def make_handler(store: Store):
     router = build_router(store)
+    load_feature_modules(store, router)
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "BlacklakeWO/1.0"
@@ -215,9 +264,11 @@ def make_handler(store: Store):
 def serve(host: str = "127.0.0.1", port: int = 8000,
           db_path: str = "workorder.db", seed: bool = True) -> None:
     store = Store(db_path)
+    handler = make_handler(store)  # 加载功能模块（建表 + 路由），须在种子前完成
     if seed:
         store.seed_demo()
-    httpd = ThreadingHTTPServer((host, port), make_handler(store))
+        seed_feature_modules(store)
+    httpd = ThreadingHTTPServer((host, port), handler)
     print(f"黑湖工单系统已启动 →  http://{host}:{port}")
     print(f"数据库：{Path(db_path).resolve()}  （Ctrl+C 退出）")
     try:
