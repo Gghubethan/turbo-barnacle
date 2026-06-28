@@ -18,8 +18,11 @@
   <nav class="tabs">
     <button data-view="dashboard" class="active">生产看板</button>
     <button data-view="orders">工单管理</button>
+    <button data-view="inspections">质量检验</button>
+    <button data-view="inventory">物料库存</button>
     <button data-view="exceptions">异常处理</button>
     <button data-view="products">产品档案</button>
+    <button data-view="staff">员工班组</button>
   </nav>
 
   <main>
@@ -57,6 +60,54 @@
       </div>
     </section>
 
+    <!-- 质检 -->
+    <section id="inspections" class="view">
+      <div class="toolbar">
+        <span class="grow"></span>
+        <button class="btn" id="btn-new-insp">+ 新建检验单</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>工单号</th><th>质检员</th><th class="num">送检</th><th class="num">合格</th>
+              <th class="num">不良</th><th>合格率</th><th>结论</th><th class="hide-sm">时间</th></tr>
+          </thead>
+          <tbody id="insp-tbody"></tbody>
+        </table>
+        <div class="empty" id="insp-empty" style="display:none;">暂无检验记录</div>
+      </div>
+    </section>
+
+    <!-- 库存 -->
+    <section id="inventory" class="view">
+      <div class="toolbar">
+        <span class="grow"></span>
+        <button class="btn ghost" id="btn-new-material">+ 新建物料</button>
+        <button class="btn subtle" id="btn-view-txns">出入库流水</button>
+      </div>
+      <div class="card" id="materials-card">
+        <table>
+          <thead>
+            <tr><th>编码</th><th>名称</th><th class="hide-sm">规格</th><th>类别</th>
+              <th class="num">当前库存</th><th class="num hide-sm">安全库存</th><th></th></tr>
+          </thead>
+          <tbody id="materials-tbody"></tbody>
+        </table>
+        <div class="empty" id="materials-empty" style="display:none;">暂无物料</div>
+      </div>
+      <div class="card" id="txns-card" style="display:none;margin-top:14px;">
+        <div class="section-title" style="padding:12px 14px 0;"><h2>出入库流水</h2></div>
+        <table>
+          <thead>
+            <tr><th>时间</th><th>物料</th><th>类型</th><th class="num">数量</th>
+              <th class="num">结余</th><th class="hide-sm">关联工单</th><th class="hide-sm">操作人</th></tr>
+          </thead>
+          <tbody id="txns-tbody"></tbody>
+        </table>
+        <div class="empty" id="txns-empty" style="display:none;">暂无流水</div>
+      </div>
+    </section>
+
     <!-- 异常 -->
     <section id="exceptions" class="view">
       <div class="toolbar">
@@ -91,6 +142,21 @@
           <tbody id="products-tbody"></tbody>
         </table>
         <div class="empty" id="products-empty" style="display:none;">暂无产品</div>
+      </div>
+    </section>
+
+    <!-- 员工 -->
+    <section id="staff" class="view">
+      <div class="toolbar">
+        <span class="grow"></span>
+        <button class="btn" id="btn-new-staff">+ 新建员工</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>姓名</th><th>角色</th><th>班组</th><th>状态</th><th></th></tr></thead>
+          <tbody id="staff-tbody"></tbody>
+        </table>
+        <div class="empty" id="staff-empty" style="display:none;">暂无员工</div>
       </div>
     </section>
   </main>

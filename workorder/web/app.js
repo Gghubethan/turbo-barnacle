@@ -32,6 +32,14 @@ const EXC_CATS = [
   ["equipment", "设备故障"], ["material", "物料缺料"], ["quality", "质量问题"],
   ["process", "工艺异常"], ["other", "其他"],
 ];
+const STAFF_ROLES = [
+  ["operator", "操作工"], ["inspector", "质检员"], ["leader", "班组长"],
+  ["planner", "计划员"], ["manager", "管理员"],
+];
+const MAT_CATS = [["raw", "原料"], ["semi", "半成品"], ["finished", "成品"]];
+const INSP_RESULTS = [["pass", "合格"], ["concession", "让步接收"], ["reject", "拒收"]];
+const TXN_IN = [["purchase", "采购入库"], ["produce_in", "完工入库"], ["return", "退料入库"], ["adjust_in", "盘盈入库"]];
+const TXN_OUT = [["scrap", "报废出库"], ["adjust_out", "盘亏出库"]];
 // 各状态可执行的动作（前端按钮渲染用；后端是唯一裁决方）
 const ACTIONS = {
   pending: [["dispatch", "派工", "btn"], ["cancel", "取消", "subtle"]],
@@ -59,8 +67,11 @@ $$("nav.tabs button").forEach((btn) => {
 function refreshView(view) {
   if (view === "dashboard") loadDashboard();
   else if (view === "orders") loadOrders();
+  else if (view === "inspections") loadInspections();
+  else if (view === "inventory") loadMaterials();
   else if (view === "exceptions") loadExceptions();
   else if (view === "products") loadProducts();
+  else if (view === "staff") loadStaff();
 }
 
 // ── 看板 ────────────────────────────────────────────────────────────────
@@ -77,6 +88,8 @@ async function loadDashboard() {
       { label: "已完成", value: fmt(d.completed_qty), cls: "ok" },
       { label: "不良率", value: d.defect_rate + "%", cls: d.defect_rate > 5 ? "danger" : "" },
       { label: "今日产出", value: fmt(d.today_completed), cls: "accent" },
+      { label: "质检合格率", value: d.inspect_pass_rate + "%", cls: d.inspect_pass_rate && d.inspect_pass_rate < 95 ? "warn" : "ok" },
+      { label: "低库存物料", value: d.low_stock_materials, cls: d.low_stock_materials ? "danger" : "" },
     ];
     $("#stat-cards").innerHTML = cards.map((c) => `
       <div class="stat ${c.cls || ""}">
@@ -152,27 +165,32 @@ $("#search").addEventListener("input", () => {
 // ── 工单详情抽屉 ──────────────────────────────────────────────────────────
 async function openOrder(id) {
   try {
-    const [w, reports, excs] = await Promise.all([
+    const [w, reports, excs, issues, insps] = await Promise.all([
       api("/work-orders/" + id),
       api(`/work-orders/${id}/reports`),
       api(`/work-orders/${id}/exceptions`),
+      api(`/work-orders/${id}/inventory`),
+      api(`/work-orders/${id}/inspections`),
     ]);
     $("#drawer-title").textContent = w.order_no;
-    $("#drawer-body").innerHTML = renderOrderDetail(w, reports, excs);
+    $("#drawer-body").innerHTML = renderOrderDetail(w, reports, excs, issues, insps);
     bindOrderActions(w);
     showDrawer();
   } catch (e) { toast(e.message, true); }
 }
 
-function renderOrderDetail(w, reports, excs) {
+function renderOrderDetail(w, reports, excs, issues, insps) {
   const actions = (ACTIONS[w.status] || []).map(([a, label, cls]) =>
     `<button class="btn ${cls} sm" data-action="${a}">${label}</button>`).join("");
+  const active = w.status !== "completed" && w.status !== "closed";
   const reportBtn = (w.status === "producing" || w.status === "paused")
     ? `<button class="btn sm" data-report>+ 报工</button>` : "";
+  const issueBtn = active ? `<button class="btn subtle sm" data-issue>+ 领料</button>` : "";
+  const inspBtn = `<button class="btn subtle sm" data-inspect>+ 质检</button>`;
   const excBtn = `<button class="btn ghost sm" data-add-exc>+ 上报异常</button>`;
 
   return `
-    <div class="action-row">${actions}${reportBtn}${excBtn}</div>
+    <div class="action-row">${actions}${reportBtn}${issueBtn}${inspBtn}${excBtn}</div>
     <div class="sub-card">
       <dl class="kv">
         <dt>产品</dt><dd>${esc(w.product_name)}</dd>
@@ -200,6 +218,25 @@ function renderOrderDetail(w, reports, excs) {
     </div>
 
     <div class="sub-card">
+      <h4>领料记录 <span style="color:var(--muted);font-weight:400">${issues.length} 条</span></h4>
+      ${issues.length ? issues.map((t) => `
+        <div class="timeline-item">
+          <div><strong>${esc(t.material_name)}</strong> 出库 ${fmt(t.qty)}（结余 ${fmt(t.balance_after)}）</div>
+          <div class="meta">${esc(t.created_at)}${t.operator ? " · " + esc(t.operator) : ""}${t.remark ? " · " + esc(t.remark) : ""}</div>
+        </div>`).join("") : '<div class="empty">暂无领料</div>'}
+    </div>
+
+    <div class="sub-card">
+      <h4>质检记录 <span style="color:var(--muted);font-weight:400">${insps.length} 条</span></h4>
+      ${insps.length ? insps.map((i) => `
+        <div class="timeline-item">
+          <div><span class="badge ${i.result === "reject" ? "p-urgent" : i.result === "concession" ? "p-high" : "s-completed"}">${esc(i.result_label)}</span>
+            送检 ${fmt(i.qty_inspected)}，合格 ${fmt(i.qty_qualified)}（${i.pass_rate}%）</div>
+          <div class="meta">${esc(i.inspector)} · ${esc(i.created_at)}${i.defect_reason ? " · " + esc(i.defect_reason) : ""}</div>
+        </div>`).join("") : '<div class="empty">暂无质检</div>'}
+    </div>
+
+    <div class="sub-card">
       <h4>关联异常 <span style="color:var(--muted);font-weight:400">${excs.length} 条</span></h4>
       ${excs.length ? excs.map((e) => `
         <div class="timeline-item">
@@ -215,7 +252,62 @@ function bindOrderActions(w) {
     btn.addEventListener("click", () => doTransition(w, btn.dataset.action)));
   const rep = $("#drawer-body [data-report]");
   if (rep) rep.addEventListener("click", () => openReportModal(w));
+  const iss = $("#drawer-body [data-issue]");
+  if (iss) iss.addEventListener("click", () => openIssueModal(w));
+  $("#drawer-body [data-inspect]").addEventListener("click", () => openInspectModal(w));
   $("#drawer-body [data-add-exc]").addEventListener("click", () => openExcModal(w.id));
+}
+
+async function openIssueModal(w) {
+  const mats = await api("/materials");
+  if (!mats.length) { toast("请先在「物料库存」中建立物料", true); return; }
+  const opts = mats.map((m) =>
+    `<option value="${m.id}">${esc(m.code)} · ${esc(m.name)}（库存 ${fmt(m.stock)}${esc(m.unit)}）</option>`).join("");
+  openModal("工单领料 · " + w.order_no, `
+    <label class="field"><span class="req">物料</span><select id="i-mat">${opts}</select></label>
+    <label class="field"><span class="req">领用数量</span><input id="i-qty" type="number" min="0" step="any" /></label>
+    <label class="field"><span>领料人</span><input id="i-op" value="${esc(w.assignee)}" /></label>
+    <label class="field"><span>备注</span><textarea id="i-remark"></textarea></label>`,
+    async () => {
+      await api(`/work-orders/${w.id}/issue`, {
+        method: "POST",
+        body: {
+          material_id: Number($("#i-mat").value),
+          qty: Number($("#i-qty").value || 0),
+          operator: $("#i-op").value.trim(),
+          remark: $("#i-remark").value.trim(),
+        },
+      });
+      toast("领料成功");
+      openOrder(w.id);
+    });
+}
+
+function openInspectModal(w) {
+  openModal("质量检验 · " + w.order_no, `
+    <label class="field"><span class="req">质检员</span><input id="q-inspector" placeholder="如：陈质检" /></label>
+    <label class="field"><span class="req">送检数量</span><input id="q-insp" type="number" min="0" step="any" /></label>
+    <label class="field"><span>合格数量</span><input id="q-ok" type="number" min="0" step="any" value="0" /></label>
+    <label class="field"><span>不良数量</span><input id="q-ng" type="number" min="0" step="any" value="0" /></label>
+    <label class="field"><span>结论</span><select id="q-result">
+      ${INSP_RESULTS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+    </select></label>
+    <label class="field"><span>不良原因</span><input id="q-reason" /></label>`,
+    async () => {
+      await api(`/work-orders/${w.id}/inspections`, {
+        method: "POST",
+        body: {
+          inspector: $("#q-inspector").value.trim(),
+          qty_inspected: Number($("#q-insp").value || 0),
+          qty_qualified: Number($("#q-ok").value || 0),
+          qty_defective: Number($("#q-ng").value || 0),
+          result: $("#q-result").value,
+          defect_reason: $("#q-reason").value.trim(),
+        },
+      });
+      toast("检验单已提交");
+      openOrder(w.id);
+    });
 }
 
 async function doTransition(w, action) {
@@ -407,6 +499,188 @@ $("#btn-new-product").addEventListener("click", () => {
       });
       toast("产品已创建");
       loadProducts();
+    });
+});
+
+// ── 质检 ────────────────────────────────────────────────────────────────
+async function loadInspections() {
+  try {
+    const rows = await api("/inspections");
+    $("#insp-empty").style.display = rows.length ? "none" : "block";
+    $("#insp-tbody").innerHTML = rows.map((i) => `
+      <tr>
+        <td><strong>${esc(i.order_no)}</strong></td>
+        <td>${esc(i.inspector)}</td>
+        <td class="num">${fmt(i.qty_inspected)}</td>
+        <td class="num">${fmt(i.qty_qualified)}</td>
+        <td class="num">${fmt(i.qty_defective)}</td>
+        <td>${i.pass_rate}%</td>
+        <td><span class="badge ${i.result === "reject" ? "p-urgent" : i.result === "concession" ? "p-high" : "s-completed"}">${esc(i.result_label)}</span></td>
+        <td class="hide-sm">${esc(i.created_at)}</td>
+      </tr>`).join("");
+  } catch (e) { toast(e.message, true); }
+}
+$("#btn-new-insp").addEventListener("click", async () => {
+  const orders = await api("/work-orders");
+  const pick = orders.filter((w) => w.status !== "pending" && w.status !== "closed");
+  if (!pick.length) { toast("暂无可检验的工单", true); return; }
+  const opts = pick.map((w) => `<option value="${w.id}">${esc(w.order_no)} · ${esc(w.product_name)}</option>`).join("");
+  openModal("新建检验单", `
+    <label class="field"><span class="req">工单</span><select id="qg-wo">${opts}</select></label>
+    <label class="field"><span class="req">质检员</span><input id="qg-inspector" /></label>
+    <label class="field"><span class="req">送检数量</span><input id="qg-insp" type="number" min="0" step="any" /></label>
+    <label class="field"><span>合格数量</span><input id="qg-ok" type="number" min="0" step="any" value="0" /></label>
+    <label class="field"><span>不良数量</span><input id="qg-ng" type="number" min="0" step="any" value="0" /></label>
+    <label class="field"><span>结论</span><select id="qg-result">
+      ${INSP_RESULTS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+    </select></label>
+    <label class="field"><span>不良原因</span><input id="qg-reason" /></label>`,
+    async () => {
+      await api(`/work-orders/${$("#qg-wo").value}/inspections`, {
+        method: "POST",
+        body: {
+          inspector: $("#qg-inspector").value.trim(),
+          qty_inspected: Number($("#qg-insp").value || 0),
+          qty_qualified: Number($("#qg-ok").value || 0),
+          qty_defective: Number($("#qg-ng").value || 0),
+          result: $("#qg-result").value,
+          defect_reason: $("#qg-reason").value.trim(),
+        },
+      });
+      toast("检验单已提交");
+      loadInspections();
+    });
+});
+
+// ── 物料 / 库存 ───────────────────────────────────────────────────────────
+async function loadMaterials() {
+  try {
+    const rows = await api("/materials");
+    $("#materials-empty").style.display = rows.length ? "none" : "block";
+    $("#materials-tbody").innerHTML = rows.map((m) => `
+      <tr>
+        <td><strong>${esc(m.code)}</strong></td>
+        <td>${esc(m.name)}</td>
+        <td class="hide-sm">${esc(m.spec) || "—"}</td>
+        <td>${esc(m.category_label)}</td>
+        <td class="num ${m.low_stock ? "overdue" : ""}">${fmt(m.stock)} ${esc(m.unit)}${m.low_stock ? " ⚠" : ""}</td>
+        <td class="num hide-sm">${fmt(m.safety_stock)}</td>
+        <td><button class="btn sm ghost" data-move="${m.id}" data-name="${esc(m.name)}" data-unit="${esc(m.unit)}" data-stock="${m.stock}">出入库</button></td>
+      </tr>`).join("");
+    $$("#materials-tbody [data-move]").forEach((b) =>
+      b.addEventListener("click", () => openMoveModal(b.dataset)));
+  } catch (e) { toast(e.message, true); }
+}
+
+function openMoveModal(d) {
+  const allOpts = [...TXN_IN, ...TXN_OUT];
+  openModal(`出入库 · ${d.name}（库存 ${fmt(d.stock)}${d.unit}）`, `
+    <label class="field"><span class="req">类型</span><select id="mv-type">
+      ${allOpts.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+    </select></label>
+    <label class="field"><span class="req">数量</span><input id="mv-qty" type="number" min="0" step="any" /></label>
+    <label class="field"><span>操作人</span><input id="mv-op" /></label>
+    <label class="field"><span>备注</span><textarea id="mv-remark"></textarea></label>`,
+    async () => {
+      await api(`/materials/${d.move}/move`, {
+        method: "POST",
+        body: {
+          biz_type: $("#mv-type").value,
+          qty: Number($("#mv-qty").value || 0),
+          operator: $("#mv-op").value.trim(),
+          remark: $("#mv-remark").value.trim(),
+        },
+      });
+      toast("库存已更新");
+      loadMaterials();
+      if ($("#txns-card").style.display !== "none") loadTxns();
+    });
+}
+
+$("#btn-new-material").addEventListener("click", () => {
+  openModal("新建物料", `
+    <label class="field"><span class="req">物料编码</span><input id="m-code" placeholder="如：M-2004" /></label>
+    <label class="field"><span class="req">物料名称</span><input id="m-name" /></label>
+    <label class="field"><span>规格</span><input id="m-spec" /></label>
+    <label class="field"><span>单位</span><input id="m-unit" value="件" /></label>
+    <label class="field"><span>类别</span><select id="m-cat">
+      ${MAT_CATS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+    </select></label>
+    <label class="field"><span>初始库存</span><input id="m-stock" type="number" min="0" step="any" value="0" /></label>
+    <label class="field"><span>安全库存</span><input id="m-safety" type="number" min="0" step="any" value="0" /></label>`,
+    async () => {
+      await api("/materials", {
+        method: "POST",
+        body: {
+          code: $("#m-code").value.trim(),
+          name: $("#m-name").value.trim(),
+          spec: $("#m-spec").value.trim(),
+          unit: $("#m-unit").value.trim() || "件",
+          category: $("#m-cat").value,
+          stock: Number($("#m-stock").value || 0),
+          safety_stock: Number($("#m-safety").value || 0),
+        },
+      });
+      toast("物料已创建");
+      loadMaterials();
+    });
+});
+
+let txnsVisible = false;
+$("#btn-view-txns").addEventListener("click", () => {
+  txnsVisible = !txnsVisible;
+  $("#txns-card").style.display = txnsVisible ? "block" : "none";
+  if (txnsVisible) loadTxns();
+});
+async function loadTxns() {
+  const rows = await api("/inventory-txns");
+  $("#txns-empty").style.display = rows.length ? "none" : "block";
+  $("#txns-tbody").innerHTML = rows.map((t) => `
+    <tr>
+      <td>${esc(t.created_at)}</td>
+      <td>${esc(t.material_name)}</td>
+      <td><span class="badge ${t.kind === "in" ? "s-completed" : "p-high"}">${esc(t.biz_label)}</span></td>
+      <td class="num">${t.kind === "in" ? "+" : "−"}${fmt(t.qty)}</td>
+      <td class="num">${fmt(t.balance_after)}</td>
+      <td class="hide-sm">${t.work_order_id ? "#" + t.work_order_id : "—"}</td>
+      <td class="hide-sm">${esc(t.operator) || "—"}</td>
+    </tr>`).join("");
+}
+
+// ── 员工 ────────────────────────────────────────────────────────────────
+async function loadStaff() {
+  try {
+    const rows = await api("/staff");
+    $("#staff-empty").style.display = rows.length ? "none" : "block";
+    $("#staff-tbody").innerHTML = rows.map((s) => `
+      <tr>
+        <td><strong>${esc(s.name)}</strong></td>
+        <td>${esc(s.role_label)}</td>
+        <td>${esc(s.team) || "—"}</td>
+        <td><span class="badge ${s.active ? "s-producing" : "s-closed"}">${s.active ? "在职" : "停用"}</span></td>
+        <td><button class="btn sm subtle" data-toggle="${s.id}" data-active="${s.active ? 1 : 0}">${s.active ? "停用" : "启用"}</button></td>
+      </tr>`).join("");
+    $$("#staff-tbody [data-toggle]").forEach((b) =>
+      b.addEventListener("click", async () => {
+        await api(`/staff/${b.dataset.toggle}/active`, { method: "POST", body: { active: b.dataset.active !== "1" } });
+        loadStaff();
+      }));
+  } catch (e) { toast(e.message, true); }
+}
+$("#btn-new-staff").addEventListener("click", () => {
+  openModal("新建员工", `
+    <label class="field"><span class="req">姓名</span><input id="s-name" /></label>
+    <label class="field"><span>角色</span><select id="s-role">
+      ${STAFF_ROLES.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}
+    </select></label>
+    <label class="field"><span>班组</span><input id="s-team" placeholder="如：一号车间" /></label>`,
+    async () => {
+      await api("/staff", {
+        method: "POST",
+        body: { name: $("#s-name").value.trim(), role: $("#s-role").value, team: $("#s-team").value.trim() },
+      });
+      toast("员工已创建");
+      loadStaff();
     });
 });
 

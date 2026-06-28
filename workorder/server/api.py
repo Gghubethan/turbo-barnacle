@@ -75,6 +75,45 @@ def build_router(store: Store) -> Router:
           lambda req, p: (200, store.list_reports(int(p["id"]))))
     r.add("GET", r"/api/work-orders/(?P<id>\d+)/exceptions",
           lambda req, p: (200, store.list_exceptions(wo_id=int(p["id"]))))
+    r.add("POST", r"/api/work-orders/(?P<id>\d+)/issue",
+          lambda req, p: (201, store.issue_to_work_order(int(p["id"]), req["body"])))
+    r.add("GET", r"/api/work-orders/(?P<id>\d+)/inventory",
+          lambda req, p: (200, store.list_txns(work_order_id=int(p["id"]))))
+    r.add("POST", r"/api/work-orders/(?P<id>\d+)/inspections",
+          lambda req, p: (201, store.create_inspection(int(p["id"]), req["body"])))
+    r.add("GET", r"/api/work-orders/(?P<id>\d+)/inspections",
+          lambda req, p: (200, store.list_inspections(work_order_id=int(p["id"]))))
+
+    # 员工 / 班组
+    def list_staff(req, p):
+        active = req["query"].get("active", [None])[0] == "1"
+        return 200, store.list_staff(active_only=active)
+
+    r.add("GET", r"/api/staff", list_staff)
+    r.add("POST", r"/api/staff", lambda req, p: (201, store.create_staff(req["body"])))
+    r.add("POST", r"/api/staff/(?P<id>\d+)/active",
+          lambda req, p: (200, store.set_staff_active(int(p["id"]), bool(req["body"].get("active")))))
+
+    # 物料 / 库存
+    r.add("GET", r"/api/materials", lambda req, p: (200, store.list_materials()))
+    r.add("POST", r"/api/materials", lambda req, p: (201, store.create_material(req["body"])))
+    r.add("POST", r"/api/materials/(?P<id>\d+)/move",
+          lambda req, p: (201, store.stock_move(
+              int(p["id"]), req["body"].get("biz_type", ""), req["body"].get("qty"),
+              operator=req["body"].get("operator", ""),
+              remark=req["body"].get("remark", ""))))
+
+    def list_txns(req, p):
+        mid = req["query"].get("material_id", [None])[0]
+        return 200, store.list_txns(material_id=int(mid) if mid else None)
+
+    r.add("GET", r"/api/inventory-txns", list_txns)
+
+    # 质检
+    def list_insp(req, p):
+        return 200, store.list_inspections()
+
+    r.add("GET", r"/api/inspections", list_insp)
 
     # 异常
     def list_exc(req, p):

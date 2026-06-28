@@ -46,6 +46,35 @@ EXCEPTION_CATEGORY = {
     "other": "其他",
 }
 
+# 员工角色
+STAFF_ROLE = {
+    "operator": "操作工",
+    "inspector": "质检员",
+    "leader": "班组长",
+    "planner": "计划员",
+    "manager": "管理员",
+}
+
+# 物料类别
+MATERIAL_CATEGORY = {"raw": "原料", "semi": "半成品", "finished": "成品"}
+
+# 库存流水业务类型（按出入库方向分组）
+TXN_IN = {
+    "purchase": "采购入库",
+    "produce_in": "完工入库",
+    "return": "退料入库",
+    "adjust_in": "盘盈入库",
+}
+TXN_OUT = {
+    "issue": "生产领料",
+    "scrap": "报废出库",
+    "adjust_out": "盘亏出库",
+}
+TXN_BIZ = {**TXN_IN, **TXN_OUT}
+
+# 质检结论
+INSPECT_RESULT = {"pass": "合格", "concession": "让步接收", "reject": "拒收"}
+
 
 class ValidationError(ValueError):
     """业务校验失败，HTTP 层应返回 400。"""
@@ -108,9 +137,60 @@ CREATE TABLE IF NOT EXISTS exceptions (
     resolved_at    TEXT DEFAULT ''
 );
 
+CREATE TABLE IF NOT EXISTS staff (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT NOT NULL,
+    role        TEXT NOT NULL DEFAULT 'operator',
+    team        TEXT DEFAULT '',
+    active      INTEGER NOT NULL DEFAULT 1,
+    created_at  TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS materials (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    code          TEXT NOT NULL UNIQUE,
+    name          TEXT NOT NULL,
+    spec          TEXT DEFAULT '',
+    unit          TEXT DEFAULT '件',
+    category      TEXT NOT NULL DEFAULT 'raw',
+    stock         REAL NOT NULL DEFAULT 0,
+    safety_stock  REAL NOT NULL DEFAULT 0,
+    created_at    TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS inventory_txns (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    material_id    INTEGER NOT NULL REFERENCES materials(id),
+    material_name  TEXT NOT NULL,
+    kind           TEXT NOT NULL,          -- in / out
+    biz_type       TEXT NOT NULL,
+    qty            REAL NOT NULL,
+    balance_after  REAL NOT NULL,
+    work_order_id  INTEGER REFERENCES work_orders(id),
+    operator       TEXT DEFAULT '',
+    remark         TEXT DEFAULT '',
+    created_at     TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS inspections (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    work_order_id  INTEGER NOT NULL REFERENCES work_orders(id),
+    inspector      TEXT NOT NULL,
+    qty_inspected  REAL NOT NULL,
+    qty_qualified  REAL NOT NULL,
+    qty_defective  REAL NOT NULL,
+    result         TEXT NOT NULL DEFAULT 'pass',
+    defect_reason  TEXT DEFAULT '',
+    remark         TEXT DEFAULT '',
+    created_at     TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_wo_status ON work_orders(status);
 CREATE INDEX IF NOT EXISTS idx_report_wo ON reports(work_order_id);
 CREATE INDEX IF NOT EXISTS idx_exc_wo ON exceptions(work_order_id);
+CREATE INDEX IF NOT EXISTS idx_txn_mat ON inventory_txns(material_id);
+CREATE INDEX IF NOT EXISTS idx_txn_wo ON inventory_txns(work_order_id);
+CREATE INDEX IF NOT EXISTS idx_insp_wo ON inspections(work_order_id);
 """
 
 
@@ -405,6 +485,208 @@ class Store:
         d["category_label"] = EXCEPTION_CATEGORY.get(d["category"], d["category"])
         return d
 
+    # ── 员工 / 班组 ───────────────────────────────────────────────────────
+    def list_staff(self, active_only: bool = False) -> list[dict]:
+        sql = "SELECT * FROM staff"
+        if active_only:
+            sql += " WHERE active = 1"
+        sql += " ORDER BY id DESC"
+        with self._conn() as conn:
+            rows = conn.execute(sql).fetchall()
+        return [self._staff_label(dict(r)) for r in rows]
+
+    @staticmethod
+    def _staff_label(s: dict) -> dict:
+        s["role_label"] = STAFF_ROLE.get(s["role"], s["role"])
+        s["active"] = bool(s["active"])
+        return s
+
+    def create_staff(self, data: dict) -> dict:
+        name = _require(data, "name", "姓名")
+        role = data.get("role", "operator")
+        if role not in STAFF_ROLE:
+            raise ValidationError(f"未知角色：{role}")
+        with self._lock, self._conn() as conn:
+            cur = conn.execute(
+                "INSERT INTO staff (name, role, team, active, created_at) VALUES (?,?,?,?,?)",
+                (name, role, str(data.get("team", "")).strip(), 1, _now()),
+            )
+            row = conn.execute("SELECT * FROM staff WHERE id = ?", (cur.lastrowid,)).fetchone()
+        return self._staff_label(dict(row))
+
+    def set_staff_active(self, sid: int, active: bool) -> dict:
+        with self._lock, self._conn() as conn:
+            if not conn.execute("SELECT 1 FROM staff WHERE id = ?", (sid,)).fetchone():
+                raise NotFound(f"员工 {sid} 不存在")
+            conn.execute("UPDATE staff SET active = ? WHERE id = ?", (1 if active else 0, sid))
+            row = conn.execute("SELECT * FROM staff WHERE id = ?", (sid,)).fetchone()
+        return self._staff_label(dict(row))
+
+    # ── 物料档案 ──────────────────────────────────────────────────────────
+    def list_materials(self) -> list[dict]:
+        with self._conn() as conn:
+            rows = conn.execute("SELECT * FROM materials ORDER BY id DESC").fetchall()
+        return [self._material_label(dict(r)) for r in rows]
+
+    @staticmethod
+    def _material_label(m: dict) -> dict:
+        m["category_label"] = MATERIAL_CATEGORY.get(m["category"], m["category"])
+        m["low_stock"] = m["safety_stock"] > 0 and m["stock"] < m["safety_stock"]
+        return m
+
+    def create_material(self, data: dict) -> dict:
+        code = _require(data, "code", "物料编码")
+        name = _require(data, "name", "物料名称")
+        category = data.get("category", "raw")
+        if category not in MATERIAL_CATEGORY:
+            raise ValidationError(f"未知物料类别：{category}")
+        stock = _num(data.get("stock", 0), "初始库存")
+        safety = _num(data.get("safety_stock", 0), "安全库存")
+        with self._lock, self._conn() as conn:
+            if conn.execute("SELECT 1 FROM materials WHERE code = ?", (code,)).fetchone():
+                raise ValidationError(f"物料编码 {code} 已存在")
+            now = _now()
+            cur = conn.execute(
+                """INSERT INTO materials (code, name, spec, unit, category, stock,
+                   safety_stock, created_at) VALUES (?,?,?,?,?,?,?,?)""",
+                (code, name, str(data.get("spec", "")).strip(),
+                 str(data.get("unit", "件")).strip() or "件", category, stock, safety, now),
+            )
+            mid = cur.lastrowid
+            if stock > 0:  # 初始库存登记一条期初入库流水
+                self._write_txn(conn, mid, name, "in", "adjust_in", stock, stock,
+                                None, str(data.get("operator", "")).strip(), "期初库存", now)
+            row = conn.execute("SELECT * FROM materials WHERE id = ?", (mid,)).fetchone()
+        return self._material_label(dict(row))
+
+    # ── 库存出入库 ────────────────────────────────────────────────────────
+    @staticmethod
+    def _write_txn(conn, material_id, material_name, kind, biz_type, qty,
+                   balance_after, work_order_id, operator, remark, now):
+        conn.execute(
+            """INSERT INTO inventory_txns
+               (material_id, material_name, kind, biz_type, qty, balance_after,
+                work_order_id, operator, remark, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (material_id, material_name, kind, biz_type, qty, balance_after,
+             work_order_id, operator, remark, now),
+        )
+
+    def stock_move(self, material_id: int, biz_type: str, qty, *,
+                   operator: str = "", remark: str = "",
+                   work_order_id: Optional[int] = None) -> dict:
+        """统一出入库入口。``biz_type`` 决定方向（见 TXN_IN / TXN_OUT）。"""
+        if biz_type not in TXN_BIZ:
+            raise ValidationError(f"未知出入库类型：{biz_type}")
+        kind = "in" if biz_type in TXN_IN else "out"
+        qty = _num(qty, "数量", allow_zero=False)
+        with self._lock, self._conn() as conn:
+            row = conn.execute("SELECT * FROM materials WHERE id = ?", (material_id,)).fetchone()
+            if not row:
+                raise NotFound(f"物料 {material_id} 不存在")
+            mat = dict(row)
+            if work_order_id and not conn.execute(
+                "SELECT 1 FROM work_orders WHERE id = ?", (work_order_id,)
+            ).fetchone():
+                raise ValidationError("关联的工单不存在")
+            delta = qty if kind == "in" else -qty
+            new_stock = mat["stock"] + delta
+            if new_stock < 0:
+                raise ValidationError(
+                    f"库存不足：当前 {mat['stock']} {mat['unit']}，本次出库 {qty}"
+                )
+            now = _now()
+            conn.execute("UPDATE materials SET stock = ? WHERE id = ?", (new_stock, material_id))
+            self._write_txn(conn, material_id, mat["name"], kind, biz_type, qty,
+                            new_stock, work_order_id, str(operator).strip(),
+                            str(remark).strip(), now)
+            row = conn.execute("SELECT * FROM materials WHERE id = ?", (material_id,)).fetchone()
+        return self._material_label(dict(row))
+
+    def issue_to_work_order(self, wo_id: int, data: dict) -> dict:
+        """工单领料：从指定物料出库并挂到工单。"""
+        material_id = _require(data, "material_id", "物料")
+        with self._conn() as conn:
+            wo = conn.execute("SELECT status FROM work_orders WHERE id = ?", (wo_id,)).fetchone()
+        if not wo:
+            raise NotFound(f"工单 {wo_id} 不存在")
+        if wo["status"] in ("completed", "closed"):
+            raise ValidationError("已完工/已关闭的工单不能再领料")
+        return self.stock_move(
+            int(material_id), "issue", data.get("qty"),
+            operator=data.get("operator", ""), remark=data.get("remark", ""),
+            work_order_id=wo_id,
+        )
+
+    def list_txns(self, material_id: Optional[int] = None,
+                  work_order_id: Optional[int] = None) -> list[dict]:
+        sql = "SELECT * FROM inventory_txns WHERE 1=1"
+        params: list[Any] = []
+        if material_id:
+            sql += " AND material_id = ?"
+            params.append(material_id)
+        if work_order_id:
+            sql += " AND work_order_id = ?"
+            params.append(work_order_id)
+        sql += " ORDER BY id DESC"
+        with self._conn() as conn:
+            rows = conn.execute(sql, params).fetchall()
+        out = []
+        for r in rows:
+            d = dict(r)
+            d["biz_label"] = TXN_BIZ.get(d["biz_type"], d["biz_type"])
+            out.append(d)
+        return out
+
+    # ── 质检 ──────────────────────────────────────────────────────────────
+    def create_inspection(self, wo_id: int, data: dict) -> dict:
+        inspector = _require(data, "inspector", "质检员")
+        qty_inspected = _num(data.get("qty_inspected"), "送检数量", allow_zero=False)
+        qty_qualified = _num(data.get("qty_qualified", 0), "合格数量")
+        qty_defective = _num(data.get("qty_defective", 0), "不良数量")
+        if qty_qualified + qty_defective > qty_inspected:
+            raise ValidationError("合格 + 不良数量不能大于送检数量")
+        result = data.get("result", "pass")
+        if result not in INSPECT_RESULT:
+            raise ValidationError(f"未知质检结论：{result}")
+        with self._lock, self._conn() as conn:
+            if not conn.execute("SELECT 1 FROM work_orders WHERE id = ?", (wo_id,)).fetchone():
+                raise NotFound(f"工单 {wo_id} 不存在")
+            cur = conn.execute(
+                """INSERT INTO inspections
+                   (work_order_id, inspector, qty_inspected, qty_qualified, qty_defective,
+                    result, defect_reason, remark, created_at)
+                   VALUES (?,?,?,?,?,?,?,?,?)""",
+                (wo_id, inspector, qty_inspected, qty_qualified, qty_defective, result,
+                 str(data.get("defect_reason", "")).strip(),
+                 str(data.get("remark", "")).strip(), _now()),
+            )
+            row = conn.execute(
+                "SELECT i.*, w.order_no FROM inspections i "
+                "JOIN work_orders w ON w.id = i.work_order_id WHERE i.id = ?",
+                (cur.lastrowid,),
+            ).fetchone()
+        return self._inspection_label(dict(row))
+
+    @staticmethod
+    def _inspection_label(i: dict) -> dict:
+        i["result_label"] = INSPECT_RESULT.get(i["result"], i["result"])
+        insp = i["qty_inspected"] or 0
+        i["pass_rate"] = round((i["qty_qualified"] / insp) * 100, 1) if insp else 0.0
+        return i
+
+    def list_inspections(self, work_order_id: Optional[int] = None) -> list[dict]:
+        sql = ("SELECT i.*, w.order_no FROM inspections i "
+               "JOIN work_orders w ON w.id = i.work_order_id WHERE 1=1")
+        params: list[Any] = []
+        if work_order_id:
+            sql += " AND i.work_order_id = ?"
+            params.append(work_order_id)
+        sql += " ORDER BY i.id DESC"
+        with self._conn() as conn:
+            rows = conn.execute(sql, params).fetchall()
+        return [self._inspection_label(dict(r)) for r in rows]
+
     # ── 看板统计 ──────────────────────────────────────────────────────────
     def dashboard_stats(self) -> dict:
         with self._conn() as conn:
@@ -431,6 +713,14 @@ class Store:
                 "AND status NOT IN ('completed','closed')",
                 (today,),
             ).fetchone()["c"]
+            insp = conn.execute(
+                "SELECT COALESCE(SUM(qty_inspected),0) AS i, "
+                "COALESCE(SUM(qty_qualified),0) AS q FROM inspections"
+            ).fetchone()
+            low_stock = conn.execute(
+                "SELECT COUNT(*) AS c FROM materials "
+                "WHERE safety_stock > 0 AND stock < safety_stock"
+            ).fetchone()["c"]
 
         by_status = {k: 0 for k in STATUS}
         for r in status_rows:
@@ -452,6 +742,8 @@ class Store:
             "open_exceptions": open_exc,
             "today_completed": today_ok,
             "overdue_orders": overdue,
+            "inspect_pass_rate": round((insp["q"] / insp["i"]) * 100, 1) if insp["i"] else 0.0,
+            "low_stock_materials": low_stock,
         }
 
     # ── 演示数据 ──────────────────────────────────────────────────────────
@@ -496,3 +788,36 @@ class Store:
             "planned_start": "2026-06-29", "planned_end": "2026-07-05",
             "remark": "等待排产",
         })
+
+        # 员工 / 班组
+        for s in [
+            {"name": "张工", "role": "leader", "team": "一号车间"},
+            {"name": "王工", "role": "leader", "team": "二号车间"},
+            {"name": "李师傅", "role": "operator", "team": "一号车间"},
+            {"name": "赵师傅", "role": "operator", "team": "二号车间"},
+            {"name": "陈质检", "role": "inspector", "team": "质检组"},
+        ]:
+            self.create_staff(s)
+
+        # 物料档案 + 期初库存
+        m_steel = self.create_material({
+            "code": "M-2001", "name": "304 不锈钢板", "spec": "1.5mm",
+            "unit": "kg", "category": "raw", "stock": 800, "safety_stock": 200})
+        m_alu = self.create_material({
+            "code": "M-2002", "name": "6061 铝型材", "spec": "40×40",
+            "unit": "根", "category": "raw", "stock": 60, "safety_stock": 100})
+        self.create_material({
+            "code": "M-2003", "name": "润滑脂", "spec": "2# 锂基",
+            "unit": "桶", "category": "raw", "stock": 12, "safety_stock": 5})
+
+        # 工单领料 + 一笔采购入库
+        self.issue_to_work_order(wo2["id"], {
+            "material_id": m_steel["id"], "qty": 150, "operator": "王工",
+            "remark": "法兰盘下料"})
+        self.stock_move(m_alu["id"], "purchase", 200, operator="采购员",
+                        remark="补货 PO-0617")
+
+        # 质检记录
+        self.create_inspection(wo1["id"], {
+            "inspector": "陈质检", "qty_inspected": 420, "qty_qualified": 412,
+            "qty_defective": 8, "result": "pass", "defect_reason": "尺寸偏差"})
