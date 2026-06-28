@@ -139,6 +139,7 @@
     host.innerHTML = VIEWS[view]();
     host.scrollTop = 0;
     if (AFTER[view]) AFTER[view]();
+    refreshBadge();
   }
 
   /* ---------- 派生统计 ---------- */
@@ -742,6 +743,125 @@
   }
 
   /* ============================================================
+     通知中心
+     ============================================================ */
+  function notifications() {
+    const list = [];
+    db.loans.filter(l => l.status === "overdue").forEach(l => {
+      const b = bookById(l.book), m = memberById(l.member);
+      list.push({ kind: "overdue", icon: "⚠", color: "var(--red)", bg: "rgba(255,90,122,.12)",
+        title: `《${b ? b.title : l.book}》逾期 ${daysBetween(l.due, todayISO)} 天`,
+        sub: `${m ? m.name : l.member} · 应还 ${l.due}`, loan: l.id });
+    });
+    db.books.filter(b => b.available === 0).forEach(b => {
+      list.push({ kind: "stock", icon: "▣", color: "var(--amber)", bg: "rgba(255,194,75,.12)",
+        title: `《${b.title}》已借罄`, sub: `${b.cat} · ${b.zone} · 共 ${b.total} 册全部借出` });
+    });
+    db.books.filter(b => b.available > 0 && b.available <= 1).forEach(b => {
+      list.push({ kind: "low", icon: "◔", color: "var(--amber)", bg: "rgba(255,194,75,.1)",
+        title: `《${b.title}》库存紧张`, sub: `仅剩 ${b.available} 册在架` });
+    });
+    return list;
+  }
+  function refreshBadge() {
+    const n = notifications().filter(x => x.kind === "overdue").length + db.books.filter(b => b.available === 0).length;
+    const badge = $("#bellBadge");
+    if (!badge) return;
+    badge.hidden = n === 0;
+    badge.textContent = n > 99 ? "99+" : n;
+  }
+  let popoverEl = null;
+  function toggleNotifs() {
+    if (popoverEl) { popoverEl.remove(); popoverEl = null; return; }
+    const list = notifications();
+    const el = document.createElement("div");
+    el.className = "popover";
+    el.innerHTML = `
+      <div class="popover__head"><h4>通知中心</h4><span class="clr" id="notifAll">${list.length} 条待处理</span></div>
+      <div class="popover__list">
+        ${list.length ? list.map(n => `
+          <div class="note">
+            <div class="note__ic" style="background:${n.bg};color:${n.color}">${n.icon}</div>
+            <div class="note__bd">${esc(n.title)}<small>${esc(n.sub)}</small></div>
+            ${n.loan ? `<button class="note__act" data-remind="${n.loan}">催还</button>` : ""}
+          </div>`).join("") : `<div class="empty" style="padding:36px">🎉 暂无待处理事项</div>`}
+      </div>`;
+    $(".main").appendChild(el);
+    popoverEl = el;
+    $$("[data-remind]", el).forEach(btn => btn.addEventListener("click", () => {
+      const l = db.loans.find(x => x.id === btn.dataset.remind);
+      const m = l ? memberById(l.member) : null;
+      toast(`已向 ${m ? m.name : "读者"} 发送催还提醒`, "warn");
+      btn.textContent = "已催"; btn.disabled = true; btn.style.opacity = ".5";
+    }));
+  }
+
+  /* ============================================================
+     数据导出 / 备份 / 恢复
+     ============================================================ */
+  function download(name, text, type) {
+    const blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function toCSV(rows) {
+    return rows.map(r => r.map(c => {
+      const s = String(c ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    }).join(",")).join("\r\n");
+  }
+  function exportCatalogCSV() {
+    const rows = [["编号", "书名", "作者", "分类", "ISBN", "年份", "位置", "在架", "馆藏", "评分"]];
+    db.books.forEach(b => rows.push([b.id, b.title, b.author, b.cat, b.isbn, b.year, b.zone, b.available, b.total, b.rating]));
+    download(`nexus-catalog-${todayISO}.csv`, "﻿" + toCSV(rows), "text/csv;charset=utf-8");
+    toast(`已导出 ${db.books.length} 条书目 (CSV)`, "ok");
+  }
+  function exportLoansCSV() {
+    const rows = [["单号", "书名", "读者", "借出", "应还", "状态", "归还日"]];
+    db.loans.forEach(l => { const b = bookById(l.book), m = memberById(l.member);
+      rows.push([l.id, b ? b.title : l.book, m ? m.name : l.member, l.out, l.due,
+        { active: "在借", overdue: "逾期", returned: "已还" }[l.status] || l.status, l.back || ""]); });
+    download(`nexus-loans-${todayISO}.csv`, "﻿" + toCSV(rows), "text/csv;charset=utf-8");
+    toast(`已导出 ${db.loans.length} 条流通记录 (CSV)`, "ok");
+  }
+  function exportBackup() {
+    download(`nexus-backup-${todayISO}.json`, JSON.stringify(db, null, 2), "application/json");
+    toast("已导出全量备份 (JSON)", "ok");
+  }
+  function importBackup() {
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "application/json,.json";
+    inp.onchange = () => {
+      const f = inp.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const data = JSON.parse(r.result);
+          if (!data.books || !data.members || !data.loans) throw new Error("格式不符");
+          db = data; State.save(); render(current); refreshBadge();
+          toast("备份已恢复", "ok");
+        } catch (e) { toast("恢复失败：" + e.message, "err"); }
+      };
+      r.readAsText(f);
+    };
+    inp.click();
+  }
+  function openExportMenu() {
+    openDrawer("数据导出 / 备份", `
+      <p style="color:var(--txt-mut);font-size:13px;margin:0 0 18px;font-family:var(--mono)">DATA EXPORT · BACKUP · RESTORE</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="btn" style="justify-content:flex-start" onclick="NEXUS.exportCatalogCSV()"><i class="ico ico-download"></i>导出书目矩阵 · CSV</button>
+        <button class="btn" style="justify-content:flex-start" onclick="NEXUS.exportLoansCSV()"><i class="ico ico-download"></i>导出流通记录 · CSV</button>
+        <button class="btn" style="justify-content:flex-start" onclick="NEXUS.exportBackup()"><i class="ico ico-download"></i>全量备份 · JSON</button>
+        <div style="height:1px;background:var(--line);margin:6px 0"></div>
+        <button class="btn btn--ghost" style="justify-content:flex-start" onclick="NEXUS.importBackup()"><i class="ico ico-reset"></i>从 JSON 备份恢复…</button>
+      </div>
+      <p style="color:var(--txt-mut);font-size:12px;margin-top:20px;line-height:1.7">CSV 含 UTF-8 BOM，Excel 直接打开不乱码。<br>恢复将覆盖当前全部数据，请先做一次全量备份。</p>`);
+  }
+
+  /* ============================================================
      命令面板 ⌘K / Ctrl+K
      ============================================================ */
   const CMDK = { el: null, items: [], active: 0 };
@@ -756,7 +876,10 @@
       { group: "操作", icon: "ico-plus", label: "新增书目", hint: "New book", run: () => openBookForm() },
       { group: "操作", icon: "ico-plus", label: "注册读者", hint: "New member", run: () => openMemberForm() },
       { group: "操作", icon: "ico-swap", label: "登记借阅", hint: "New loan", run: () => openLoanForm() },
-      { group: "操作", icon: "ico-reset", label: "重置演示数据", hint: "Reset", run: () => { State.reset(); render(current); toast("演示数据已重置", "ok"); } },
+      { group: "操作", icon: "ico-reset", label: "重置演示数据", hint: "Reset", run: () => { State.reset(); render(current); refreshBadge(); toast("演示数据已重置", "ok"); } },
+      { group: "数据", icon: "ico-download", label: "导出书目 · CSV", hint: "Export", run: () => exportCatalogCSV() },
+      { group: "数据", icon: "ico-download", label: "导出流通记录 · CSV", hint: "Export", run: () => exportLoansCSV() },
+      { group: "数据", icon: "ico-download", label: "全量备份 · JSON", hint: "Backup", run: () => exportBackup() },
     ];
   }
   function openCmdk() {
@@ -826,6 +949,11 @@
     $$("[data-close]").forEach(el => el.addEventListener("click", closeDrawer));
     $("#seedBtn").addEventListener("click", () => { State.reset(); toast("演示数据已重置", "ok"); render(current); });
     $("#cmdkBtn").addEventListener("click", () => CMDK.el ? closeCmdk() : openCmdk());
+    $("#bellBtn").addEventListener("click", e => { e.stopPropagation(); toggleNotifs(); });
+    $("#exportBtn").addEventListener("click", openExportMenu);
+    document.addEventListener("click", e => {
+      if (popoverEl && !popoverEl.contains(e.target) && !e.target.closest("#bellBtn")) { popoverEl.remove(); popoverEl = null; }
+    });
     const gs = $("#globalSearch");
     gs.addEventListener("keydown", e => { if (e.key === "Enter") globalSearch(gs.value); });
     document.addEventListener("keydown", e => {
@@ -837,7 +965,8 @@
 
   window.NEXUS = { bookDetail, memberDetail, openBookForm, openMemberForm, openLoanForm,
     quickBorrow: (id) => { closeDrawer(); openLoanForm(); setTimeout(() => { const sel = $("#loanForm [name=book]"); if (sel) sel.value = id; }, 0); },
-    returnLoan, deleteBook, closeDrawer, toast };
+    returnLoan, deleteBook, closeDrawer, toast,
+    exportCatalogCSV, exportLoansCSV, exportBackup, importBackup };
 
   // 启动
   particles(); liveClock(); bind(); boot();
