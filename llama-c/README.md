@@ -16,7 +16,7 @@ LLaMA-2 7B 权重，在普通 CPU 上逐 token 生成文本。
 | **流式输出** | 解码出一个 token 立即 `fputs`+`fflush`，无需等整段生成完。见 `src/main.c` 的 `generate()`。 |
 | **GQA** | `n_kv_heads <= n_heads` 时启用分组查询注意力（7B 为 MHA，两者相等）。 |
 | **采样** | 温度为 0 走贪心 argmax；否则温度缩放 + top-p（nucleus）采样，自带可复现 xorshift RNG。见 `src/sampler.c`。 |
-| **SIMD 加速** | `matmul_q8` 热点在支持 AVX2 的 x86 上自动走 int8 向量点积（`_mm256_madd_epi16`），与标量路径数值完全一致；实测单线程 ~1.9×。无 AVX2 时回退标量。 |
+| **SIMD 加速** | `matmul_q8` 热点自动选择最宽 ISA：AVX-512BW（`_mm512_madd_epi16`）> AVX2（`_mm256_madd_epi16`）> 标量回退。三条路径整数累加、**逐位一致**；实测单线程对标量约 1.9×（4096² 矩阵乘受内存带宽限制，AVX-512 较 AVX2 再小幅领先）。 |
 | **多线程** | `make omp` 用 OpenMP 并行矩阵乘与多头注意力，与 SIMD 叠加。 |
 
 ## 目录结构
@@ -159,5 +159,5 @@ token ──► 查 embedding ──► 残差流 x
 ## 限制
 
 - 面向 LLaMA-2 7B 校准；其它尺寸只要 config 与张量维度都能被 `GS` 整除即可。
-- x86 AVX2 int8 SIMD + 可选 OpenMP；未实现 AVX-512/VNNI 或 ARM NEON 路径，亦无手写 GEMM 分块，单线程 7B 速度仍有限（适合学习/小规模生成，不追求极致吞吐）。
+- x86 AVX-512BW / AVX2 int8 SIMD + 可选 OpenMP；未用 VNNI `dpbusd`（需符号偏移处理）或 ARM NEON，亦无手写 GEMM 分块，单线程 7B 速度仍有限（适合学习/小规模生成，不追求极致吞吐）。
 - 仅 CPU、fp32 激活 + int8 权重；无 batch、无 GPU。

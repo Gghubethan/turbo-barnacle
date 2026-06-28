@@ -1,14 +1,33 @@
 #include "quant.h"
 #include <math.h>
 
-#if defined(__AVX2__)
+#if defined(__AVX2__) || defined(__AVX512BW__)
 #include <immintrin.h>
+#endif
+
+#if defined(__AVX512BW__)
+_Static_assert(GS % 32 == 0, "AVX-512 int8 path needs GS to be a multiple of 32");
+
+/* Signed int8 dot product over `n` elements (n a multiple of 32), 512-bit wide.
+ * Same exact widen-to-int16 + madd approach as the AVX2 path, no sign tricks. */
+static inline int32_t dot_i8_simd(const int8_t *a, const int8_t *b, int n) {
+    __m512i acc = _mm512_setzero_si512();
+    for (int k = 0; k < n; k += 32) {
+        __m512i a16 = _mm512_cvtepi8_epi16(_mm256_loadu_si256((const __m256i *)(a + k)));
+        __m512i b16 = _mm512_cvtepi8_epi16(_mm256_loadu_si256((const __m256i *)(b + k)));
+        acc = _mm512_add_epi32(acc, _mm512_madd_epi16(a16, b16));
+    }
+    return _mm512_reduce_add_epi32(acc);
+}
+#define HAVE_SIMD_DOT 1
+
+#elif defined(__AVX2__)
 _Static_assert(GS % 16 == 0, "AVX2 int8 path needs GS to be a multiple of 16");
 
 /* Signed int8 dot product over `n` elements (n a multiple of 16) -> int32.
  * Widen bytes to int16, multiply-add adjacent pairs into int32 lanes, then
  * horizontally reduce. Matches the scalar accumulation exactly (no rounding). */
-static inline int32_t dot_i8_avx2(const int8_t *a, const int8_t *b, int n) {
+static inline int32_t dot_i8_simd(const int8_t *a, const int8_t *b, int n) {
     __m256i acc = _mm256_setzero_si256();
     for (int k = 0; k < n; k += 16) {
         __m256i a16 = _mm256_cvtepi8_epi16(_mm_loadu_si128((const __m128i *)(a + k)));
@@ -21,6 +40,7 @@ static inline int32_t dot_i8_avx2(const int8_t *a, const int8_t *b, int n) {
     s = _mm_hadd_epi32(s, s);
     return _mm_cvtsi128_si32(s);
 }
+#define HAVE_SIMD_DOT 1
 #endif
 
 void dequantize(const QuantizedTensor *qt, float *out, int n) {
@@ -75,8 +95,8 @@ void matmul_q8(float *out, const QuantizedTensor *x, const QuantizedTensor *w,
         const float  *xs = x->s;
 
         for (int g = 0; g < n; g += GS) {
-#if defined(__AVX2__)
-            int32_t ig = dot_i8_avx2(wq + g, xq + g, GS);
+#if defined(HAVE_SIMD_DOT)
+            int32_t ig = dot_i8_simd(wq + g, xq + g, GS);
 #else
             int32_t ig = 0;
             for (int k = 0; k < GS; k++) {

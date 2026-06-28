@@ -35,7 +35,9 @@ void quantize(QuantizedTensor *qt, const float *x, int n);
 
 /* W (d rows x n cols, quantized) times x (n, quantized) -> out (d, fp32).
  * out[i] = sum_j W[i,j] * x[j], computed in the int8 domain group by group and
- * rescaled by the product of the two group scales. This is the hot path. */
+ * rescaled by the product of the two group scales. This is the hot path; it
+ * uses an AVX-512 or AVX2 int8 dot product when available, else a scalar loop
+ * (all three are bit-for-bit identical — integer accumulation). */
 void matmul_q8(float *out, const QuantizedTensor *x, const QuantizedTensor *w,
                int n, int d);
 
