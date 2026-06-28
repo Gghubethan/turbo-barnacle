@@ -20,8 +20,12 @@ WO.registerModule({
       WO.toast(e.message, true);
     }
 
+    // 默认选中一张生产中的工单（通常已排好工序）。orders 按 id 倒序，取最早进入生产的那张，
+    // 与后端 seed（最早的 producing 工单）对齐，首屏即展示已排好的工序。
+    const producing = orders.filter((w) => w.status === "producing");
+    const defaultId = (producing[producing.length - 1] || orders[0] || {}).id;
     const opts = orders
-      .map((w) => `<option value="${w.id}">${WO.esc(w.order_no)} · ${WO.esc(w.product_name)}</option>`)
+      .map((w) => `<option value="${w.id}"${w.id === defaultId ? " selected" : ""}>${WO.esc(w.order_no)} · ${WO.esc(w.product_name)}</option>`)
       .join("");
 
     container.innerHTML = `
