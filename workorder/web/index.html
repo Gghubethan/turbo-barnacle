@@ -14,7 +14,22 @@
       <h1>黑湖工单系统</h1>
     </div>
     <span class="sub">数字化车间 · 工单全流程协同</span>
+    <div class="userbox" id="userbox"></div>
   </header>
+
+  <!-- 登录屏 -->
+  <div id="login-screen" class="login-screen" style="display:none;">
+    <form class="login-card" id="login-form">
+      <div class="login-logo">湖</div>
+      <h2>黑湖工单系统</h2>
+      <p class="login-sub">请登录以继续</p>
+      <label class="field"><span>用户名</span><input id="login-user" autocomplete="username" placeholder="如：admin" /></label>
+      <label class="field"><span>密码</span><input id="login-pass" type="password" autocomplete="current-password" /></label>
+      <button class="btn" id="login-btn" type="submit" style="width:100%;margin-top:6px;">登 录</button>
+      <div class="login-hint" id="login-hint"></div>
+      <div class="login-demo">演示账号：admin/admin123 · planner/plan123 · operator/op123 · inspector/insp123</div>
+    </form>
+  </div>
 
   <nav class="tabs">
     <button data-view="dashboard" class="active">生产看板</button>

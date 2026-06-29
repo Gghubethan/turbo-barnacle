@@ -253,7 +253,7 @@ def make_handler(store: Store):
                 return
             try:
                 body = self._read_body() if method in ("POST", "PUT", "PATCH") else {}
-                req = {"body": body, "query": parse_qs(parsed.query)}
+                req = {"body": body, "query": parse_qs(parsed.query), "headers": self.headers}
                 status, payload = handler(req, params)
                 if isinstance(payload, FileResponse):
                     self._send_file(status, payload)

@@ -13,14 +13,22 @@ function toast(msg, isErr = false) {
   setTimeout(() => (t.className = ""), 2600);
 }
 
+const AUTH = { token: localStorage.getItem("wo_token") || null, user: null };
+
 async function api(path, opts = {}) {
+  const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
+  if (AUTH.token) headers["Authorization"] = "Bearer " + AUTH.token;
   const res = await fetch("/api" + path, {
-    headers: { "Content-Type": "application/json" },
     ...opts,
+    headers,
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   let data = null;
   try { data = await res.json(); } catch (_) { /* 可能无 body */ }
+  if (res.status === 401 && path !== "/auth/login") {
+    handleUnauthorized();
+    throw new Error((data && data.error) || "未登录");
+  }
   if (!res.ok) throw new Error((data && data.error) || `请求失败 (${res.status})`);
   return data;
 }
@@ -744,6 +752,8 @@ window.WO = {
     sec.innerHTML = '<div class="empty">加载中…</div>';
     $("main").appendChild(sec);
 
+    if (!canSee(def.id)) btn.style.display = "none";  // 按当前角色控制可见性
+
     btn.addEventListener("click", () => {
       $$("nav.tabs button").forEach((b) => b.classList.remove("active"));
       $$(".view").forEach((v) => v.classList.remove("active"));
@@ -770,6 +780,99 @@ async function loadPlugins() {
   }
 }
 
+// ── 登录与权限 ────────────────────────────────────────────────────────────
+function canSee(id) {
+  const perms = (AUTH.user && AUTH.user.permissions) || [];
+  return perms.includes("*") || perms.includes(id);
+}
+
+function applyPermissions() {
+  $$("nav.tabs button").forEach((b) => {
+    b.style.display = canSee(b.dataset.view) ? "" : "none";
+  });
+  // 当前激活的标签若被隐藏，切到第一个可见标签
+  const active = $("nav.tabs button.active");
+  if (!active || active.style.display === "none") {
+    const first = $$("nav.tabs button").find((b) => b.style.display !== "none");
+    if (first) first.click();
+  }
+}
+
+function renderUserbox() {
+  const u = AUTH.user;
+  $("#userbox").innerHTML = u
+    ? `<span class="who"><b>${esc(u.name)}</b><span class="role-tag">${esc(u.role_label)}</span></span>
+       <button class="logout" id="btn-logout">退出</button>`
+    : "";
+  const lo = $("#btn-logout");
+  if (lo) lo.addEventListener("click", logout);
+}
+
+async function logout() {
+  try { await api("/auth/logout", { method: "POST", body: {} }); } catch (_) { /* 忽略 */ }
+  AUTH.token = null;
+  AUTH.user = null;
+  localStorage.removeItem("wo_token");
+  location.reload();
+}
+
+function handleUnauthorized() {
+  AUTH.token = null;
+  AUTH.user = null;
+  localStorage.removeItem("wo_token");
+  showLogin();
+}
+
+function showLogin() {
+  $("#login-screen").style.display = "grid";
+  const u = $("#login-user");
+  if (u) u.focus();
+}
+
+let appStarted = false;
+function startApp() {
+  $("#login-screen").style.display = "none";
+  renderUserbox();
+  applyPermissions();
+  if (appStarted) return;   // 避免重复加载
+  appStarted = true;
+  loadDashboard();
+  loadPlugins();
+}
+
+$("#login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const hint = $("#login-hint");
+  const btn = $("#login-btn");
+  hint.textContent = "";
+  btn.disabled = true;
+  try {
+    const res = await api("/auth/login", {
+      method: "POST",
+      body: { username: $("#login-user").value.trim(), password: $("#login-pass").value },
+    });
+    AUTH.token = res.token;
+    AUTH.user = res.user;
+    localStorage.setItem("wo_token", res.token);
+    startApp();
+  } catch (err) {
+    hint.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 // ── 启动 ────────────────────────────────────────────────────────────────
-loadDashboard();
-loadPlugins();
+(async function init() {
+  if (AUTH.token) {
+    try {
+      AUTH.user = await api("/auth/me");
+      startApp();
+      return;
+    } catch (_) {
+      AUTH.token = null;
+      localStorage.removeItem("wo_token");
+    }
+  }
+  showLogin();
+})();
