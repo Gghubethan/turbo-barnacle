@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEXUS · 图书馆数字管理系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<!-- 动态背景层 -->
+<div class="bg-grid"></div>
+<canvas id="bgParticles" class="bg-particles"></canvas>
+<div class="bg-glow bg-glow--1"></div>
+<div class="bg-glow bg-glow--2"></div>
+<div class="scanline"></div>
+
+<!-- 开机加载 -->
+<div id="boot" class="boot">
+  <div class="boot__core">
+    <div class="boot__ring"></div>
+    <div class="boot__logo">NEXUS</div>
+    <div class="boot__sub">LIBRARY OPERATING SYSTEM</div>
+    <div class="boot__bar"><div class="boot__bar-fill" id="bootFill"></div></div>
+    <div class="boot__log" id="bootLog"></div>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark"><span>N</span></div>
+      <div class="brand__text">
+        <div class="brand__name">NEXUS</div>
+        <div class="brand__tag">LIBRARY · OS v2.4</div>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav__item is-active" data-view="dashboard"><i class="ico ico-grid"></i><span>控制中枢</span></button>
+      <button class="nav__item" data-view="catalog"><i class="ico ico-book"></i><span>书目矩阵</span></button>
+      <button class="nav__item" data-view="members"><i class="ico ico-user"></i><span>读者档案</span></button>
+      <button class="nav__item" data-view="circulation"><i class="ico ico-swap"></i><span>流通调度</span></button>
+      <button class="nav__item" data-view="analytics"><i class="ico ico-chart"></i><span>数据透析</span></button>
+      <button class="nav__item" data-view="shelf"><i class="ico ico-shelf"></i><span>馆藏拓扑</span></button>
+    </nav>
+
+    <div class="sys-status">
+      <div class="sys-status__title">系统状态</div>
+      <div class="sys-row"><span>核心负载</span><div class="meter"><i id="loadCore"></i></div></div>
+      <div class="sys-row"><span>检索引擎</span><div class="meter"><i id="loadIndex"></i></div></div>
+      <div class="sys-row"><span>同步链路</span><div class="meter"><i id="loadSync"></i></div></div>
+      <div class="sys-clock" id="sysClock">--:--:--</div>
+    </div>
+  </aside>
+
+  <!-- 主区 -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar__crumb">
+        <span class="topbar__node">NEXUS</span>
+        <span class="topbar__sep">/</span>
+        <span class="topbar__here" id="viewTitle">控制中枢</span>
+      </div>
+      <div class="topbar__search">
+        <i class="ico ico-search"></i>
+        <input id="globalSearch" type="text" placeholder="全局检索：书名 / 作者 / ISBN / 读者…" autocomplete="off" />
+        <kbd>/</kbd>
+      </div>
+      <div class="topbar__actions">
+        <button class="ghost-btn" id="cmdkBtn" title="命令面板 (Ctrl/⌘ + K)" style="width:auto;padding:0 12px;gap:6px;font-family:var(--mono);font-size:12px"><kbd style="border:1px solid var(--line);border-radius:4px;padding:0 5px">⌘K</kbd></button>
+        <button class="ghost-btn bell" id="bellBtn" title="通知中心"><i class="ico ico-bell"></i><span class="bell__badge" id="bellBadge" hidden>0</span></button>
+        <button class="ghost-btn" id="exportBtn" title="导出 / 备份"><i class="ico ico-download"></i></button>
+        <button class="ghost-btn" id="themeBtn" title="切换强调色主题"><span style="width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--violet));box-shadow:var(--glow-cyan)"></span></button>
+        <button class="ghost-btn" id="seedBtn" title="重置演示数据"><i class="ico ico-reset"></i></button>
+        <div class="op"><div class="op__avatar">管</div><div class="op__meta"><b>馆务管理员</b><small>ROOT · 在线</small></div></div>
+      </div>
+    </header>
+
+    <section class="views" id="views"><!-- 视图注入 --></section>
+  </main>
+
+  <!-- 移动端底部导航 -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mnav__item is-active" data-view="dashboard"><i class="ico ico-grid"></i><span>中枢</span></button>
+    <button class="mnav__item" data-view="catalog"><i class="ico ico-book"></i><span>书目</span></button>
+    <button class="mnav__item" data-view="members"><i class="ico ico-user"></i><span>读者</span></button>
+    <button class="mnav__item" data-view="circulation"><i class="ico ico-swap"></i><span>流通</span></button>
+    <button class="mnav__item" data-view="analytics"><i class="ico ico-chart"></i><span>分析</span></button>
+    <button class="mnav__item" data-view="shelf"><i class="ico ico-shelf"></i><span>馆藏</span></button>
+  </nav>
+</div>
+
+<!-- 通用抽屉/弹窗 -->
+<div class="drawer" id="drawer" hidden>
+  <div class="drawer__mask" data-close></div>
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <h3 id="drawerTitle">面板</h3>
+      <button class="ghost-btn" data-close><i class="ico ico-close"></i></button>
+    </div>
+    <div class="drawer__body" id="drawerBody"></div>
+  </div>
+</div>
+
+<div id="toasts" class="toasts"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
