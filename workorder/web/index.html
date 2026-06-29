@@ -198,6 +198,19 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- 浏览器内 Mock 后端（仅在无真实后端的纯静态部署下自动启用）。
+       核心须最先加载；各模块 mock 随后注册自己的路由与种子。 -->
+  <script src="mock/core.js"></script>
+  <script src="mock/export.js"></script>
+  <script src="mock/sales.js"></script>
+  <script src="mock/purchasing.js"></script>
+  <script src="mock/bom.js"></script>
+  <script src="mock/planning.js"></script>
+  <script src="mock/routing.js"></script>
+  <script src="mock/equipment.js"></script>
+  <script src="mock/reports.js"></script>
+
   <script src="app.js"></script>
 </body>
 </html>

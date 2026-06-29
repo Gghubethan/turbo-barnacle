@@ -21,11 +21,34 @@ WO.registerModule({
             <div class="stat">
               <div class="label">数据集</div>
               <div class="value" style="font-size:18px;">${WO.esc(d.label)}</div>
-              <a class="btn sm" style="margin-top:10px;display:inline-block;text-decoration:none;"
-                 href="/api/export/${encodeURIComponent(d.key)}.csv">导出 CSV</a>
+              <button class="btn sm" style="margin-top:10px;" data-export="${WO.esc(d.key)}" data-label="${WO.esc(d.label)}">导出 CSV</button>
             </div>`).join("")}
         </div>
         ${datasets.length ? "" : '<div class="empty">暂无可导出的数据集</div>'}
       </div>`;
+
+    container.querySelectorAll("[data-export]").forEach((btn) =>
+      btn.addEventListener("click", () => downloadCsv(btn.dataset.export, btn.dataset.label)));
   },
 });
+
+// 通过 fetch + Blob 下载，兼容真实后端与浏览器内 mock 两种模式。
+async function downloadCsv(key, label) {
+  try {
+    const res = await fetch("/api/export/" + encodeURIComponent(key) + ".csv",
+      { headers: AUTH && AUTH.token ? { Authorization: "Bearer " + AUTH.token } : {} });
+    if (!res.ok) throw new Error("导出失败 (" + res.status + ")");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = (label || key) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    WO.toast("已导出 " + (label || key));
+  } catch (e) {
+    WO.toast(e.message, true);
+  }
+}

@@ -16,7 +16,17 @@ python3 app.py                 # 启动后访问 http://127.0.0.1:8000
 首次启动会自动灌入一批演示数据（产品、工单、报工、异常等）与演示账号，方便直接体验。
 打开后用 **`admin` / `admin123`** 登录即可看到全部模块（其它角色见下方「登录与默认账号」）。
 
-常用参数：
+### 在线 Demo（纯前端，免安装）
+
+仓库根目录含 `netlify.toml`，把 `workorder/web/` 作为站点发布。**无后端时前端会自动启用浏览器内 mock**
+（数据存 localStorage、内置同样的演示数据），因此 PR 的 Netlify Deploy Preview 链接可直接点开试用，
+无需安装任何东西——用 `admin / admin123` 登录即可。
+
+> 工作原理：前端启动时探测 `/api/modules`，命中真实后端就走后端；否则激活 `web/mock/` 下的浏览器内
+> mock（同一套前端代码，两种运行模式）。Demo 模式数据仅存于当前浏览器，清缓存即重置。
+> 完整能力（真实持久化 / 多端共享）请用下方的本地或服务器方式运行。
+
+### 常用参数
 
 ```bash
 python3 app.py --port 9000     # 换端口
@@ -102,7 +112,8 @@ workorder/
 │   ├── index.html
 │   ├── app.js          # 含插件机制：动态加载 web/modules/*.js 注册标签页
 │   ├── styles.css
-│   └── modules/        # 功能模块前端（planning.js / routing.js / equipment.js / reports.js）
+│   ├── modules/        # 功能模块前端（planning.js / routing.js / equipment.js / reports.js …）
+│   └── mock/           # 浏览器内 mock 后端（纯静态 Demo 模式自动启用）
 └── tests/              # pytest：业务逻辑 + HTTP 端到端 + 各功能模块
     ├── test_store.py    # 工单/报工/异常/状态机
     ├── test_modules.py  # 员工/物料库存/质检

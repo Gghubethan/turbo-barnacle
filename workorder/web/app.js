@@ -862,8 +862,23 @@ $("#login-form").addEventListener("submit", async (e) => {
   }
 });
 
+// 启动时探测运行模式：命中真实后端则用后端，否则启用浏览器内 mock（纯静态部署）。
+async function detectMode() {
+  try {
+    const r = await fetch("/api/modules", { cache: "no-store" });
+    const ct = r.headers.get("content-type") || "";
+    if (r.ok && ct.includes("json")) return "backend";
+  } catch (_) { /* 无后端 */ }
+  if (window.Mock && window.Mock.activate) {
+    window.Mock.activate();
+    console.info("黑湖工单系统：未检测到后端，已启用浏览器内 Demo 模式（数据存本地）。");
+  }
+  return "static";
+}
+
 // ── 启动 ────────────────────────────────────────────────────────────────
 (async function init() {
+  await detectMode();
   if (AUTH.token) {
     try {
       AUTH.user = await api("/auth/me");

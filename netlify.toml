@@ -1,0 +1,7 @@
+# Netlify 发布配置：把工单系统的前端目录作为站点根目录发布。
+# 该站点为「纯前端 Demo」模式——无 Python 后端时，前端自动启用浏览器内 mock
+# （数据存 localStorage，内置演示数据），因此 Deploy Preview 链接可直接打开试用。
+# 完整版（真实后端 + SQLite）请在本地或 Python 环境运行：cd workorder && python3 app.py
+[build]
+  publish = "workorder/web"
+  command = ""
