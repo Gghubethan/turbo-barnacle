@@ -1,0 +1,5 @@
+# Netlify 配置：把 library-system 作为站点根目录发布
+# 这样部署后访问根地址即可直接打开图书馆数字管理系统。
+[build]
+  publish = "library-system"
+  command = ""
