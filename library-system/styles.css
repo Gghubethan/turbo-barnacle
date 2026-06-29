@@ -365,11 +365,41 @@ thead th.sort-desc::after{opacity:1;color:var(--cyan);border-bottom:none;border-
 .cmdk__foot{display:flex;gap:16px;padding:10px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--txt-mut);font-family:var(--mono)}
 .cmdk__foot kbd{border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-right:4px}
 
+/* 移动端底部导航（默认隐藏，窄屏显示） */
+.mobile-nav{display:none}
+@media(max-width:1080px){
+  .mobile-nav{display:flex;position:fixed;left:10px;right:10px;bottom:10px;z-index:70;
+    border:1px solid var(--line-2);border-radius:16px;padding:6px;gap:2px;
+    background:linear-gradient(180deg,rgba(18,24,44,.92),rgba(8,12,22,.96));backdrop-filter:blur(16px);
+    box-shadow:0 -8px 30px rgba(0,0,0,.5),var(--glow-cyan)}
+  .mnav__item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border:none;border-radius:11px;
+    background:transparent;color:var(--txt-mut);font-size:10px;cursor:pointer;transition:.16s}
+  .mnav__item .ico{width:20px;height:20px}
+  .mnav__item.is-active{color:#fff;background:linear-gradient(180deg,rgba(34,224,255,.2),rgba(61,123,255,.06))}
+  .mnav__item.is-active .ico{filter:drop-shadow(0 0 6px var(--cyan))}
+}
+
 /* 响应式 */
 @media(max-width:1080px){
-  .app{grid-template-columns:1fr}
+  .app{grid-template-columns:1fr;padding:10px;padding-bottom:80px}
   .sidebar{display:none}
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .grid-2{grid-template-columns:1fr}
   .grid-3{grid-template-columns:1fr}
+  .topbar{flex-wrap:wrap;gap:10px;padding:10px 12px}
+  .topbar__search{order:3;max-width:none;width:100%;flex-basis:100%}
+  .topbar__crumb{flex:1}
+  .topbar__actions{margin-left:0}
+  .op__meta{display:none}
+  .views{padding:14px}
+  .drawer__panel{width:100vw}
+  .cmdk{padding-top:8vh}
+  .popover{right:10px;left:10px;width:auto}
+}
+@media(max-width:560px){
+  .kpi-grid{grid-template-columns:1fr}
+  .section-head{flex-direction:column;align-items:flex-start}
+  .mnav__item span{display:none}
+  .mnav__item{padding:11px 2px}
+  .cmdkBtn,#cmdkBtn{display:none}
 }

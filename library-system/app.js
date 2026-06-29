@@ -136,7 +136,7 @@
   function render(view) {
     current = view;
     $("#viewTitle").textContent = TITLES[view];
-    $$(".nav__item").forEach(b => b.classList.toggle("is-active", b.dataset.view === view));
+    $$(".nav__item, .mnav__item").forEach(b => b.classList.toggle("is-active", b.dataset.view === view));
     const host = $("#views");
     host.innerHTML = VIEWS[view]();
     host.scrollTop = 0;
@@ -1017,6 +1017,9 @@
   function bind() {
     $("#nav").addEventListener("click", e => {
       const item = e.target.closest(".nav__item"); if (item) render(item.dataset.view);
+    });
+    $("#mobileNav").addEventListener("click", e => {
+      const item = e.target.closest(".mnav__item"); if (item) render(item.dataset.view);
     });
     $$("[data-close]").forEach(el => el.addEventListener("click", closeDrawer));
     $("#seedBtn").addEventListener("click", () => { State.reset(); toast("演示数据已重置", "ok"); render(current); });
