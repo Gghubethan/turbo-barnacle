@@ -18,28 +18,38 @@ typedef struct {
     int n_kv_heads;   /* number of key/value heads (<= n_heads for GQA)    */
     int vocab_size;   /* token vocabulary size   (32000 for LLaMA-2)       */
     int seq_len;      /* max sequence length the cache is sized for        */
+    int quant_type;   /* weight quantization: 0 = Q8 (int8), 1 = Q4 (int4) */
 } Config;
+
+/* A weight matrix in whichever quantization the model uses. Activations are
+ * always Q8; only the stored weights differ. The loader fills exactly one of
+ * the unions based on Config.quant_type. */
+typedef struct {
+    int q4;                /* 0 = use q8, 1 = use q4t */
+    QuantizedTensor q8;    /* int8 weights  */
+    Q4Tensor        q4t;   /* int4 weights  */
+} Linear;
 
 /* All learned parameters. Matmul weights are int8-quantized; the small RMSNorm
  * vectors stay in fp32 because they are cheap and accuracy-sensitive. */
 typedef struct {
-    QuantizedTensor *q_tokens;  /* (vocab_size, dim) token embeddings        */
+    Linear *q_tokens;           /* (vocab_size, dim) token embeddings        */
     float *token_embedding;     /* dequantized embedding scratch (vocab,dim) */
 
     float *rms_att;             /* (n_layers, dim)  attention RMSNorm gain    */
     float *rms_ffn;             /* (n_layers, dim)  ffn RMSNorm gain          */
     float *rms_final;           /* (dim,)           final RMSNorm gain        */
 
-    QuantizedTensor *wq;        /* (n_layers, dim, n_heads*head_size)         */
-    QuantizedTensor *wk;        /* (n_layers, dim, n_kv_heads*head_size)      */
-    QuantizedTensor *wv;        /* (n_layers, dim, n_kv_heads*head_size)      */
-    QuantizedTensor *wo;        /* (n_layers, n_heads*head_size, dim)         */
+    Linear *wq;                 /* (n_layers, dim, n_heads*head_size)         */
+    Linear *wk;                 /* (n_layers, dim, n_kv_heads*head_size)      */
+    Linear *wv;                 /* (n_layers, dim, n_kv_heads*head_size)      */
+    Linear *wo;                 /* (n_layers, n_heads*head_size, dim)         */
 
-    QuantizedTensor *w1;        /* (n_layers, hidden_dim, dim)  gate          */
-    QuantizedTensor *w2;        /* (n_layers, dim, hidden_dim)  down          */
-    QuantizedTensor *w3;        /* (n_layers, hidden_dim, dim)  up            */
+    Linear *w1;                 /* (n_layers, hidden_dim, dim)  gate          */
+    Linear *w2;                 /* (n_layers, dim, hidden_dim)  down          */
+    Linear *w3;                 /* (n_layers, hidden_dim, dim)  up            */
 
-    QuantizedTensor *wcls;      /* (vocab_size, dim) classifier (may share)   */
+    Linear *wcls;               /* (vocab_size, dim) classifier (may share)   */
 } Weights;
 
 /* Per-step activation buffers and the persistent KV cache. */

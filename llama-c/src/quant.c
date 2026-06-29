@@ -77,6 +77,72 @@ void quantize(QuantizedTensor *qt, const float *x, int n) {
     }
 }
 
+/* sign-extend a 4-bit two's-complement nibble to a signed int */
+static inline int nib_sext(int nib) { return nib >= 8 ? nib - 16 : nib; }
+
+void dequantize_q4(const Q4Tensor *qt, float *out, int n) {
+    for (int i = 0; i < n; i++) {
+        uint8_t byte = qt->q[i >> 1];
+        int nib = (i & 1) ? (byte >> 4) : (byte & 0x0F);
+        out[i] = nib_sext(nib) * qt->s[i / GS];
+    }
+}
+
+void quantize_q4(Q4Tensor *qt, const float *x, int n) {
+    const int num_groups = n / GS;
+    const float q_max = 7.0f;
+
+    for (int g = 0; g < num_groups; g++) {
+        const float *xg = x + g * GS;
+
+        float wmax = 0.0f;
+        for (int i = 0; i < GS; i++) {
+            float a = fabsf(xg[i]);
+            if (a > wmax) wmax = a;
+        }
+        float scale = wmax / q_max;
+        qt->s[g] = scale;
+
+        /* pack two quantized weights per byte */
+        for (int i = 0; i < GS; i += 2) {
+            int idx = g * GS + i;
+            float v0 = (scale > 0.0f) ? (xg[i]     / scale) : 0.0f;
+            float v1 = (scale > 0.0f) ? (xg[i + 1] / scale) : 0.0f;
+            int q0 = (int)lroundf(v0); if (q0 > 7) q0 = 7; if (q0 < -7) q0 = -7;
+            int q1 = (int)lroundf(v1); if (q1 > 7) q1 = 7; if (q1 < -7) q1 = -7;
+            qt->q[idx >> 1] = (uint8_t)((q0 & 0x0F) | ((q1 & 0x0F) << 4));
+        }
+    }
+}
+
+void matmul_q4(float *out, const QuantizedTensor *x, const Q4Tensor *w,
+               int n, int d) {
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static)
+#endif
+    for (int i = 0; i < d; i++) {
+        float val = 0.0f;
+        const int row = i * n;
+        const uint8_t *wq = w->q + (row >> 1);   /* packed weight row i */
+        const float   *ws = w->s + row / GS;
+        const int8_t  *xq = x->q;
+        const float   *xs = x->s;
+
+        for (int g = 0; g < n; g += GS) {
+            int32_t ig = 0;
+            const uint8_t *wg = wq + (g >> 1);
+            const int8_t  *xg = xq + g;
+            for (int k = 0; k < GS; k += 2) {
+                uint8_t byte = wg[k >> 1];
+                ig += nib_sext(byte & 0x0F) * (int32_t)xg[k];
+                ig += nib_sext(byte >> 4)   * (int32_t)xg[k + 1];
+            }
+            val += (float)ig * ws[g / GS] * xs[g / GS];
+        }
+        out[i] = val;
+    }
+}
+
 void matmul_q8(float *out, const QuantizedTensor *x, const QuantizedTensor *w,
                int n, int d) {
     /* Each output row i is the dot product of weight row i with x.

@@ -202,10 +202,11 @@ int main(int argc, char **argv) {
     sampler_init(&sampler, transformer.config.vocab_size, temperature, topp, seed);
 
     fprintf(stderr,
-        "model: dim=%d layers=%d heads=%d kv_heads=%d vocab=%d seq_len=%d\n",
+        "model: dim=%d layers=%d heads=%d kv_heads=%d vocab=%d seq_len=%d quant=%s\n",
         transformer.config.dim, transformer.config.n_layers,
         transformer.config.n_heads, transformer.config.n_kv_heads,
-        transformer.config.vocab_size, transformer.config.seq_len);
+        transformer.config.vocab_size, transformer.config.seq_len,
+        transformer.config.quant_type ? "Q4" : "Q8");
 
     if (strcmp(mode, "chat") == 0)
         chat(&transformer, &tokenizer, &sampler, system_prompt, steps);

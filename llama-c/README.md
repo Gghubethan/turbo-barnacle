@@ -12,6 +12,7 @@ LLaMA-2 7B 权重，在普通 CPU 上逐 token 生成文本。
 | 能力 | 实现 |
 | --- | --- |
 | **int8 量化** | 对称分组量化（group size `GS=64`），每组一个 fp32 scale，权重 ~4× 压缩。矩阵乘在 int8 域累加成 int32 再回乘 scale。见 `src/quant.c`。 |
+| **int4 量化** | 可选 Q4：每权重 4 bit、两个打包进一字节（`[-7,7]`），权重 ~8× 压缩（7B ≈ 3.5 GB）。激活仍 Q8，`matmul_q4` 用 Q4 权重 × Q8 激活。导出加 `--q4` 即可；引擎按模型头部 `quant_type` 自动选择，前向通过 `linear()` 统一分派。 |
 | **KV 缓存** | key/value 投影直接写入 `(n_layers, seq_len, kv_dim)` 缓存；每步只对当前位置算 q/k/v，注意力扫描历史缓存。见 `src/model.c`。 |
 | **流式输出** | 解码出一个 token 立即 `fputs`+`fflush`，无需等整段生成完。见 `src/main.c` 的 `generate()`。 |
 | **GQA** | `n_kv_heads <= n_heads` 时启用分组查询注意力（7B 为 MHA，两者相等）。 |
@@ -74,6 +75,8 @@ pip install torch transformers sentencepiece
 
 # 权重：HF 格式 -> int8 .bin（约 7 GB）
 python3 tools/export.py meta-llama/Llama-2-7b-hf llama2_7b_q8.bin
+# 或导出 4-bit（约 3.5 GB，精度略降）
+python3 tools/export.py --q4 meta-llama/Llama-2-7b-hf llama2_7b_q4.bin
 
 # 分词器：SentencePiece -> tokenizer.bin
 python3 tools/export_tokenizer.py /path/to/tokenizer.model tokenizer.bin
@@ -126,16 +129,19 @@ bot> ...
   int32  magic   = 0x616b3432
   int32  version = 2
   int32  dim, hidden_dim, n_layers, n_heads, n_kv_heads, vocab_size, seq_len
-  uint8  shared_classifier        // 1 = 分类头复用 token embedding
+  int32  flags                    // byte0 = shared_classifier, byte1 = quant_type
   int32  group_size               // 必须等于编译时的 GS
 主体:
   fp32   rms_att   (n_layers*dim)
   fp32   rms_ffn   (n_layers*dim)
   fp32   rms_final (dim)
   量化张量（顺序: q_tokens, wq, wk, wv, wo, w1, w2, w3, [wcls 若不共享]）:
-    int8  q[n]
+    Q8: int8  q[n]     ;  Q4: uint8 packed[n/2]（两个 4-bit 打包）
     fp32  s[n/GS]
 ```
+
+> `quant_type`：0 = Q8（int8），1 = Q4（int4）。`shared_classifier=1` 时分类头复用
+> token embedding 权重。
 
 RMSNorm 权重保留 fp32（量小且对精度敏感），其余 matmul 权重全部 int8 量化。
 
@@ -160,4 +166,5 @@ token ──► 查 embedding ──► 残差流 x
 
 - 面向 LLaMA-2 7B 校准；其它尺寸只要 config 与张量维度都能被 `GS` 整除即可。
 - x86 AVX-512BW / AVX2 int8 SIMD + 可选 OpenMP；未用 VNNI `dpbusd`（需符号偏移处理）或 ARM NEON，亦无手写 GEMM 分块，单线程 7B 速度仍有限（适合学习/小规模生成，不追求极致吞吐）。
+- Q8 矩阵乘有 SIMD 路径；`matmul_q4` 目前仅标量实现（Q4 主要为省内存，速度未优化）。
 - 仅 CPU、fp32 激活 + int8 权重；无 batch、无 GPU。

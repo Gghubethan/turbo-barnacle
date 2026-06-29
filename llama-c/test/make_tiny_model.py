@@ -40,28 +40,37 @@ def build_vocab():
     return vocab
 
 
-def quantize_group(vals):
-    """Symmetric int8 group quantization matching quant.c."""
+def quantize_group(vals, qmax):
+    """Symmetric group quantization matching quant.c (qmax=127 Q8, 7 Q4)."""
     wmax = max((abs(v) for v in vals), default=0.0)
-    scale = wmax / 127.0
+    scale = wmax / qmax
     q = []
     for v in vals:
         x = (v / scale) if scale > 0 else 0.0
         qi = int(round(x))
-        qi = max(-127, min(127, qi))
+        qi = max(-qmax, min(qmax, qi))
         q.append(qi)
     return q, scale
 
 
-def write_quantized(f, vals):
-    """Write one quantized tensor: int8 payload then fp32 scales."""
+def write_quantized(f, vals, q4=False):
+    """Write one quantized tensor: payload then fp32 scales.
+
+    Q8: one signed byte per value. Q4: two nibbles packed per byte
+    (low = even element, high = odd), values in [-7, 7] as 4-bit two's comp."""
     assert len(vals) % GS == 0, (len(vals), GS)
+    qmax = 7 if q4 else 127
     qall, sall = [], []
     for g in range(0, len(vals), GS):
-        q, s = quantize_group(vals[g:g + GS])
+        q, s = quantize_group(vals[g:g + GS], qmax)
         qall.extend(q)
         sall.append(s)
-    f.write(struct.pack("%db" % len(qall), *qall))
+    if q4:
+        for i in range(0, len(qall), 2):
+            byte = (qall[i] & 0x0F) | ((qall[i + 1] & 0x0F) << 4)
+            f.write(struct.pack("B", byte))
+    else:
+        f.write(struct.pack("%db" % len(qall), *qall))
     f.write(struct.pack("%df" % len(sall), *sall))
 
 
@@ -69,14 +78,16 @@ def rand_vec(n, scale=0.04):
     return [random.gauss(0.0, scale) for _ in range(n)]
 
 
-def write_model(path, vocab_size):
+def write_model(path, vocab_size, q4=False):
     random.seed(1234)
+    quant_type = 1 if q4 else 0
     with open(path, "wb") as f:
         # ---- 256-byte header ----
+        # header[9] packs shared_classifier (byte 0) and quant_type (byte 1)
+        flags = 1 | (quant_type << 8)
         header = struct.pack(
             "<10i", MAGIC, VERSION, DIM, HIDDEN_DIM, N_LAYERS,
-            N_HEADS, N_KV_HEADS, vocab_size, SEQ_LEN,
-            1,  # shared_classifier = 1
+            N_HEADS, N_KV_HEADS, vocab_size, SEQ_LEN, flags,
         )
         header += struct.pack("<i", GS)
         f.write(header)
@@ -91,14 +102,15 @@ def write_model(path, vocab_size):
         write_norm(DIM)              # rms_final
 
         # ---- quantized weights, in loader order ----
-        write_quantized(f, rand_vec(vocab_size * DIM))          # q_tokens
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * DIM))      # wq
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * KV_DIM))   # wk
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * KV_DIM))   # wv
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * DIM))      # wo
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * HIDDEN_DIM))  # w1
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(HIDDEN_DIM * DIM))  # w2
-        for _ in range(N_LAYERS): write_quantized(f, rand_vec(DIM * HIDDEN_DIM))  # w3
+        def wq(vals): write_quantized(f, vals, q4)
+        wq(rand_vec(vocab_size * DIM))                         # q_tokens
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * DIM))      # wq
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * KV_DIM))   # wk
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * KV_DIM))   # wv
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * DIM))      # wo
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * HIDDEN_DIM))  # w1
+        for _ in range(N_LAYERS): wq(rand_vec(HIDDEN_DIM * DIM))  # w2
+        for _ in range(N_LAYERS): wq(rand_vec(DIM * HIDDEN_DIM))  # w3
         # wcls shared -> nothing more
 
 
@@ -115,14 +127,16 @@ def write_tokenizer(path, vocab):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("usage: make_tiny_model.py <model.bin> <tokenizer.bin>")
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    q4 = "--q4" in sys.argv
+    if len(args) != 2:
+        print("usage: make_tiny_model.py [--q4] <model.bin> <tokenizer.bin>")
         sys.exit(1)
     vocab = build_vocab()
-    write_model(sys.argv[1], len(vocab))
-    write_tokenizer(sys.argv[2], vocab)
-    print("wrote %s (%d-token vocab) and %s" %
-          (sys.argv[1], len(vocab), sys.argv[2]))
+    write_model(args[0], len(vocab), q4=q4)
+    write_tokenizer(args[1], vocab)
+    print("wrote %s (%d-token vocab, %s) and %s" %
+          (args[0], len(vocab), "Q4" if q4 else "Q8", args[1]))
 
 
 if __name__ == "__main__":

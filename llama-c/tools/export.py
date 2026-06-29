@@ -25,26 +25,35 @@ MAGIC = 0x616b3432
 VERSION = 2
 
 
-def quantize_q8(w, group_size=GS):
-    """Symmetric int8 group quantization, identical math to quant.c.
-
-    Returns (int8 tensor, fp32 scales, max abs rel error) flattened."""
+def quantize_group(w, qmax, group_size=GS):
+    """Symmetric group quantization, identical math to quant.c."""
     assert w.numel() % group_size == 0
     w = w.float().reshape(-1, group_size)
     wmax = w.abs().max(dim=1, keepdim=True).values
-    scale = wmax / 127.0
+    scale = wmax / qmax
     q = torch.where(scale > 0, w / scale, torch.zeros_like(w))
-    q = q.round().clamp(-127, 127).to(torch.int8)
-    # report worst-case reconstruction error for sanity
-    deq = q.float() * scale
+    q = q.round().clamp(-qmax, qmax)
+    deq = q.float() * scale                 # for the error report
     err = (deq - w).abs().max().item()
-    return q.reshape(-1), scale.reshape(-1), err
+    return q.reshape(-1).to(torch.int32), scale.reshape(-1), err
 
 
 def serialize_q8(f, w):
-    q, s, err = quantize_q8(w)
-    f.write(q.numpy().tobytes())          # int8 payload
+    q, s, err = quantize_group(w, 127)
+    f.write(q.to(torch.int8).numpy().tobytes())     # int8 payload
     f.write(s.numpy().astype("float32").tobytes())  # fp32 scales
+    return err
+
+
+def serialize_q4(f, w):
+    """Pack two 4-bit weights per byte (low nibble even, high nibble odd)."""
+    q, s, err = quantize_group(w, 7)
+    qi = q.to(torch.int32) & 0x0F                    # 4-bit two's complement
+    lo = qi[0::2]
+    hi = qi[1::2]
+    packed = (lo | (hi << 4)).to(torch.uint8)
+    f.write(packed.numpy().tobytes())
+    f.write(s.numpy().astype("float32").tobytes())
     return err
 
 
@@ -56,7 +65,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("model", help="HF model id or local path")
     ap.add_argument("out", help="output .bin path")
+    ap.add_argument("--q4", action="store_true",
+                    help="4-bit weights (~8x smaller than fp32) instead of int8")
     args = ap.parse_args()
+    quant_type = 1 if args.q4 else 0
+    serialize_weight = serialize_q4 if args.q4 else serialize_q8
 
     from transformers import AutoModelForCausalLM
     print(f"loading {args.model} ...", file=sys.stderr)
@@ -88,9 +101,10 @@ def main():
           file=sys.stderr)
 
     with open(args.out, "wb") as f:
+        # header[9] packs shared_classifier (byte 0) and quant_type (byte 1)
+        flags = (1 if shared else 0) | (quant_type << 8)
         header = struct.pack("<10i", MAGIC, VERSION, dim, hidden_dim, n_layers,
-                             n_heads, n_kv_heads, vocab_size, seq_len,
-                             1 if shared else 0)
+                             n_heads, n_kv_heads, vocab_size, seq_len, flags)
         header += struct.pack("<i", GS)
         f.write(header)
         f.write(b"\x00" * (256 - len(header)))
@@ -105,7 +119,7 @@ def main():
         max_err = 0.0
         def q(w):
             nonlocal max_err
-            max_err = max(max_err, serialize_q8(f, w))
+            max_err = max(max_err, serialize_weight(f, w))
 
         # quantized weights, in the loader's expected order
         q(p["model.embed_tokens.weight"])                                   # q_tokens
@@ -126,8 +140,8 @@ def main():
         if not shared:
             q(p["lm_head.weight"])
 
-    print(f"wrote {args.out}  (worst-case quant error {max_err:.4f})",
-          file=sys.stderr)
+    print(f"wrote {args.out}  ({'Q4' if args.q4 else 'Q8'}, "
+          f"worst-case quant error {max_err:.4f})", file=sys.stderr)
 
 
 if __name__ == "__main__":

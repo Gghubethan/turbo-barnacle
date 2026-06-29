@@ -40,19 +40,27 @@ static void *xcalloc(size_t n, size_t sz) {
     return p;
 }
 
-/* Read `count` quantized tensors laid out back-to-back starting at *ptr,
- * each of `each` elements. Advances *ptr past the data it consumes. */
-static QuantizedTensor *map_quantized(void **ptr, int count, int each) {
+/* Read `count` weight matrices laid out back-to-back starting at *ptr, each of
+ * `each` elements, in the model's quantization (q4 = 1 for int4, else int8).
+ * Advances *ptr past the data it consumes. */
+static Linear *map_weights(void **ptr, int count, int each, int q4) {
     void *p = *ptr;
-    QuantizedTensor *qt = xcalloc(count, sizeof(QuantizedTensor));
+    Linear *w = xcalloc(count, sizeof(Linear));
     for (int i = 0; i < count; i++) {
-        qt[i].q = (int8_t *)p;
-        p = (int8_t *)p + each;            /* int8 payload */
-        qt[i].s = (float *)p;
-        p = (float *)p + each / GS;        /* fp32 scales  */
+        w[i].q4 = q4;
+        if (q4) {
+            w[i].q4t.q = (uint8_t *)p;
+            p = (uint8_t *)p + each / 2;       /* packed nibbles */
+            w[i].q4t.s = (float *)p;
+        } else {
+            w[i].q8.q = (int8_t *)p;
+            p = (int8_t *)p + each;             /* int8 payload   */
+            w[i].q8.s = (float *)p;
+        }
+        p = (float *)p + each / GS;            /* fp32 scales     */
     }
     *ptr = p;
-    return qt;
+    return w;
 }
 
 static void alloc_state(RunState *s, const Config *c) {
@@ -98,8 +106,12 @@ void model_load(Transformer *t, const char *path) {
     c->n_kv_heads = header[6];
     c->vocab_size = header[7];
     c->seq_len    = header[8];
-    /* header[9] packs shared_classifier (low byte) and is followed by GS */
+    /* header[9] packs shared_classifier (byte 0) and quant_type (byte 1),
+     * followed by GS. quant_type: 0 = Q8 (int8), 1 = Q4 (int4). */
     uint8_t shared_classifier = header[9] & 0xff;
+    c->quant_type = (header[9] >> 8) & 0xff;
+    if (c->quant_type != 0 && c->quant_type != 1) die("unknown quant_type");
+    int q4 = c->quant_type;
     int32_t group_size;
     if (fread(&group_size, sizeof(int32_t), 1, f) != 1) die("truncated header");
     if (group_size != GS)
@@ -129,20 +141,21 @@ void model_load(Transformer *t, const char *path) {
     w->rms_final = (float *)p; p = (float *)p + c->dim;
 
     /* quantized tensors */
-    w->q_tokens = map_quantized(&p, 1, c->vocab_size * c->dim);
-    w->wq = map_quantized(&p, c->n_layers, c->dim * (c->n_heads * head_size));
-    w->wk = map_quantized(&p, c->n_layers, c->dim * kv_dim);
-    w->wv = map_quantized(&p, c->n_layers, c->dim * kv_dim);
-    w->wo = map_quantized(&p, c->n_layers, (c->n_heads * head_size) * c->dim);
-    w->w1 = map_quantized(&p, c->n_layers, c->dim * c->hidden_dim);
-    w->w2 = map_quantized(&p, c->n_layers, c->hidden_dim * c->dim);
-    w->w3 = map_quantized(&p, c->n_layers, c->dim * c->hidden_dim);
+    w->q_tokens = map_weights(&p, 1, c->vocab_size * c->dim, q4);
+    w->wq = map_weights(&p, c->n_layers, c->dim * (c->n_heads * head_size), q4);
+    w->wk = map_weights(&p, c->n_layers, c->dim * kv_dim, q4);
+    w->wv = map_weights(&p, c->n_layers, c->dim * kv_dim, q4);
+    w->wo = map_weights(&p, c->n_layers, (c->n_heads * head_size) * c->dim, q4);
+    w->w1 = map_weights(&p, c->n_layers, c->dim * c->hidden_dim, q4);
+    w->w2 = map_weights(&p, c->n_layers, c->hidden_dim * c->dim, q4);
+    w->w3 = map_weights(&p, c->n_layers, c->dim * c->hidden_dim, q4);
     w->wcls = shared_classifier ? w->q_tokens
-                                : map_quantized(&p, 1, c->vocab_size * c->dim);
+                                : map_weights(&p, 1, c->vocab_size * c->dim, q4);
 
     /* dequantize the token embedding table once (used by gather, not matmul) */
     w->token_embedding = xcalloc((size_t)c->vocab_size * c->dim, sizeof(float));
-    dequantize(w->q_tokens, w->token_embedding, c->vocab_size * c->dim);
+    if (q4) dequantize_q4(&w->q_tokens->q4t, w->token_embedding, c->vocab_size * c->dim);
+    else    dequantize(&w->q_tokens->q8, w->token_embedding, c->vocab_size * c->dim);
 
     alloc_state(&t->state, c);
 }
@@ -165,6 +178,14 @@ static void rmsnorm(float *o, const float *x, const float *gain, int size) {
     for (int i = 0; i < size; i++) ss += x[i] * x[i];
     ss = 1.0f / sqrtf(ss / size + 1e-5f);
     for (int i = 0; i < size; i++) o[i] = gain[i] * (ss * x[i]);
+}
+
+/* Quantized linear: out(d) = W(d x n) * x(n), dispatching on the weight's
+ * quantization. Activation x is always Q8. */
+static void linear(float *out, const QuantizedTensor *x, const Linear *w,
+                   int n, int d) {
+    if (w->q4) matmul_q4(out, x, &w->q4t, n, d);
+    else       matmul_q8(out, x, &w->q8,  n, d);
 }
 
 /* Numerically stable in-place softmax over the first `size` elements. */
@@ -200,9 +221,9 @@ float *model_forward(Transformer *t, int token, int pos) {
         float *k = s->key_cache + kv_off;
         float *v = s->value_cache + kv_off;
         quantize(&s->xq, s->xb, dim);
-        matmul_q8(s->q, &s->xq, &w->wq[l], dim, dim);
-        matmul_q8(k,    &s->xq, &w->wk[l], dim, kv_dim);
-        matmul_q8(v,    &s->xq, &w->wv[l], dim, kv_dim);
+        linear(s->q, &s->xq, &w->wq[l], dim, dim);
+        linear(k,    &s->xq, &w->wk[l], dim, kv_dim);
+        linear(v,    &s->xq, &w->wv[l], dim, kv_dim);
 
         /* RoPE: rotate each adjacent (even,odd) pair in q and k by position. */
         for (int i = 0; i < dim; i += 2) {
@@ -253,26 +274,26 @@ float *model_forward(Transformer *t, int token, int pos) {
 
         /* output projection and residual add */
         quantize(&s->xq, s->xb, dim);
-        matmul_q8(s->xb2, &s->xq, &w->wo[l], dim, dim);
+        linear(s->xb2, &s->xq, &w->wo[l], dim, dim);
         for (int i = 0; i < dim; i++) s->x[i] += s->xb2[i];
 
         /* --- feed-forward (SwiGLU): w2( silu(w1 x) * (w3 x) ) --- */
         rmsnorm(s->xb, s->x, w->rms_ffn + l * dim, dim);
         quantize(&s->xq, s->xb, dim);
-        matmul_q8(s->hb,  &s->xq, &w->w1[l], dim, hidden_dim);
-        matmul_q8(s->hb2, &s->xq, &w->w3[l], dim, hidden_dim);
+        linear(s->hb,  &s->xq, &w->w1[l], dim, hidden_dim);
+        linear(s->hb2, &s->xq, &w->w3[l], dim, hidden_dim);
         for (int i = 0; i < hidden_dim; i++) {
             float x = s->hb[i];
             s->hb[i] = (x / (1.0f + expf(-x))) * s->hb2[i];  /* SiLU * gate */
         }
         quantize(&s->hq, s->hb, hidden_dim);
-        matmul_q8(s->xb, &s->hq, &w->w2[l], hidden_dim, dim);
+        linear(s->xb, &s->hq, &w->w2[l], hidden_dim, dim);
         for (int i = 0; i < dim; i++) s->x[i] += s->xb[i];
     }
 
     /* final norm + classifier -> logits */
     rmsnorm(s->x, s->x, w->rms_final, dim);
     quantize(&s->xq, s->x, dim);
-    matmul_q8(s->logits, &s->xq, w->wcls, dim, c->vocab_size);
+    linear(s->logits, &s->xq, w->wcls, dim, c->vocab_size);
     return s->logits;
 }

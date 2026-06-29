@@ -41,4 +41,23 @@ void quantize(QuantizedTensor *qt, const float *x, int n);
 void matmul_q8(float *out, const QuantizedTensor *x, const QuantizedTensor *w,
                int n, int d);
 
+/* ---- 4-bit (Q4) weight quantization -------------------------------------
+ * Same per-group symmetric scheme, but each weight is stored in 4 bits, so two
+ * weights pack into one byte: low nibble = even element, high nibble = odd.
+ * Values quantize to [-7, 7] (scale = max|group| / 7) and are kept as 4-bit
+ * two's complement. This halves weight memory again vs Q8 (~8x vs fp32) at some
+ * accuracy cost. Activations stay Q8; matmul_q4 multiplies Q4 weights by a Q8
+ * activation vector. */
+typedef struct {
+    uint8_t *q;  /* packed nibbles, length = number of elements / 2 */
+    float   *s;  /* scales,         length = number of elements / GS */
+} Q4Tensor;
+
+void dequantize_q4(const Q4Tensor *qt, float *out, int n);
+void quantize_q4(Q4Tensor *qt, const float *x, int n);
+
+/* Q4 weight W (d x n) times Q8 activation x (n) -> out (d, fp32). */
+void matmul_q4(float *out, const QuantizedTensor *x, const Q4Tensor *w,
+               int n, int d);
+
 #endif /* LLAMA_QUANT_H */

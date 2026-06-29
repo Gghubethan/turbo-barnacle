@@ -116,11 +116,81 @@ static void test_exact_constant(void) {
     free(x); free(y); free(qt.q); free(qt.s);
 }
 
+/* Q4 round-trip: error bounded by scale/2 = max|group|/14 per element. */
+static void test_q4_roundtrip(void) {
+    const int n = 4 * GS;
+    float *x = malloc(n * sizeof(float));
+    float *y = malloc(n * sizeof(float));
+    Q4Tensor qt = { malloc(n / 2), malloc((n / GS) * sizeof(float)) };
+
+    for (int i = 0; i < n; i++) x[i] = frand() * 3.0f;
+    quantize_q4(&qt, x, n);
+    dequantize_q4(&qt, y, n);
+
+    float max_err = 0.0f;
+    for (int g = 0; g < n / GS; g++) {
+        float gmax = 0.0f;
+        for (int i = 0; i < GS; i++) {
+            float a = fabsf(x[g * GS + i]);
+            if (a > gmax) gmax = a;
+        }
+        float bound = gmax / 14.0f + 1e-6f;
+        for (int i = 0; i < GS; i++) {
+            float e = fabsf(x[g * GS + i] - y[g * GS + i]);
+            if (e > max_err) max_err = e;
+            if (e > bound) { printf("  q4 elem %d err %.6f > bound %.6f\n",
+                                    g * GS + i, e, bound); failures++; }
+        }
+    }
+    CHECK(1, "q4 roundtrip within per-group bound (max abs err %.6f)", max_err);
+    free(x); free(y); free(qt.q); free(qt.s);
+}
+
+/* matmul_q4 (Q4 weights x Q8 activations) vs fp32. Q4 is coarse (~15 levels)
+ * so the bound is looser than Q8, but accumulation still keeps L2 error small. */
+static void test_q4_matmul(void) {
+    const int n = 8 * GS;
+    const int d = 64;
+    float *xf = malloc(n * sizeof(float));
+    float *wf = malloc((size_t)d * n * sizeof(float));
+    float *ref = malloc(d * sizeof(float));
+    float *got = malloc(d * sizeof(float));
+
+    QuantizedTensor xq = { malloc(n), malloc((n / GS) * sizeof(float)) };
+    Q4Tensor wq = { malloc((size_t)d * n / 2),
+                    malloc(((size_t)d * n / GS) * sizeof(float)) };
+
+    for (int i = 0; i < n; i++) xf[i] = frand();
+    for (int i = 0; i < d * n; i++) wf[i] = frand();
+    for (int i = 0; i < d; i++) {
+        float acc = 0.0f;
+        for (int j = 0; j < n; j++) acc += wf[i * n + j] * xf[j];
+        ref[i] = acc;
+    }
+
+    quantize(&xq, xf, n);
+    quantize_q4(&wq, wf, d * n);
+    matmul_q4(got, &xq, &wq, n, d);
+
+    double num = 0.0, den = 0.0;
+    for (int i = 0; i < d; i++) {
+        double e = got[i] - ref[i];
+        num += e * e; den += (double)ref[i] * ref[i];
+    }
+    double rel = sqrt(num / (den + 1e-12));
+    CHECK(rel < 0.12, "matmul_q4 vs fp32: L2 rel err %.4f (< 0.12)", rel);
+
+    free(xf); free(wf); free(ref); free(got);
+    free(xq.q); free(xq.s); free(wq.q); free(wq.s);
+}
+
 int main(void) {
     printf("== int8 quantization unit tests (GS=%d) ==\n", GS);
     test_roundtrip();
     test_exact_constant();
     test_matmul();
+    test_q4_roundtrip();
+    test_q4_matmul();
     if (failures) { printf("\n%d check(s) FAILED\n", failures); return 1; }
     printf("\nall checks passed\n");
     return 0;

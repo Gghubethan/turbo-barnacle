@@ -41,11 +41,13 @@ build/test_quant: test/test_quant.c src/quant.c src/quant.h
 	@mkdir -p build
 	$(CC) $(CFLAGS) test/test_quant.c src/quant.c -o $@ $(LDFLAGS)
 
-# Builds a tiny synthetic model + tokenizer and runs the engine end to end.
+# Builds tiny synthetic models (Q8 and Q4) and runs the engine end to end.
 test: $(BIN)
 	python3 test/make_tiny_model.py test/tiny.bin test/tiny_tok.bin
 	./$(BIN) test/tiny.bin -z test/tiny_tok.bin -n 16 -t 0 -i "hello"
-	@echo "smoke test passed"
+	python3 test/make_tiny_model.py --q4 test/tiny_q4.bin test/tiny_tok.bin
+	./$(BIN) test/tiny_q4.bin -z test/tiny_tok.bin -n 16 -t 0 -i "hello"
+	@echo "smoke test passed (Q8 + Q4)"
 
 clean:
-	rm -rf build test/tiny.bin test/tiny_tok.bin
+	rm -rf build test/tiny.bin test/tiny_q4.bin test/tiny_tok.bin
