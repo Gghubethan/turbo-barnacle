@@ -1,0 +1,53 @@
+# Pure-C int8 LLaMA-2 inference engine.
+#
+# Targets:
+#   make          optimized build -> build/llama
+#   make omp      optimized + OpenMP multithreading
+#   make debug    -O0 -g with sanitizers
+#   make test     build and run the end-to-end smoke test
+#   make clean
+
+CC      ?= cc
+CFLAGS  ?= -O3 -ffast-math -march=native -funroll-loops -Wall -Wextra -std=gnu11
+LDFLAGS ?= -lm
+
+# Group size for int8 quantization. Must match the value used by export.py.
+GS ?= 64
+CFLAGS += -DGS=$(GS)
+
+SRC     := src/quant.c src/model.c src/tokenizer.c src/sampler.c src/main.c
+HDR     := src/quant.h src/model.h src/tokenizer.h src/sampler.h
+BIN     := build/llama
+
+.PHONY: all omp debug test check clean
+
+all: $(BIN)
+
+$(BIN): $(SRC) $(HDR)
+	@mkdir -p build
+	$(CC) $(CFLAGS) $(SRC) -o $@ $(LDFLAGS)
+
+omp: CFLAGS += -fopenmp
+omp: clean $(BIN)
+
+debug: CFLAGS := -O0 -g -fsanitize=address,undefined -Wall -Wextra -std=gnu11 -DGS=$(GS)
+debug: clean $(BIN)
+
+# Numerical unit tests for the int8 quantization path.
+check: build/test_quant
+	./build/test_quant
+
+build/test_quant: test/test_quant.c src/quant.c src/quant.h
+	@mkdir -p build
+	$(CC) $(CFLAGS) test/test_quant.c src/quant.c -o $@ $(LDFLAGS)
+
+# Builds tiny synthetic models (Q8 and Q4) and runs the engine end to end.
+test: $(BIN)
+	python3 test/make_tiny_model.py test/tiny.bin test/tiny_tok.bin
+	./$(BIN) test/tiny.bin -z test/tiny_tok.bin -n 16 -t 0 -i "hello"
+	python3 test/make_tiny_model.py --q4 test/tiny_q4.bin test/tiny_tok.bin
+	./$(BIN) test/tiny_q4.bin -z test/tiny_tok.bin -n 16 -t 0 -i "hello"
+	@echo "smoke test passed (Q8 + Q4)"
+
+clean:
+	rm -rf build test/tiny.bin test/tiny_q4.bin test/tiny_tok.bin

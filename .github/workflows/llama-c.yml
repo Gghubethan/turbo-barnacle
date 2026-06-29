@@ -1,0 +1,37 @@
+name: llama-c
+
+# Build and test the pure-C LLaMA-2 inference engine. Scoped to llama-c/ so it
+# stays out of the way of the docs/Netlify flow.
+on:
+  push:
+    paths:
+      - "llama-c/**"
+      - ".github/workflows/llama-c.yml"
+  pull_request:
+    paths:
+      - "llama-c/**"
+      - ".github/workflows/llama-c.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: llama-c
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (portable flags, no -march=native on CI)
+        run: make CFLAGS="-O3 -ffast-math -funroll-loops -Wall -Wextra -std=gnu11 -DGS=64"
+
+      - name: Numerical unit tests (int8 quant vs fp32)
+        run: make check CFLAGS="-O3 -ffast-math -funroll-loops -Wall -Wextra -std=gnu11 -DGS=64"
+
+      - name: End-to-end smoke test (synthetic model)
+        run: make test CFLAGS="-O3 -ffast-math -funroll-loops -Wall -Wextra -std=gnu11 -DGS=64"
+
+      - name: Sanitizer build + unit tests (ASan/UBSan)
+        run: |
+          cc -O1 -g -fsanitize=address,undefined -std=gnu11 -DGS=64 \
+             test/test_quant.c src/quant.c -o build/test_quant_san -lm
+          ./build/test_quant_san

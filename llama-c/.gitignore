@@ -1,0 +1,12 @@
+# build output
+build/
+
+# exported models / tokenizers are large and produced locally
+*.bin
+test/tiny.bin
+test/tiny_q4.bin
+test/tiny_tok.bin
+
+# python bytecode
+__pycache__/
+*.pyc
