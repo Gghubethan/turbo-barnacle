@@ -49,6 +49,23 @@ cd library-system && python3 -m http.server 8080
 # 浏览器访问 http://localhost:8080
 ```
 
+## Windows：安装到 D 盘 + 桌面快捷方式
+
+仓库自带安装脚本，把本系统装到 `D:\NexusLibrary` 并在桌面生成快捷方式。
+
+1. 下载/克隆本仓库到 Windows（任意位置）：
+   ```powershell
+   git clone https://github.com/Gghubethan/turbo-barnacle.git
+   ```
+   不想用 git 的话，到 GitHub 仓库页 **Code → Download ZIP**，解压即可。
+2. 进入 `turbo-barnacle\library-system` 文件夹。
+3. **双击 `安装到D盘.bat`**（它会绕过执行策略调用 `install-windows.ps1`）。
+4. 完成后，双击桌面 **「图书馆管理系统」** 即可用默认浏览器打开。
+
+> - 想装到别的盘/目录：用记事本打开 `install-windows.ps1`，改第一行的 `$dest` 即可。
+> - 不想安装、只想临时打开：直接双击 `打开图书馆系统.bat` 或 `index.html`。
+> - 纯本地静态文件，离线可用，数据存浏览器 `localStorage`。
+
 ## 文件结构
 
 ```
