@@ -30,6 +30,13 @@
 > Obsidian 本身是**静态知识库**，没有 AI 对话能力 —— 必须外接 API 才能激活分析端。
 > 这是整个第二阶段的技术核心，单独立项推进。
 
+## 本地 Skill
+
+- **[`resume-expert`](.claude/skills/resume-expert/SKILL.md)** —— 简历诊断 → 修改 → 排版的完整流水线（Claude Code 项目级 Skill）。
+  对着简历说「帮我检查这份简历」即可触发：先给 🔴必改 / 🟡值得改 / ⚪不建议动 的分级诊断和逐条理由，
+  确认后再零编造改写、查 ATS 兼容、自动排版，输出 DOCX + PDF + 修改前后对比。
+  工作目录 `resume-work/` 含个人信息，已在 `.gitignore` 中排除。
+
 ## 文档索引
 
 - **[Obsidian 接入 AI API 方案（专项）](docs/obsidian-ai-integration.md)** —— 插件选型、工作流设计、笔记结构规范、AI 任务路由、关键决策点、分阶段落地。

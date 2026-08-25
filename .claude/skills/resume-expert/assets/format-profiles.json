@@ -1,0 +1,91 @@
+{
+  "_comment": "排版规格。build_docx.py / format_docx.py 都读这个文件；改这里即可改全局排版，不用动脚本。单位：字号 pt，间距 pt，页边距 cm，缩进 cm。",
+  "zh": {
+    "label": "中文简历（默认）",
+    "page": {
+      "margin_top_cm": 1.8,
+      "margin_bottom_cm": 1.8,
+      "margin_left_cm": 1.8,
+      "margin_right_cm": 1.8,
+      "columns": 1
+    },
+    "fonts": {
+      "ascii": "Calibri",
+      "east_asia": "微软雅黑",
+      "fallback_east_asia": ["思源黑体", "Source Han Sans SC", "PingFang SC", "Noto Sans CJK SC", "宋体"]
+    },
+    "sizes": {
+      "name": 20,
+      "contact": 9.5,
+      "section_heading": 12,
+      "entry_title": 10.5,
+      "body": 10.5,
+      "bullet": 10.5
+    },
+    "spacing": {
+      "line_spacing": 1.15,
+      "name_after_pt": 2,
+      "contact_after_pt": 8,
+      "section_before_pt": 10,
+      "section_after_pt": 4,
+      "entry_before_pt": 6,
+      "entry_after_pt": 1,
+      "bullet_after_pt": 2
+    },
+    "bullet": {
+      "char": "•",
+      "indent_left_cm": 0.5,
+      "hanging_cm": 0.5
+    },
+    "rules": {
+      "alignment": "left",
+      "section_rule_line": true,
+      "keep_entry_together": true,
+      "max_pages": 2
+    }
+  },
+  "en": {
+    "label": "English resume",
+    "page": {
+      "margin_top_cm": 1.6,
+      "margin_bottom_cm": 1.6,
+      "margin_left_cm": 1.9,
+      "margin_right_cm": 1.9,
+      "columns": 1
+    },
+    "fonts": {
+      "ascii": "Calibri",
+      "east_asia": "Calibri",
+      "fallback_east_asia": ["Arial", "Helvetica"]
+    },
+    "sizes": {
+      "name": 18,
+      "contact": 9.5,
+      "section_heading": 11.5,
+      "entry_title": 10.5,
+      "body": 10.5,
+      "bullet": 10.5
+    },
+    "spacing": {
+      "line_spacing": 1.1,
+      "name_after_pt": 2,
+      "contact_after_pt": 8,
+      "section_before_pt": 10,
+      "section_after_pt": 4,
+      "entry_before_pt": 6,
+      "entry_after_pt": 1,
+      "bullet_after_pt": 2
+    },
+    "bullet": {
+      "char": "•",
+      "indent_left_cm": 0.48,
+      "hanging_cm": 0.48
+    },
+    "rules": {
+      "alignment": "left",
+      "section_rule_line": true,
+      "keep_entry_together": true,
+      "max_pages": 2
+    }
+  }
+}

@@ -1,0 +1,4 @@
+python-docx>=1.1      # 读写 DOCX（解析、排版、ATS 检查都要）
+pdfminer.six>=20231228 # PDF 文本提取 + 双栏检测（只投 DOCX 可不装）
+pypdf>=4.0            # PDF 页数统计与备用提取（可选）
+pytest>=8             # 仅开发/测试用
