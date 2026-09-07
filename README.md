@@ -36,6 +36,7 @@
 - **[落地路径：iOS + Windows + Obsidian Sync](docs/setup-ios-windows.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Windows pipeline 脚本骨架，可直接照做。
 - **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
 - **[Minecraft《我的世界》完整结构、操作、玩法与规则说明](docs/minecraft-complete-guide.md)** —— 从版本、界面、操作、生存到三大维度、红石自动化、成长路线的系统化整理，含关键数字速查与新手 FAQ。
+- **[方块世界（可玩的浏览器方块沙盒）](game/index.html)** —— 单文件 HTML 游戏：程序生成地形、挖掘与放置、合成熔炼、昼夜与怪物、生存/创造模式、本地自动存档。直接用浏览器打开即可玩。
 
 ## 路线图
 
