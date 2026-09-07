@@ -35,6 +35,7 @@
 - **[Obsidian 接入 AI API 方案（专项）](docs/obsidian-ai-integration.md)** —— 插件选型、工作流设计、笔记结构规范、AI 任务路由、关键决策点、分阶段落地。
 - **[落地路径：iOS + Windows + Obsidian Sync](docs/setup-ios-windows.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Windows pipeline 脚本骨架，可直接照做。
 - **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
+- **[Minecraft《我的世界》完整结构、操作、玩法与规则说明](docs/minecraft-complete-guide.md)** —— 从版本、界面、操作、生存到三大维度、红石自动化、成长路线的系统化整理，含关键数字速查与新手 FAQ。
 
 ## 路线图
 
