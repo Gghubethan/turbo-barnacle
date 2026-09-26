@@ -1,0 +1,162 @@
+# 验光/检查/档案指标库。
+# decision_class：直接决策指标 / 辅助判断指标 / 参考指标 / 暂不可用于自动推荐
+# 任何指标都不得直接跳到商品：指标 → 问题(PROBLEM) → 需求(NEED) → 功能(FUNC) → 商品。
+# 唯一例外是"SKU 可做性"排除（光度范围、ADD、瞳高/框高等），它只判断能不能做，不判断该不该推荐。
+exams:
+  - id: EXAM_001
+    name: SPH 球镜度
+    decision_class: 直接决策指标
+    used_for: [SKU 光度范围排除（RULE_050）, 识别高度数（RULE_006）]
+    threshold: {sku_range: 见 skus.csv（A）, high_power: 阈值待业务确认}
+  - id: EXAM_002
+    name: CYL 柱镜度
+    decision_class: 直接决策指标
+    used_for: [SKU 柱镜/联合光度排除（RULE_050）, 识别散光]
+    threshold: {sku_range: 见 skus.csv（A）, astigmatism: 阈值待业务确认}
+  - id: EXAM_003
+    name: AXIS 轴位
+    decision_class: 参考指标
+    notes: 本批资料无与轴位相关的产品限制或功能判断。
+  - id: EXAM_004
+    name: SE 等效球镜
+    decision_class: 辅助判断指标
+    used_for: [识别近视（RULE_001）, 近视进展（RULE_002）]
+    threshold: {myopia: 阈值待业务确认}
+    notes: 各品牌临床研究的入组区间（如新乐学研究 SE -1.00~-5.00D、屈光参差 ≤1.5D）只代表证据人群，不作为适用阈值。
+  - id: EXAM_005
+    name: ADD 下加光
+    decision_class: 直接决策指标
+    used_for: [识别老视（RULE_004）, SKU ADD 范围排除（RULE_051）, 蔡司室内型 M.I.D. 规则（RULE_057）]
+    threshold:
+      presence: 处方含 ADD 即进入老视/中近用产品池（B）
+      sku_range: 见 skus.csv（A）
+      zeiss_mid: "ADD − 1/M.I.D.(m) ≥ 0.75D（A，SRC_002#p10）"
+      zeiss_office_hint: "蔡司室内型'适合 ADD 超过 1.50D'（A，SRC_002#p9）"
+      sap_viyue: "视悦智能 ADD ≤ 1.50D 时视距通常可达约 200cm（A，SRC_002#p2）"
+  - id: EXAM_006
+    name: 裸眼视力
+    decision_class: 辅助判断指标
+    threshold: 阈值待业务确认
+  - id: EXAM_007
+    name: 矫正视力
+    decision_class: 参考指标
+  - id: EXAM_008
+    name: 单眼瞳距（远用）
+    decision_class: 直接决策指标
+    used_for: [定制必需参数, 内移量优化]
+  - id: EXAM_009
+    name: 单眼瞳高
+    decision_class: 直接决策指标
+    used_for: [最小瞳高排除（RULE_052）]
+    threshold: {sku_min_fitting_height: 见 skus.csv（A）}
+  - id: EXAM_010
+    name: 调节功能（调节幅度/调节滞后）
+    decision_class: 辅助判断指标
+    used_for: [识别儿童调节滞后（RULE_010）]
+    threshold: 阈值待业务确认
+    notes: 资料未给出测量方法与阈值。
+  - id: EXAM_011
+    name: 集合功能
+    decision_class: 暂不可用于自动推荐
+    notes: 仅蔡司数码识别设计提到"优化双眼集合需求"，无判断标准。
+  - id: EXAM_012
+    name: 双眼视功能
+    decision_class: 暂不可用于自动推荐
+    notes: 可能与 SYMPTOM_002 阅读跳行漏字相关，资料未说明（Q_019）。
+  - id: EXAM_013
+    name: AL 眼轴长度
+    decision_class: 辅助判断指标
+    used_for: [按年龄/性别百分位评估近视风险（RULE_003）]
+    threshold:
+      reference: reference/axial_length_percentiles.csv（A，专家共识 2023）
+      trigger: 阈值待业务确认（资料只说"P 值越高风险相对越高"）
+  - id: EXAM_014
+    name: AL 年增长量（ΔAL/年，两次测量推算）
+    decision_class: 辅助判断指标
+    used_for: [识别近视进展（RULE_002）, 评估近视管理效果]
+    threshold:
+      safe_growth_6_10y: "< 0.2 mm/年 为安全增长范围（A，专家共识，SRC_001#p4）"
+      other_ages: 资料未提供
+      trigger: 是否作为自动触发条件待业务确认
+  - id: EXAM_015
+    name: 角膜曲率（CR，平均角膜曲率半径）
+    decision_class: 辅助判断指标
+    used_for: [计算 AL/CR]
+  - id: EXAM_016
+    name: 轴率比 AL/CR
+    decision_class: 辅助判断指标
+    used_for: [识别近视发生风险（RULE_003）]
+    threshold: "资料称'大于诊断界值提示远视储备量耗尽，12 岁以下应睫状肌麻痹验光确证'，但未给出界值数值 → 阈值待业务确认（Q_004）"
+  - id: EXAM_017
+    name: 屈光参差量 |SE右 − SE左|
+    decision_class: 辅助判断指标
+    used_for: [识别屈光参差（RULE_005）]
+    threshold: 阈值待业务确认
+  - id: EXAM_018
+    name: 睫状肌麻痹验光（散瞳验光）结果
+    decision_class: 直接决策指标
+    used_for: ["<12 岁近视风险确证（A，SRC_001#p5）", "菁杰视用于远视前必须检查（A，SRC_001#p52）"]
+  - id: EXAM_019
+    name: 远视储备
+    decision_class: 辅助判断指标
+    threshold:
+      reference: reference/hyperopic_reserve.csv（A，资料标注"仅供参考"，引自《幼儿园近视防控手册》2020）
+      trigger: 阈值待业务确认
+  - id: EXAM_020
+    name: 年龄
+    decision_class: 直接决策指标
+    used_for: [产品线分流（儿童/成人）, 产品年龄建议]
+    notes: "资料中的年龄信息：新乐学'18 岁以下'；睛童'6–18 岁'；控优点'建议 6 岁及以上'；蔡司智锐'40+'；老视分期 35–45/45–52/>52（专家共识）。"
+  - id: EXAM_021
+    name: 前倾角（倾斜角）
+    decision_class: 直接决策指标
+    used_for: [L3 个性化产品必需参数（RULE_053）]
+  - id: EXAM_022
+    name: 镜眼距（后顶点距离）
+    decision_class: 直接决策指标
+    used_for: [L3 个性化产品必需参数（RULE_053）]
+  - id: EXAM_023
+    name: 镜架面弯（镜面角）
+    decision_class: 直接决策指标
+    used_for: [L3 个性化产品必需参数（RULE_053）]
+  - id: EXAM_024
+    name: 习惯阅读距离/近用距离
+    decision_class: 直接决策指标
+    used_for: [L3 个性化产品必需参数; 豪雅可指定近用目的距离 20–90/99cm]
+  - id: EXAM_025
+    name: NVB 近用视觉行为
+    decision_class: 直接决策指标
+    used_for: [依视路 豪华版/旗舰版 必需（A）；需 VOX 或 ER2 plus 设备]
+  - id: EXAM_026
+    name: ERCD 眼球旋转中心距离
+    decision_class: 直接决策指标
+    used_for: [依视路 旗舰版 必需（A）]
+  - id: EXAM_027
+    name: 主视眼
+    decision_class: 直接决策指标
+    used_for: [依视路 旗舰版 必需（A）]
+  - id: EXAM_028
+    name: 镜框参数（框高/框宽/中梁距/镜框类型/镜圈宽）
+    decision_class: 直接决策指标
+    used_for: [最小框高、镜圈宽 ≥45mm 等排除（RULE_052）, 部分产品定制必需]
+  - id: EXAM_029
+    name: 父母近视史
+    decision_class: 参考指标
+    notes: 仅出现在蔡司成长乐研究的亚组分析中（Q_017）。
+  - id: EXAM_030
+    name: 户外活动时间
+    decision_class: 参考指标
+    notes: 资料作为近视防控建议出现，未用于产品选择。
+  - id: EXAM_031
+    name: 角膜地形图
+    decision_class: 直接决策指标
+    used_for: [菁杰视用于远视前必须检查（A，SRC_001#p52）]
+  - id: EXAM_032
+    name: 近用瞳距
+    decision_class: 直接决策指标
+    used_for: [依视路 豪华版/旗舰版 必需、F360+/商务版 可选; 豪雅新智阅近近 需近用单眼瞳距]
+  - id: EXAM_033
+    name: 预期每日配戴时长
+    decision_class: 辅助判断指标
+    used_for: [近视管理产品依从性确认（RULE_070）]
+    threshold: "星趣控 67% 数据来自每日配戴 >12 小时的常戴镜者；小乐圆资料要求每天配戴超过 12 小时（A）。是否作为推荐前置条件待业务确认。"

@@ -1,0 +1,43 @@
+prel_id,product_a,predicate,product_b,comparison,evidence,basis,difference,source,note
+PREL_001,PRODUCT_SHAMIR_001,overlaps_with,PRODUCT_SAP_003,部分重合,B,同一专利号 ZL202121288583.4；同为 1.590、阿贝数 30.6；光度范围完全一致（SPH 0~-12/CYL -4/S+C -12）；均为双面复合+周边散光刺激,膜层（碧慧膜 vs 易洁膜）；睛童需镜架参数；价格 ¥3280 vs ¥2680；睛童标明 PC 材料，星视佳未写材料,SRC_001#p12;SRC_001#p33,是否同一镜片设计/同一供应来源待确认；确认后可升级为 equivalent_to（Q_007）
+PREL_002,PRODUCT_SAP_004,overlaps_with,PRODUCT_SAP_003,部分重合,A,同一专利号；均为 940 个微透镜/10 圈,小圆片资料只描述前表面微透镜（+3.50~+5.00D、中心 10mm、58mm 区），未描述后表面周边离焦与散光补偿；小圆片为现片、光度 0~-6/CYL -2,SRC_001#p12;SRC_001#p14,
+PREL_003,PRODUCT_SAP_001,upgrade_of,PRODUCT_SAP_003,升级关系,A,同为星视佳双面复合结构（前表面微透镜+后表面周边离焦）,Pro：912 个/11 圈、+4.80D、填充率 43.8%（双面复合 37.3%）；Pro 有防蓝光型,SRC_001#p8;SRC_001#p12,升级依据为结构参数（填充率）明示；疗效是否更优资料无数据
+PREL_004,PRODUCT_SAP_002,overlaps_with,PRODUCT_SAP_003,部分重合,A,同为微透镜阵列近视离焦,舒适型2.0：1300+ 微透镜内置于基片、扇形布局、有 1.56–1.70 多折射率；未描述后表面周边离焦/散光补偿,SRC_001#p10,品牌以'与双面复合相比'表述，但不是同结构的升级
+PREL_005,PRODUCT_SAP_005,overlaps_with,PRODUCT_HOYA_001,部分重合,B,同为点状正度数微透镜阵列（MECH_001）,512 个/44mm 区/+3.50~+4.50D vs 396 个/离焦量资料未提供；新乐学有 RCT 引用，青护多点仅有团体标准符合声明,SRC_001#p16;SRC_001#p19,机制同族，证据强度不同，不可视为等价
+PREL_006,PRODUCT_ESSILOR_001,overlaps_with,PRODUCT_HOYA_001,部分重合,B,同为微透镜阵列近视离焦,星趣控为高非球微透镜（1021 个/11 圈）；新乐学未写明微透镜面型,SRC_001#p19;SRC_001#p26,疗效数据来自不同研究，不可横向比较
+PREL_007,PRODUCT_ZEISS_002,overlaps_with,PRODUCT_ZEISS_003,部分重合,A,成长怡包含成长乐的'减少周边远视离焦'技术（同专利）,成长怡另加 C.A.R.E. 环带微柱镜,SRC_001#p31;SRC_001#p44,
+PREL_008,PRODUCT_ZEISS_002,overlaps_with,PRODUCT_ZEISS_001,部分重合,A,成长怡包含小乐圆的 C.A.R.E.（同专利）,成长怡另加周边远视离焦；未给出微柱镜加光量,SRC_001#p31;SRC_001#p30,
+PREL_009,PRODUCT_NIKON_001,overlaps_with,PRODUCT_QS_001,解决同一问题但机制不同,A,均以降低视网膜对比度为原理（EFFECT_003）,控优点为光散射微点（MECH_007）；乐蕊为凹透镜阵列折射散焦（MECH_008）,SRC_001#p37;SRC_001#p57,
+PREL_010,PRODUCT_SAP_006,overlaps_with,PRODUCT_NIKON_001,部分重合,B,均含光散射微点降低对比度,星佳贝另加环带同心离焦（+5.0D）,SRC_001#p35;SRC_001#p37,
+PREL_011,PRODUCT_SAP_006,overlaps_with,PRODUCT_JY_001,部分重合,B,均含同心环带离焦,睛鹰 +3.50D 环带、PC；星佳贝 +5.0D 环带 + 散射点、非球面,SRC_001#p35;SRC_001#p54,
+PREL_012,PRODUCT_ZEISS_003,overlaps_with,PRODUCT_SAP_007,部分重合,B,均为周边渐变正度数、减少周边远视离焦（MECH_004）,青护全焦点为非对称扇形布局,SRC_001#p42;SRC_001#p44,
+PREL_013,PRODUCT_ZEISS_001,overlaps_with,PRODUCT_HOYA_001,解决同一问题但机制不同,A,均为儿童近视管理（FUNC_001）,C.A.R.E. 环带微柱镜'动态光信号' vs 点状微透镜离焦,SRC_001#p19;SRC_001#p29,
+PREL_014,PRODUCT_ZEISS_004,overlaps_with,PRODUCT_ESSILOR_002,部分重合,B,均为儿童渐进（近附加）,成长悦另有数码识别、眼龄识别；ADD 范围不同（+1.00~+2.50 vs +1.50/+2.00）,SRC_001#p46;SRC_001#p48,
+PREL_015,PRODUCT_NIKON_002,upgrade_of,PRODUCT_NIKON_001,无法直接比较,C,同一技术 D.O.T.,资料未说明 2.0 的升级内容；1.591 价格、光度范围、产地完全相同,SRC_001#p39;SRC_001#p40,Q_009
+PREL_016,PRODUCT_HOYA_103,equivalent_to,PRODUCT_HOYA_105,高度等价,C,隐形标记完全相同（APP11–15/APP41–45）；折射率、阿贝数、光度范围、通道、ADD 相同；介绍页产品特点表述相同,膜层选项不同（唯钻/豪钻/蓝光/光智X vs 唯频/唯频+新兰御）；11mm 通道最小瞳高 15 vs 17mm；可指定目的距离 20–90 vs 20–99cm,SRC_002#p21;SRC_002#p25,候选等价，待厂商确认后才能用于替代推荐（Q_008）
+PREL_017,PRODUCT_HOYA_104,overlaps_with,PRODUCT_HOYA_103,无法直接比较,C,同属悦览系列,S5 宣称移动中清晰、快速响应、暗光对比度提升；S3 宣称中近视野、周边光度分布、变形小；资料未说明 S5 是否包含 S3 全部能力,SRC_002#p20,
+PREL_018,PRODUCT_HOYA_106,overlaps_with,PRODUCT_HOYA_105,部分重合,A,同属锐适三维,双面版采用双面复合设计；另有 1.74 与变色选项,SRC_002#p23,
+PREL_019,PRODUCT_HOYA_102,overlaps_with,PRODUCT_HOYA_101,部分重合,A,同属新智阅（FUNC_011）,中近：至 3m、需远用处方+ADD、框高≥32；近近：至 1m、只需近用处方、无最小框高,SRC_002#p6,
+PREL_020,PRODUCT_SAP_101,overlaps_with,PRODUCT_HOYA_101,部分重合,B,均以近用处方为基准的中近用镜片（FUNC_011）,视悦 30–100cm、框高≥30；新智阅近近 至 1m、无框高要求,SRC_002#p2;SRC_002#p6,
+PREL_021,PRODUCT_ZEISS_101,overlaps_with,PRODUCT_HOYA_102,部分重合,B,均为远用处方+ADD 的室内型渐进（FUNC_011）,蔡司可选 M.I.D. 2m/4m；新智阅中近至 3m,SRC_002#p6;SRC_002#p9,
+PREL_022,PRODUCT_ESSILOR_101,overlaps_with,PRODUCT_ZEISS_101,部分重合,B,均为电脑/室内中近用渐进,依视路电脑专用覆盖距离资料未提供,SRC_002#p18;SRC_002#p9,
+PREL_023,PRODUCT_ZEISS_102,upgrade_of,PRODUCT_ZEISS_101,升级关系,A,同为蔡司室内型,臻锐：个人参数定制（FUNC_016 L3）+ 个性化 M.I.D. 1–4m,SRC_002#p9;SRC_002#p10,
+PREL_024,PRODUCT_SAP_103,upgrade_of,PRODUCT_SAP_102,升级关系,A,包含标准型全部技术,+优化内移量、双眼面弯匹配,SRC_002#p12;SRC_002#p14,
+PREL_025,PRODUCT_SAP_104,upgrade_of,PRODUCT_SAP_103,升级关系,A,包含舒享型全部技术,+均衡比例设计、双眼视觉优化、亚洲版设计、镜框自由配,SRC_002#p12;SRC_002#p15,
+PREL_026,PRODUCT_SAP_105,upgrade_of,PRODUCT_SAP_104,升级关系,A,包含亚洲版全部技术,+个性化定制、瞳孔视觉优化、波面光线优化、调节力优化,SRC_002#p12;SRC_002#p16,
+PREL_027,PRODUCT_ZEISS_104,upgrade_of,PRODUCT_ZEISS_103,升级关系,B,同为睐光2.0,3D 另有融像优化、3D视觉图标及中通道；文字说明缺失,SRC_002#p29;SRC_002#p30,Q_011
+PREL_028,PRODUCT_ZEISS_110,upgrade_of,PRODUCT_ZEISS_109,升级关系,A,p40 矩阵,+镜框识别设计、视觉焦点优化设计、亚洲人平均面部参数,SRC_002#p40,
+PREL_029,PRODUCT_ZEISS_111,upgrade_of,PRODUCT_ZEISS_110,升级关系,A,p40 矩阵,+3D面部识别设计（个人配戴参数）,SRC_002#p40,
+PREL_030,PRODUCT_ZEISS_112,upgrade_of,PRODUCT_ZEISS_111,升级关系,A,p40 矩阵,+视觉增强设计 IAD、个性化识别设计（平衡/中距/近距）、个人隐形标记,SRC_002#p40,
+PREL_031,PRODUCT_ZEISS_106,upgrade_of,PRODUCT_ZEISS_105,升级关系,A,p35 矩阵,+镜框识别设计、视觉焦点优化设计、亚洲人平均面部参数,SRC_002#p35,
+PREL_032,PRODUCT_ZEISS_107,upgrade_of,PRODUCT_ZEISS_106,升级关系,A,p35 矩阵,+3D面部识别设计,SRC_002#p35,
+PREL_033,PRODUCT_ZEISS_108,upgrade_of,PRODUCT_ZEISS_107,升级关系,A,p35 矩阵,+IAD、个性化识别设计、个人隐形标记,SRC_002#p35,
+PREL_034,PRODUCT_ZEISS_105,overlaps_with,PRODUCT_ZEISS_109,无法直接比较,C,同版本层级的数码识别、瞳孔感光平衡2.0 及版本增量功能相同,纵横版'新升级'为旋转中心设计；智锐'新升级'为智锐识别设计2.0（动态光学/年龄/清晰视觉/美薄）；纵横版有 1.53 Trivex；经典/亚洲/臻选纵横版价格更低，个化3.0 价格几乎相同,SRC_002#p35;SRC_002#p40,Q_010
+PREL_035,PRODUCT_ZEISS_106,overlaps_with,PRODUCT_ZEISS_110,无法直接比较,C,同版本层级的数码识别、瞳孔感光平衡2.0 及版本增量功能相同,纵横版'新升级'为旋转中心设计；智锐'新升级'为智锐识别设计2.0（动态光学/年龄/清晰视觉/美薄）；纵横版有 1.53 Trivex；经典/亚洲/臻选纵横版价格更低，个化3.0 价格几乎相同,SRC_002#p35;SRC_002#p40,Q_010
+PREL_036,PRODUCT_ZEISS_107,overlaps_with,PRODUCT_ZEISS_111,无法直接比较,C,同版本层级的数码识别、瞳孔感光平衡2.0 及版本增量功能相同,纵横版'新升级'为旋转中心设计；智锐'新升级'为智锐识别设计2.0（动态光学/年龄/清晰视觉/美薄）；纵横版有 1.53 Trivex；经典/亚洲/臻选纵横版价格更低，个化3.0 价格几乎相同,SRC_002#p35;SRC_002#p40,Q_010
+PREL_037,PRODUCT_ZEISS_108,overlaps_with,PRODUCT_ZEISS_112,无法直接比较,C,同版本层级的数码识别、瞳孔感光平衡2.0 及版本增量功能相同,纵横版'新升级'为旋转中心设计；智锐'新升级'为智锐识别设计2.0（动态光学/年龄/清晰视觉/美薄）；纵横版有 1.53 Trivex；经典/亚洲/臻选纵横版价格更低，个化3.0 价格几乎相同,SRC_002#p35;SRC_002#p40,Q_010
+PREL_038,PRODUCT_ESSILOR_104,upgrade_of,PRODUCT_ESSILOR_103,升级关系,B,同属万里路,睿视智辉以睿视3.0为对比基准宣称锐利度与对比度提升（Pupilizer）；是否保留 WAVE2.0/Binocular Booster 资料未说明,SRC_002#p54,
+PREL_039,PRODUCT_ESSILOR_103,overlaps_with,PRODUCT_ESSILOR_102,无法直接比较,B,同属万里路渐进,技术点不同（WAVE2.0/Binocular Booster vs 头位/视觉区域扩展）；星级为品牌自评，不作等级依据,SRC_002#p52;SRC_002#p53,
+PREL_040,PRODUCT_ZEISS_113,overlaps_with,PRODUCT_ZEISS_112,部分重合,B,均宣称适合驾驶（个化版中距型：适合驾驶、看汽车仪表盘）,驾驶型有极光膜、驾驶视点设计、瞳孔感光平衡；个化版为个人参数定制,SRC_002#p44;SRC_002#p46,
+PREL_041,PRODUCT_SAP_105,overlaps_with,PRODUCT_ZEISS_111,部分重合,B,均为按个人配戴参数定制（FUNC_016 L3）,其余技术点不同,SRC_002#p16;SRC_002#p43,
+PREL_042,PRODUCT_SAP_105,overlaps_with,PRODUCT_ESSILOR_104,部分重合,B,均含瞳孔尺寸适配（MECH_026）宣称弱光清晰,SAP 另有个人参数定制与波面优化,SRC_002#p16;SRC_002#p54,

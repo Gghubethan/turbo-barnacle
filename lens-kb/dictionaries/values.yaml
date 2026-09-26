@@ -1,0 +1,30 @@
+# 用户价值字典（L3）：普通消费者能感受到什么。初中生能看懂、不夸大、不承诺治疗。
+values:
+  - {id: VALUE_001, name: 看东西清楚, evidence: B}
+  - {id: VALUE_002, name: 帮助减慢孩子近视加深的速度（效果因人而异，需要坚持戴、定期复查）, evidence: A}
+  - {id: VALUE_003, name: 孩子看书写字时眼睛不用那么使劲, evidence: B}
+  - {id: VALUE_004, name: 一副眼镜看远看近都清楚，不用来回摘戴, evidence: A}
+  - {id: VALUE_005, name: 长时间看电脑、看书时清晰范围更宽，不用一直调整头的位置, evidence: A}
+  - {id: VALUE_006, name: 眼睛往旁边看时画面更自然，晃动感更少, evidence: A}
+  - {id: VALUE_007, name: 从看远切到看近，更快找到清晰的位置, evidence: A}
+  - {id: VALUE_008, name: 晚上或光线暗的地方也更容易看清, evidence: A}
+  - {id: VALUE_009, name: 左右眼度数差得多时，两只眼睛看东西更协调, evidence: A}
+  - {id: VALUE_010, name: 镜片更贴合自己的脸型和用眼习惯，更容易适应, evidence: A}
+  - {id: VALUE_011, name: 看手机、平板时用自然的低头姿势就能看清, evidence: A}
+  - {id: VALUE_012, name: 边走边看、看手机再看路时，视线切换更稳, evidence: A}
+  - {id: VALUE_013, name: 开车时看路、看导航、看后视镜切换更轻松, evidence: A}
+  - {id: VALUE_014, name: 小镜框也能配到合适的渐进设计, evidence: A}
+  - {id: VALUE_015, name: 左右两片镜片外观弧度一致，更好看, evidence: A}
+  - {id: VALUE_016, name: 镜片反光少，看东西更通透，别人也更容易看清你的眼睛, evidence: B}
+  - {id: VALUE_017, name: 镜片不容易脏，脏了也好擦, evidence: A}
+  - {id: VALUE_018, name: 镜片不容易刮花，更耐用, evidence: A}
+  - {id: VALUE_019, name: 可过滤部分蓝光（符合相关国家标准要求）, evidence: A}
+  - {id: VALUE_020, name: 进屋出门不用换眼镜，户外自动变深挡强光, evidence: A}
+  - {id: VALUE_021, name: 晚上对面车灯、路灯没那么刺眼, evidence: A}
+  - {id: VALUE_022, name: 挡住紫外线, evidence: A}
+  - {id: VALUE_023, name: 冷热交替时镜片不容易起雾, evidence: B}
+  - {id: VALUE_024, name: 镜片表面对特定细菌有抑菌作用, evidence: A}
+  - {id: VALUE_025, name: 运动、磕碰时镜片不容易碎, evidence: A}
+  - {id: VALUE_026, name: 镜片更薄更轻，戴着更舒服、更好看, evidence: A}
+  - {id: VALUE_027, name: 看东西边缘彩边更少，更清晰, evidence: A}
+  - {id: VALUE_028, name: 孩子左右看东西时更舒服, evidence: B}

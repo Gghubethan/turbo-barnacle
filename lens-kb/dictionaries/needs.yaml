@@ -1,0 +1,65 @@
+# 功能需求标签库：用户想要达成的结果。规则 THEN 生成 NEED，REQUIRE/BOOST 指向 FUNC。
+needs:
+  - id: NEED_001
+    name: 看远清晰矫正（基础需求）
+    evidence: B
+  - id: NEED_002
+    name: 延缓儿童近视进展（近视管理）
+    evidence: A
+    sources: [SRC_001#p18]
+  - id: NEED_003
+    name: 看近清晰（老视补偿）
+    evidence: A
+    sources: [SRC_002#p3]
+  - id: NEED_004
+    name: 一副眼镜兼顾远中近
+    evidence: A
+    sources: [SRC_002#p3, SRC_002#p12]
+  - id: NEED_005
+    name: 长时间中近距离舒适用眼
+    evidence: A
+    sources: [SRC_002#p3, SRC_002#p9]
+  - id: NEED_006
+    name: 儿童近距离用眼时减轻调节负担
+    evidence: B
+    sources: [SRC_001#p46]
+  - id: NEED_007
+    name: 夜间/驾驶时看得清、不刺眼
+    evidence: A
+    sources: [SRC_002#p46]
+  - id: NEED_008
+    name: 户外强光防护、室内外无需换镜
+    evidence: A
+    sources: [SRC_001#p21]
+  - id: NEED_009
+    name: 镜片轻薄美观
+    evidence: A
+    sources: [SRC_001#p10, SRC_002#p34]
+  - id: NEED_010
+    name: 左右眼视觉平衡（屈光参差）
+    evidence: A
+    sources: [SRC_002#p15, SRC_001#p35]
+  - id: NEED_011
+    name: 移动中快速对焦、视觉稳定
+    evidence: A
+    sources: [SRC_002#p32, SRC_002#p55]
+  - id: NEED_012
+    name: 抗冲击安全（儿童/运动）
+    evidence: A
+    sources: [SRC_002#p34, SRC_001#p54]
+  - id: NEED_013
+    name: 渐进镜片容易适应
+    evidence: B
+    sources: [SRC_002#p28, SRC_002#p51]
+  - id: NEED_014
+    name: 手机/平板等数码设备近距离看得清
+    evidence: A
+    sources: [SRC_002#p35, SRC_001#p46]
+  - id: NEED_015
+    name: 镜片耐用、好打理（耐磨/易洁/防雾）
+    evidence: B
+  - id: NEED_016
+    name: 蓝光防护（用户主动提出）
+    notes: 资料仅称相关膜层符合 GB/T 38120-2019 光安全要求与 QB/T 2506-2017 蓝光防护要求，未给出健康收益结论。
+    evidence: A
+    sources: [SRC_001#p8, SRC_002#p4]

@@ -1,0 +1,336 @@
+# 自动推荐规则库。
+# stage（按推荐顺序）：识别问题 → 识别需求 → 必须功能 → 建议功能 → 匹配商品池 → 排除 → 评分排序 → 解释
+# status：可上线候选（A 级、无待定阈值）/ 草案（B 级或阈值待业务确认）/ 阻塞（依赖 C 类信息，不得上线）
+# 语法：IF 判断条件 / THEN 生成标签 / REQUIRE 必须满足 / BOOST 符合则加分 / EXCLUDE 满足则排除 / MATCH 进入商品池
+# 当前阶段不设权重与排序算法；BOOST 只标记"加分项"，分值待底层知识稳定后再定。
+rules:
+  # ---------------- 1. 识别问题 ----------------
+  - id: RULE_001
+    name: 识别近视
+    stage: 识别问题
+    status: 草案
+    evidence: B
+    if: "EXAM_004 SE < 【近视判定阈值待业务确认】"
+    then: [PROBLEM_001]
+  - id: RULE_002
+    name: 识别儿童近视进展
+    stage: 识别问题
+    status: 草案
+    evidence: A/B
+    if: "EXAM_020 年龄 ≤ 18 AND PROBLEM_001 AND ( EXAM_014 ΔAL ≥ 0.2mm/年【仅 6–10 岁有资料参考值，A】 OR SE 年进展 ≥【阈值待业务确认】 )"
+    then: [PROBLEM_002]
+    notes: 0.2mm/年 为专家共识的"安全增长"上限，是否直接作为自动触发条件、其他年龄段阈值，待业务/临床确认（Q_004）。
+    sources: [SRC_001#p4]
+  - id: RULE_003
+    name: 识别近视发生风险（未近视儿童）
+    stage: 识别问题
+    status: 阻塞
+    evidence: C
+    if: "未近视 AND ( EXAM_013 AL 百分位 ≥【阈值待确认】 OR EXAM_016 AL/CR > 【界值资料未给出】 OR EXAM_019 远视储备 < 年龄参考值【是否作阈值待确认】 )"
+    then: [PROBLEM_003]
+    require: ["年龄 < 12 岁时须 EXAM_018 睫状肌麻痹验光确证（A）"]
+    notes: 触发阈值缺失（Q_004），不得上线。
+    sources: [SRC_001#p3, SRC_001#p5, SRC_001#p18, SRC_001#p50]
+  - id: RULE_004
+    name: 识别老视
+    stage: 识别问题
+    status: 可上线候选
+    evidence: B
+    if: "EXAM_005 处方含 ADD"
+    then: [PROBLEM_008]
+    notes: ADD 由验光师开具，本规则只做语义映射。
+  - id: RULE_005
+    name: 识别屈光参差
+    stage: 识别问题
+    status: 草案
+    evidence: B
+    if: "EXAM_017 |SE右 − SE左| ≥ 【阈值待业务确认】"
+    then: [PROBLEM_006]
+  - id: RULE_006
+    name: 识别高度屈光不正
+    stage: 识别问题
+    status: 草案
+    evidence: B
+    if: "|EXAM_001 SPH| 或 |SPH+CYL| ≥ 【阈值待业务确认】"
+    then: [PROBLEM_007]
+  - id: RULE_007
+    name: 识别中近距离高频用眼负担
+    stage: 识别问题
+    status: 草案
+    evidence: B
+    if: "高频使用 SCENE_003/SCENE_005/SCENE_002/SCENE_001【具体时长阈值待业务确认】 AND ( SYMPTOM_004 OR SYMPTOM_007 OR SYMPTOM_008 )"
+    then: [PROBLEM_009]
+  - id: RULE_008
+    name: 识别远中近多距离切换负担
+    stage: 识别问题
+    status: 可上线候选
+    evidence: B
+    if: "PROBLEM_008 AND 用户场景同时包含 D4（3m+）与 D1/D2（≤100cm）"
+    then: [PROBLEM_010]
+  - id: RULE_009
+    name: 识别夜间/弱光与眩光问题
+    stage: 识别问题
+    status: 草案
+    evidence: A/B
+    if: "( SCENE_015 OR 夜间驾驶 )【频度阈值待业务确认】 AND ( SYMPTOM_010 OR SYMPTOM_011 OR SYMPTOM_013 )"
+    then: [PROBLEM_012, PROBLEM_013]
+  - id: RULE_010
+    name: 识别儿童近距离调节滞后
+    stage: 识别问题
+    status: 草案
+    evidence: B
+    if: "EXAM_010 调节滞后 ≥【方法与阈值待业务确认】"
+    then: [PROBLEM_011]
+  - id: RULE_011
+    name: 识别移动场景视觉问题
+    stage: 识别问题
+    status: 草案
+    evidence: A/B
+    if: "SCENE_017 高频【阈值待业务确认】 OR SYMPTOM_014"
+    then: [PROBLEM_014]
+
+  # ---------------- 2. 识别需求（PROBLEM → NEED，按 tag_relations.csv） ----------------
+  - id: RULE_020
+    name: 问题到需求映射
+    stage: 识别需求
+    status: 可上线候选
+    evidence: 见 tag_relations.csv 各行
+    if: "存在 PROBLEM_x"
+    then: ["tag_relations.csv 中 PROBLEM_x directly_supports 的 NEED（A/B 级）；may_support 的 NEED 仅作候选，需人工确认"]
+
+  # ---------------- 3/4. 必须功能 / 建议功能 ----------------
+  - id: RULE_030
+    name: 儿童近视管理需求
+    stage: 必须功能
+    status: 草案
+    evidence: A
+    if: "NEED_002"
+    require: [FUNC_001]
+    boost: []
+    notes: 不按机制或品牌疗效数据加分（Q_006）。依从性要求见 RULE_070。
+  - id: RULE_031
+    name: 老视 + 多距离切换
+    stage: 必须功能
+    status: 可上线候选
+    evidence: A
+    if: "PROBLEM_008 AND PROBLEM_010"
+    then: [NEED_004]
+    require: [FUNC_010]
+  - id: RULE_032
+    name: 老视 + 中近距离高频用眼
+    stage: 建议功能
+    status: 草案
+    evidence: A/B
+    if: "PROBLEM_008 AND PROBLEM_009"
+    then: [NEED_005]
+    boost: [FUNC_011, FUNC_012]
+    notes: "若用户只配一副且需要看远/驾驶 → 以 FUNC_010 为必须、FUNC_012 加分；若可配第二副 → FUNC_011（A：SAP 建议渐进配戴者长时间近距离用眼时搭配中近用镜，SRC_002#p3）。"
+  - id: RULE_033
+    name: 屈光参差
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_006"
+    boost: [FUNC_015, FUNC_021]
+  - id: RULE_034
+    name: 高度数
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_007"
+    boost: [FUNC_040]
+  - id: RULE_035
+    name: 夜间/弱光/眩光
+    stage: 建议功能
+    status: 草案
+    evidence: A
+    if: "PROBLEM_012 OR PROBLEM_013(夜间)"
+    boost: [FUNC_014, FUNC_037]
+  - id: RULE_036
+    name: 驾驶
+    stage: 建议功能
+    status: 草案
+    evidence: A
+    if: "SCENE_010 为主要场景之一【频度阈值待业务确认】 AND PROBLEM_008"
+    boost: [FUNC_019, FUNC_014, FUNC_037]
+  - id: RULE_037
+    name: 户外强光 / 室内外切换
+    stage: 建议功能
+    status: 草案
+    evidence: A/B
+    if: "( SCENE_013 OR SCENE_014 ) AND SYMPTOM_012"
+    then: [NEED_008]
+    boost: [FUNC_036, FUNC_038]
+  - id: RULE_038
+    name: 儿童或运动 → 抗冲击
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "EXAM_020 年龄 ≤ 18 OR SCENE_018"
+    boost: [FUNC_039]
+  - id: RULE_039
+    name: 移动中看屏
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_014"
+    boost: [FUNC_018, FUNC_013]
+  - id: RULE_040
+    name: 高频手机/平板 + 老视
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_008 AND 高频 SCENE_001/SCENE_004【阈值待业务确认】"
+    then: [NEED_014]
+    boost: [FUNC_017]
+  - id: RULE_041
+    name: 首次配戴渐进
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_008 AND 无渐进配戴史"
+    then: [NEED_013]
+    boost: [FUNC_013, FUNC_016, FUNC_012]
+    notes: 资料中"初戴理想之选/94% 新戴镜者适应"为品牌宣称，不作为排序依据。
+  - id: RULE_042
+    name: 儿童调节滞后
+    stage: 建议功能
+    status: 草案
+    evidence: B
+    if: "PROBLEM_011"
+    boost: [FUNC_002]
+
+  # ---------------- 5. 匹配商品池 ----------------
+  - id: RULE_045
+    name: 功能匹配进入商品池
+    stage: 匹配商品池
+    status: 可上线候选
+    evidence: A
+    match: "PRODUCT.functions ∪ SKU.extra_functions 覆盖全部 REQUIRE 功能的 SKU 进入商品池；FUNC_016 需满足最低等级时按 SKU.function_levels 判断"
+  - id: RULE_046
+    name: 产品线分流
+    stage: 匹配商品池
+    status: 草案
+    evidence: B
+    if: "EXAM_020 年龄"
+    match: "≤18 岁仅进入 line=儿童*；成人渐进/中近用仅在 PROBLEM_008 存在时进入"
+    notes: 儿童产品年龄上限仅部分产品有资料（新乐学 <18、睛童 6–18）。
+
+  # ---------------- 6. 排除（SKU 可做性，A 级） ----------------
+  - id: RULE_050
+    name: SKU 光度范围排除
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "处方 SPH/CYL/联合光度 超出 SKU 的 sph_max/sph_min/cyl_min 及 power_note 斜边限制"
+    exclude: [SKU]
+    sources: [skus.csv 各行 source]
+  - id: RULE_051
+    name: ADD 范围排除
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "处方 ADD 不在 SKU.add_range 内（注意：部分产品短通道/GEN S 上限为 +3.00）"
+    exclude: [SKU]
+  - id: RULE_052
+    name: 装配条件排除
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "瞳高 < SKU.min_fitting_height_mm OR 框高 < SKU.min_frame_height_mm OR 框宽/镜圈宽 < 45mm（成长乐、青护全焦点） OR 单眼移心量 > 3mm（星视佳舒适型2.0）"
+    exclude: [SKU]
+  - id: RULE_053
+    name: 定制参数缺失排除
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "FUNC_016 ≥ L3 的 SKU 缺前倾角/镜眼距/镜面弯/近用距离；依视路豪华版/旗舰版缺 NVB（需 VOX 或 ER2 plus）；旗舰版缺主视眼或 ERCD"
+    exclude: [SKU]
+    sources: [SRC_002#p49, SRC_002#p58]
+  - id: RULE_054
+    name: 控优点年龄下限
+    stage: 排除
+    status: 草案
+    evidence: A
+    if: "EXAM_020 年龄 < 6"
+    exclude: [PRODUCT_NIKON_001]
+    notes: 资料为"建议 6 岁及以上"，排除还是降权待业务确认（Q_023）。
+  - id: RULE_055
+    name: 菁杰视使用前置条件
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "拟配远视度数 AND 未完成 散瞳验光 + 角膜地形图 + 眼轴 检查；或 非轴性屈光不正"
+    exclude: [PRODUCT_JJS_001]
+    sources: [SRC_001#p52]
+  - id: RULE_056
+    name: 中近用镜片不作驾驶/看远主镜
+    stage: 排除
+    status: 草案
+    evidence: B
+    if: "主要用途含 SCENE_010 或 SCENE_012 AND 仅配一副"
+    exclude: ["FUNC_011 产品（视悦智能、新智阅、蔡司室内型、万里路电脑专用）"]
+    notes: 资料只写"适合室内/桌面使用"，未明文禁止驾驶（Q_020）。
+  - id: RULE_057
+    name: 蔡司室内型 M.I.D. 组合
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "ADD − 1/M.I.D.(m) < 0.75D"
+    exclude: ["对应 M.I.D. 配置（PRODUCT_ZEISS_101/102）"]
+    sources: [SRC_002#p10]
+  - id: RULE_058
+    name: 染色需求
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "用户需要染色"
+    exclude: ["SKU.dyeable = 否（蓝光/变色/定制等）"]
+  - id: RULE_059
+    name: 星趣控专业渠道版
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "门店不具备眼轴测量、视力建档、复查追踪服务"
+    exclude: ["PRODUCT_ESSILOR_001 专业渠道版 SKU"]
+    sources: [SRC_001#p27]
+  - id: RULE_060
+    name: 现片 ±0.25D
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "处方为 ±0.25D"
+    exclude: ["PRODUCT_SAP_004、PRODUCT_SAP_005 现片 SKU"]
+    sources: [SRC_001#p14, SRC_001#p16]
+  - id: RULE_061
+    name: 棱镜/移心需求
+    stage: 排除
+    status: 可上线候选
+    evidence: A
+    if: "处方含棱镜或需移心"
+    exclude: ["PRODUCT_SAP_006（不提供）", "PRODUCT_HOYA_001 偏心（不可）/棱镜 >3 单位"]
+    sources: [SRC_001#p35, SRC_001#p22]
+
+  # ---------------- 7. 评分排序 ----------------
+  - id: RULE_065
+    name: 排序暂不启用
+    stage: 评分排序
+    status: 阻塞
+    evidence: C
+    notes: 当前阶段不做权重与 Top N；严禁按价格或品牌自评星级排序；儿童近视管理不得按疗效百分比排序（Q_006）。
+
+  # ---------------- 8. 解释 ----------------
+  - id: RULE_070
+    name: 近视管理解释必含项
+    stage: 解释
+    status: 可上线候选
+    evidence: A
+    require: ["效果因人而异（蔡司/乐蕊资料原文）", "需每天坚持配戴（星趣控/小乐圆：每天超过 12 小时）", "定期复查眼轴与屈光（专家共识：用 AL 增长评估管理效果）"]
+    sources: [SRC_001#p29, SRC_001#p24, SRC_001#p2]
+  - id: RULE_071
+    name: 引用疗效数据的合规要求
+    stage: 解释
+    status: 草案
+    evidence: B
+    require: ["引用百分比必须同时说明研究条件（人群、年龄、时长、对照、亚组）", "不得跨品牌比较百分比", "不得使用'治疗/治愈/控制住'等措辞"]
+    notes: 合规口径待业务/法务确认（Q_018）。

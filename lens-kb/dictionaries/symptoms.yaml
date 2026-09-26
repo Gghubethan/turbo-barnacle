@@ -1,0 +1,84 @@
+# 主观症状标签库。症状=用户/家长能说出来的主观感受，不是诊断。
+symptoms:
+  - id: SYMPTOM_001
+    name: 看远模糊、时清时糊（如看黑板）
+    population: 儿童
+    evidence: A
+    sources: [SRC_001#p1]
+  - id: SYMPTOM_002
+    name: 阅读跳行、漏字
+    population: 儿童
+    notes: 资料仅作为家长可观察到的现象列出，未说明其视觉原因（Q_019）。
+    evidence: A
+    sources: [SRC_001#p1]
+  - id: SYMPTOM_003
+    name: 远近切换反应慢、对焦慢
+    population: 儿童/成人
+    aliases: [聚焦延迟, 看远看近反应慢]
+    evidence: A
+    sources: [SRC_001#p1, SRC_002#p28, SRC_002#p32]
+  - id: SYMPTOM_004
+    name: 长时间近距离用眼疲劳、难以持久
+    population: 儿童/成人
+    aliases: [学习集中难持久, 看近不能持久, 视觉疲劳]
+    notes: 儿童"学习集中难持久"是注意力层面的表述，资料将其与视健康关联，视觉原因未说明。
+    evidence: A
+    sources: [SRC_001#p1, SRC_002#p37, SRC_002#p51]
+  - id: SYMPTOM_005
+    name: 看近模糊或看近费力
+    population: 成人
+    aliases: [看近困难]
+    evidence: A
+    sources: [SRC_002#p3, SRC_002#p12, SRC_002#p28]
+  - id: SYMPTOM_006
+    name: 需频繁摘戴/扶眼镜才能看清不同距离
+    population: 成人
+    evidence: A
+    sources: [SRC_002#p2]
+  - id: SYMPTOM_007
+    name: 看屏需抬头/仰头，肩颈僵硬
+    population: 成人
+    evidence: A
+    sources: [SRC_002#p9, SRC_002#p51]
+  - id: SYMPTOM_008
+    name: 渐进镜片看中近距离视野窄
+    population: 成人（渐进镜片配戴者）
+    evidence: A
+    sources: [SRC_002#p3]
+  - id: SYMPTOM_009
+    name: 镜片周边晃动、变形感（泳动感）
+    population: 成人（渐进镜片配戴者）
+    aliases: [扭曲, 摇晃效应]
+    evidence: A
+    sources: [SRC_002#p13, SRC_002#p16, SRC_002#p6]
+  - id: SYMPTOM_010
+    name: 夜间车灯/路灯刺眼、眩光
+    population: 成人
+    evidence: A
+    sources: [SRC_002#p46]
+  - id: SYMPTOM_011
+    name: 弱光环境下看不清
+    population: 成人
+    evidence: A
+    sources: [SRC_002#p46, SRC_002#p16, SRC_002#p54]
+  - id: SYMPTOM_012
+    name: 户外阳光刺眼
+    population: 儿童/成人
+    evidence: A
+    sources: [SRC_001#p21]
+  - id: SYMPTOM_013
+    name: 光晕
+    population: 成人
+    evidence: A
+    sources: [SRC_002#p16]
+  - id: SYMPTOM_014
+    name: 移动中看不清，需放慢或停下调整姿势
+    population: 成人（渐进镜片配戴者）
+    evidence: A
+    sources: [SRC_002#p50]
+  - id: SYMPTOM_015
+    name: 初戴渐进镜片不适应
+    population: 成人
+    notes: 资料以正面表述出现（"初次配戴渐进的理想之选""94% 新戴镜者轻松适应"），症状本身为归纳。
+    evidence: B
+    sources: [SRC_002#p28, SRC_002#p51]

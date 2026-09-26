@@ -1,0 +1,1678 @@
+# 镜片产品标准库（PRODUCT = 系列级设计；折射率/膜层/版本组合见 skus.csv）
+# 字段对照：brand 品牌 / series 系列 / name 产品名称 / product_type 产品类型 / official_tech_names 官方技术名称 /
+# official_claims 官方描述 / mechanisms 技术机制 / effects 光学效果 / functions 标准功能标签（设计层） /
+# values 用户价值 / problems 主要解决问题 / population 适用人群 / age 年龄 / symptoms 主观症状 / scenes 使用场景 /
+# exams 关联验光指标 / required_conditions 必须条件 / suggested_conditions 建议条件 / exclusion_conditions 排除条件 /
+# function_levels 功能等级 / price_tier 价格层级 / evidence_notes 证据说明 / sources 资料来源 / version 当前版本 /
+# open_questions 待确认问题。与其他产品关系见 relations/product_relations.csv。
+# 标签按证据等级分组：{A: [...], B: [...], C: [...]}；缺省组表示无。
+# 注：SRC_001#p1 列出的儿童症状（看黑板时清时糊、跳行漏字等）是整册"视健康筛查"引导，未指向具体产品，因此不挂到单个产品。
+products:
+  # ============================ 儿童近视管理 ============================
+  - id: PRODUCT_SAP_001
+    brand: SAP（思汉普）
+    series: 星视佳
+    name: 星视佳 Pro 双面复合离焦镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [多点离焦技术, 周边离焦, 双面技术：多点离焦+周边离焦复合叠加]
+    official_claims:
+      - "星视佳Pro，融合多点离焦+周边离焦两种技术，效果二合一（SRC_001#p8）"
+      - "可使光线在视网膜前方形成非聚焦的光束带，从而产生延缓眼轴增长的信号区，进而达到减缓青少年近视加深的效果（SRC_001#p8）"
+    key_params: {前表面微透镜: 912个/11圈, 分布直径: 52.8mm, 中心区直径: 约8.3mm, 微透镜离焦量: +4.80D, 后表面周边离焦: 渐变式最大约+1.00D, 微结构面积填充率: "43.8%（星视佳双面复合 37.3%）", 专利: "ZL202121288583.4；ZL202110571863.4"}
+    mechanisms: {A: [MECH_001, MECH_004, MECH_013, MECH_042]}
+    effects: {A: [EFFECT_001, EFFECT_004, EFFECT_027], B: [EFFECT_002]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_026]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 近视青少年（资料表述"减缓青少年近视加深"）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 瞳高≥15mm, 框高≥30mm, 处方在 SKU 光度范围内（SPH 0~-12，CYL≤-4，S+C≥-12）]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围, 瞳高<15mm 或框高<30mm]
+    price_range_cny: [3680, 3980]
+    price_tier: P3
+    price_effective_from: 2025-06-01
+    evidence_notes: 效果表述为品牌宣称，引用专利而非临床研究；资料无该产品临床数据（claim_type=品牌宣称）。
+    sources: [SRC_001#p7, SRC_001#p8]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_SAP_002
+    brand: SAP（思汉普）
+    series: 星视佳
+    name: 星视佳 舒适型2.0 多点离焦镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [多点离焦技术, 内置设计, 扇形设计, 高阿贝数, 高折射率]
+    official_claims:
+      - "相较于'双面复合'设计，微透镜增至1300多个，形成更大面积离焦区域；使周边光线聚焦于视网膜前方，形成持续性离焦信号（SRC_001#p10）"
+      - "将微透镜内置于镜片基片内部，镜片表面平整，镀膜更均匀，膜层稳定性、耐磨性更好（SRC_001#p10）"
+      - "根据中国孩子水平视野切换多、上下视野切换少的用眼特点……设计了扇形视像区，提升佩戴舒适性（SRC_001#p10）"
+    key_params: {微透镜: 1300多个（内置）, 布局: 扇形视像区, 专利: "实用新型 ZL202021387008.5；发明 ZL202110526909.0", 耐磨: 国标加强型}
+    mechanisms: {A: [MECH_001, MECH_009, MECH_010, MECH_050, MECH_051, MECH_060, MECH_061]}
+    effects: {A: [EFFECT_001, EFFECT_004, EFFECT_031, EFFECT_028], B: [EFFECT_030]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_028, VALUE_018, VALUE_027]
+    problems: {A: [PROBLEM_002], B: [PROBLEM_007]}
+    needs: [NEED_002, NEED_009]
+    population: 近视儿童青少年；高折射率满足"部分高度数消费者需求"
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {B: [SCENE_016]}
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009]
+    required_conditions: [单眼瞳高与单眼瞳距, 单眼移心量≤3mm, 处方在 SKU 光度范围内（1.56：SPH 0~-6；其余 0~-8；CYL≤-4）]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围, 单眼移心量>3mm]
+    price_range_cny: [2080, 5280]
+    price_tier: P2
+    price_effective_from: 2025-06-01
+    evidence_notes: 效果为品牌宣称+专利；"与双面复合相比"的比较为品牌内部对比。
+    sources: [SRC_001#p9, SRC_001#p10]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_SAP_003
+    brand: SAP（思汉普）
+    series: 星视佳
+    name: 星视佳 双面复合多点离焦镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [微透近视离焦技术, 双面复合设计, 散光补偿, 周边离焦]
+    official_claims:
+      - "前表面采用正屈光力的微透镜技术……后表面采用周边离焦技术，辅助矫正；同时在内表面增加散光离焦补偿，刺激视网膜周边区域散光离焦（SRC_001#p12）"
+    key_params: {微透镜: 940个/10圈, 后表面周边离焦量: 约+1.00D, 微结构面积填充率: 37.3%, 专利: ZL202121288583.4}
+    mechanisms: {A: [MECH_001, MECH_004, MECH_006, MECH_013, MECH_042]}
+    effects: {A: [EFFECT_001, EFFECT_005, EFFECT_004, EFFECT_027], B: [EFFECT_002]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_026]
+    problems: {A: [PROBLEM_002], B: [PROBLEM_005]}
+    needs: [NEED_002]
+    population: 近视儿童青少年
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 瞳高≥15mm, 框高≥30mm, 处方在 SPH 0~-12、CYL≤-4、S+C≥-12 内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围, 瞳高<15mm 或框高<30mm]
+    price_range_cny: [2680, 2680]
+    price_tier: P2
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称+专利；与 Shamir 睛童专利号、材料参数、光度范围一致（见 PREL_001）。
+    sources: [SRC_001#p11, SRC_001#p12]
+    version: v0.1.0
+    open_questions: [Q_006, Q_007]
+
+  - id: PRODUCT_SAP_004
+    brand: SAP（思汉普）
+    series: 青护
+    name: 青护小圆片 多点离焦多层复合膜镜片
+    product_type: 儿童青少年近视管理单光镜片（现片）
+    line: 儿童近视管理
+    official_tech_names: [多点离焦技术, 多点微透镜, 离焦优化设计]
+    official_claims:
+      - "在镜片表面'雕刻'940个小圆微透镜……从内到外一共10圈……离焦量逐渐变化（+3.50D~+5.00D），形成持续性近视离焦区域（SRC_001#p14）"
+      - "可使光线在视网膜前方形成非聚焦的特殊光学形态的光束带……产生减缓眼轴增长的信号区（SRC_001#p14）"
+    key_params: {微透镜: 940个/10圈, 中心区直径: 10mm, 离焦区直径: 约58mm, 微透镜离焦量: "+3.50D~+5.00D（内→外渐变）", 专利: ZL202121288583.4}
+    mechanisms: {A: [MECH_001]}
+    effects: {A: [EFFECT_001, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 近视青少年（资料："能满足青少年不同大小镜框的需求"）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 瞳高≥15mm, 框高≥30mm, 处方在 SPH 0~-6、CYL≤-2 内（现片，不提供±0.25D）]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出现片光度范围, 处方为 ±0.25D]
+    price_range_cny: [1580, 1580]
+    price_tier: P2
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称+专利（与星视佳双面复合同一专利号）。
+    sources: [SRC_001#p13, SRC_001#p14]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_SAP_005
+    brand: SAP（思汉普）
+    series: 青护
+    name: 青护多点离焦镜片
+    product_type: 儿童青少年近视管理单光镜片（现片）
+    line: 儿童近视管理
+    official_tech_names: [多点微透镜技术, 三区式渐变近视离焦区]
+    official_claims:
+      - "在镜片表面分布512个不同直径的微透镜……把镜片的周边视觉成像在人眼视网膜上或视网膜前，从而进行近视防控（SRC_001#p16）"
+      - "该产品符合 T/COOA 7-2023《微结构眼镜镜片 微透镜阵列镜片》团体标准的相关要求（SRC_001#p16）"
+    key_params: {微透镜: 512个, 分布直径: 44mm, 中心区直径: 9mm, 微透镜离焦量: "+4.50D~+3.50D（由内至外三区渐变）", 专利: ZL202120598757.0}
+    mechanisms: {A: [MECH_001]}
+    effects: {A: [EFFECT_001, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 近视青少年
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 瞳高≥15mm, 框高≥30mm, 处方在 SPH 0~-6、CYL≤-2、S+C≥-6 内（现片，不提供±0.25D）]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出现片光度范围, 处方为 ±0.25D]
+    price_range_cny: [980, 980]
+    price_tier: P1
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称+团体标准符合性声明；无临床数据。
+    sources: [SRC_001#p15, SRC_001#p16]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_SAP_006
+    brand: SAP（思汉普）（品牌依据脚注"SAP品牌镜片样片"推断，页面无品牌名）
+    series: 星佳贝
+    name: 星佳贝 青少年近视管理镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [星点动态离焦技术, 星光扩散点, 环带同心离焦设计, 非球面设计, 优像平衡]
+    official_claims:
+      - "基于对比度理论及离焦理论，综合采用两项专利技术……在镜片上精密排布数千星光扩散点，用以降低视网膜成像对比度；同时融合环状离焦设计……形成持续稳定的近视离焦信号区（SRC_001#p35）"
+      - "与 PC 材质镜片相比，镜片阿贝数高，像散小，成像更清晰（SRC_001#p35）"
+    key_params: {星光扩散点: 数千个, 环带附加顶焦度: +5.0D, 专利: "202220252267.X；202020952712.4", 优像平衡: "+¥200/副，使左右镜片前表面弯度相同并优化双眼融像"}
+    mechanisms: {A: [MECH_007, MECH_005, MECH_024, MECH_061, MECH_029, MECH_028]}
+    effects: {A: [EFFECT_003, EFFECT_001, EFFECT_004, EFFECT_028, EFFECT_029, EFFECT_012]}
+    functions: {A: [FUNC_001, FUNC_021, FUNC_015]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_027, VALUE_015, VALUE_009]
+    problems: {A: [PROBLEM_002, PROBLEM_006]}
+    needs: [NEED_002, NEED_010]
+    population: 青少年；优像平衡针对"左右眼光度不同（含一片正光度，一片负光度）"的儿童
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_017, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 框高≥28mm, 处方在 SKU 光度范围内（正球最高 +4/+6）]
+    suggested_conditions: [左右眼一正一负或度数差异大时可选优像平衡]
+    exclusion_conditions: [需棱镜或移心（不提供）, 处方超出光度范围, 框高<28mm]
+    price_range_cny: [3280, 6980]
+    price_tier: P3
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称+专利。名称含"动态"，资料未描述任何动态机制（TERM_007）。唯一覆盖正球镜度的离焦类产品。
+    sources: [SRC_001#p34, SRC_001#p35]
+    version: v0.1.0
+    open_questions: [Q_006, Q_013]
+
+  - id: PRODUCT_SAP_007
+    brand: SAP（思汉普）
+    series: 青护
+    name: 青护全焦点镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [周边离焦设计技术, 非对称扇形设计, 臻洁膜]
+    official_claims:
+      - "中央区设计正常的屈光度……镜片由3万多个光学追踪点构成，呈扇形组合排列；采用周边离焦技术设计，减少周边远视性离焦，有效减缓青少年近视加深（SRC_001#p42）"
+    key_params: {光学追踪点: 3万多个, 布局: 非对称+扇形, 专利: ZL201621065501.9, 紫外截止: UV400}
+    mechanisms: {A: [MECH_004, MECH_010, MECH_058]}
+    effects: {A: [EFFECT_002, EFFECT_004, EFFECT_023], B: [EFFECT_030]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_022, VALUE_028]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 青少年
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [单眼瞳高与单眼瞳距, 框宽≥45mm, 处方在 SPH 0~-10、CYL≤-5、S+C≥-10 内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [框宽<45mm, 处方超出光度范围]
+    price_range_cny: [880, 1380]
+    price_tier: P1
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称+专利。
+    sources: [SRC_001#p41, SRC_001#p42]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_HOYA_001
+    brand: 豪雅 HOYA
+    series: 新乐学 MiYOSMART
+    name: 豪雅新乐学多点近视离焦 1.59 树脂镜片（守护版 / 阳光版）
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [D.I.M.S. 多区正向光学离焦, 抗菌膜层（守护版）, 光智·X 速变色（阳光版）]
+    official_claims:
+      - "镜片表面上分布的396个点状正向光学离焦区，能持续性地为配戴者提供近视离焦功能（SRC_001#p19）"
+      - "针对18岁以下有矫正及延缓近视需求的青少年儿童提供有效近视管理解决方案（SRC_001#p19）"
+      - "12个月近视进展平均减慢69%，眼轴延长平均减慢66%（24个月分别为59%、60%）（SRC_001#p19，引用 2 年 RCT，BJO 2018）"
+      - "配戴 DIMS 镜片超过6年的儿童近视平均进展约 -0.15D/年，眼轴约 0.10mm/年（SRC_001#p19）"
+    key_params: {离焦区: 396个, 微透镜离焦量: 资料未提供, 微透镜尺寸偏差: "<0.1mm", 研究人群: "183例 SE -1.00~-5.00D、屈光参差≤1.5D 的中国儿童（2年 RCT）", 抗菌: "SGS：大肠杆菌/乙型溶血性链球菌 99.9%，肺炎克雷伯氏菌 99.7%，金黄色葡萄球菌 99.0%", 变色: 50秒快速褪色}
+    mechanisms: {A: [MECH_001], B: []}
+    effects: {A: [EFFECT_001, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 18 岁以下有矫正及延缓近视需求的青少年儿童（A）；阳光版面向户外活动多的儿童（A）
+    age: "<18 岁（A）"
+    symptoms: {A: [SYMPTOM_012]}
+    scenes: {A: [SCENE_011, SCENE_013, SCENE_014]}
+    exams: [EXAM_001, EXAM_002, EXAM_004, EXAM_008, EXAM_009, EXAM_014, EXAM_020]
+    required_conditions: [处方在 SKU 光度范围内（守护版 SPH 0~-13；阳光版 0~-10；CYL≤-4）]
+    suggested_conditions: [户外活动多、室内外频繁切换 → 阳光版（A）]
+    exclusion_conditions: [需要染色（不可染色）, 需要偏心（不可）, 棱镜>3 单位]
+    price_range_cny: [3980, 4980]
+    price_tier: P3
+    price_note: "守护版价格冲突：p22 ¥4980 / p23 ¥3980（Q_001）；阳光版 ¥4980"
+    evidence_notes: 疗效数据引用独立发表的 RCT（claim_type=引用临床研究），研究入组条件仅代表证据人群；6 年数据为单组随访。
+    sources: [SRC_001#p17, SRC_001#p18, SRC_001#p19, SRC_001#p20, SRC_001#p21, SRC_001#p22, SRC_001#p23]
+    version: v0.1.0
+    open_questions: [Q_001, Q_006]
+
+  - id: PRODUCT_ESSILOR_001
+    brand: 依视路 essilor
+    series: 星趣控 Stellest
+    name: 依视路星趣控镜片（常规版 / 专业渠道版）
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [H.A.L.T. 高非球微透镜星控技术, 宇宙片, 钻晶膜层]
+    official_claims:
+      - "隐形分布在11圈星环上的1021个微透镜，可使光线在视网膜前方形成非聚焦的光束带，并产生延缓眼轴增长的信号区（SRC_001#p26）"
+      - "对比单光镜片，当每天戴镜时间超过12小时，延缓近视加深平均达67%（SRC_001#p24，引用温医大 2 年 RCT，JAMA Ophthalmology 2022）"
+      - "研究组连续戴镜五年后……平均近视进展量不到单光镜片的一半（SRC_001#p26；第3年起对照组为模拟数据）"
+    key_params: {微透镜: 1021个/11圈, 材料: 1.591 宇宙片, 研究入组年龄: 8–13岁, "67%的计算人群": 连续两年每日配戴>12h 的 32 名常戴镜者}
+    mechanisms: {A: [MECH_002, MECH_059, MECH_058]}
+    effects: {A: [EFFECT_001, EFFECT_004, EFFECT_026, EFFECT_023]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_025, VALUE_022]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002, NEED_012]
+    population: 近视儿童青少年；资料称"18岁之前持续有效"（A，品牌宣称基于5年随访）
+    age: 资料未给出适用年龄范围；研究入组 8–13 岁
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_004, EXAM_013, EXAM_014, EXAM_033]
+    required_conditions: [处方在 SKU 光度范围内（常规版 SPH 0~-10、CYL≤-4；专业渠道版 SPH 0~-6、CYL≤-2）, "专业渠道版：门店须具备眼轴测量、视力建档、复查追踪服务（A）"]
+    suggested_conditions: ["每日配戴超过 12 小时（A：67% 数据来源条件）"]
+    exclusion_conditions: [处方超出光度范围, 门店不具备专业服务时不可选专业渠道版]
+    price_range_cny: [3980, 4580]
+    price_tier: P3
+    evidence_notes: 67% 为常戴镜者亚组结果；5 年期第 3 年起采用模拟对照（按 SER 年递减 9.7%、AL 年递减 15% 推算）——话术需完整表述条件（Q_018）。
+    sources: [SRC_001#p24, SRC_001#p25, SRC_001#p26, SRC_001#p27]
+    version: v0.1.0
+    open_questions: [Q_006, Q_018]
+
+  - id: PRODUCT_ZEISS_001
+    brand: 蔡司 ZEISS
+    series: 小乐圆 MyoCare
+    name: 蔡司小乐圆镜片（H / S）
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [C.A.R.E. 技术, 环带微柱镜结构, 自由环面设计, 钻立方铂金膜]
+    official_claims:
+      - "受角膜塑形镜视觉信号的启发，采用 C.A.R.E. 技术有效减缓近视进展（SRC_001#p29）"
+      - "12个月时间内，小乐圆S镜片、小乐圆H镜片相对正视眼有效率分别达68%、71%；完成随访的156位配戴者平均一年近视度数增长仅35度（SRC_001#p29，引用多中心 RCT 中期报告 ARVO 2024）"
+      - "90%以上配戴者3天内适应。近视管理眼镜需要坚持每天配戴超过12小时以获得稳定的延缓近视效果（SRC_001#p29）"
+      - "受环境、个体等因素影响，产品作用于具体配戴者的效果将因人而异（SRC_001#p29）"
+    key_params: {小乐圆H: "中央光学区 7mm，环带微柱镜等效球镜加光量 +4.60Ds", 小乐圆S: "中央光学区 9mm，+3.80Ds", 专利: ZL202010000666.2, 研究: "240人、6–13岁、NCT05288335（中期）"}
+    mechanisms: {A: [MECH_003, MECH_025, MECH_023, MECH_058, MECH_052]}
+    effects: {A: [EFFECT_032, EFFECT_004, EFFECT_023, EFFECT_026, EFFECT_019], B: [EFFECT_001]}
+    functions: {A: [FUNC_001, FUNC_038]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_022, VALUE_025]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 近视儿童青少年；研究人群 6–13 岁
+    age: 资料未给出适用年龄范围
+    symptoms: 资料未提供
+    scenes: {A: [SCENE_011]}
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_013, EXAM_014, EXAM_033]
+    required_conditions: [屈光度、单眼瞳距、单眼瞳高, 处方在 SKU 光度范围内（1.67 最大正球为 -2.00）]
+    suggested_conditions: ["每天配戴超过 12 小时（A）"]
+    exclusion_conditions: [处方超出光度范围, "定制片需要染色（不可染色）"]
+    price_range_cny: [2980, 5480]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 疗效为"相对正视眼有效率"（指标定义与其他品牌的"进展减缓百分比"不同，不可横向比较）；中期报告。C.A.R.E. 资料未表述为"离焦"，EFFECT_001 为 B。
+    sources: [SRC_001#p28, SRC_001#p29, SRC_001#p30]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_ZEISS_002
+    brand: 蔡司 ZEISS
+    series: 成长怡
+    name: 蔡司成长怡镜片（融合设计离焦镜片）
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [融合设计, 减少周边远视离焦技术, C.A.R.E. 环带微柱镜, 钻立方爱动膜]
+    official_claims:
+      - "结合减少周边远视离焦技术的近视离焦，和C.A.R.E.环带微柱镜的动态光信号，旨在延缓近视加深的同时，为活泼好动的孩子提供清晰舒适的视野（SRC_001#p31）"
+      - "这宣传语旨在表达产品的设计目标（SRC_001#p31 脚注1）"
+    key_params: {专利: "ZL200680044123.9（周边远视离焦）；ZL202010000666.2（C.A.R.E.）", 上市: 新品}
+    mechanisms: {A: [MECH_004, MECH_003, MECH_058]}
+    effects: {A: [EFFECT_002, EFFECT_001, EFFECT_032, EFFECT_004, EFFECT_023]}
+    functions: {A: [FUNC_001, FUNC_038]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_022]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 活泼好动的近视儿童（A，定位表述）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {A: [SCENE_011]}
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009]
+    required_conditions: [屈光度、单眼瞳距、单眼瞳高, 处方在 SPH 0~-9、CYL≤-4 内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围, 需要染色]
+    price_range_cny: [2380, 2380]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 资料引用的是两项组成技术各自的研究（成长乐、小乐圆），本产品自身无临床数据；脚注明确称"宣传语旨在表达设计目标"。
+    sources: [SRC_001#p31]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_ZEISS_003
+    brand: 蔡司 ZEISS
+    series: 成长乐 MyoVision
+    name: 蔡司成长乐单光镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [周边视力控制技术, 蔡司莲花膜, 钻立方铂金膜]
+    official_claims:
+      - "镜片中央贝壳形区域提供稳定的处方度数……周边区域逐渐增加的正度数，使周边的光线投射到视网膜前方，即令周边远视离焦变为近视离焦（SRC_001#p44）"
+      - "2011年在中国市场上市……累计共700万儿童选择（SRC_001#p44，品牌销售数据）"
+      - "中山眼科中心研究：整体差值没有统计学意义；6–12岁且父母至少一方近视的儿童近视进展显著减缓（SRC_001#p44）"
+    key_params: {专利: ZL200680044123.9, 外观: 功能区"隐形"，与普通单光差别很小}
+    mechanisms: {A: [MECH_004, MECH_058]}
+    effects: {A: [EFFECT_002, EFFECT_001, EFFECT_004, EFFECT_023]}
+    functions: {A: [FUNC_001, FUNC_038]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_022]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 近视儿童青少年；证据显著的亚组为 6–12 岁且父母至少一方近视（A）
+    age: 研究人群 6–16 岁；显著亚组 6–12 岁
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028, EXAM_029]
+    required_conditions: [屈光度、单眼瞳高、单眼瞳距, 镜圈宽≥45mm, "成品片仅单球镜（1.5：-1.00~-4.00；1.6：-1.00~-6.00）", 定制片在 SKU 光度范围内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [镜圈宽<45mm, 成品片处方含柱镜, 处方超出光度范围]
+    price_range_cny: [1580, 3780]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 关键证据细节：整体差异无统计学意义，仅亚组显著（Q_017）。话术不得笼统称"有效延缓"而不附条件。
+    sources: [SRC_001#p43, SRC_001#p44, SRC_001#p45]
+    version: v0.1.0
+    open_questions: [Q_006, Q_017]
+
+  - id: PRODUCT_SHAMIR_001
+    brand: Shamir 以色列·沙米尔（代理：智宇）
+    series: 睛童
+    name: 睛童近视多点离焦
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [双面复合设计, 碧慧膜]
+    official_claims:
+      - "双面复合设计，延缓近视加深；增加视网膜周边散光刺激，减缓眼轴增长；双面复合设计，镜片更薄更美观（SRC_001#p33）"
+      - "为谁而来：6–18岁学生近视群体；适用但不限于近视+散光初戴者；注重镜片轻薄美观度的人群（SRC_001#p33）"
+    key_params: {材料: 1.590（PC）, 阿贝数: 30.6, 专利: ZL202121288583.4（与 SAP 星视佳双面复合/青护小圆片相同）}
+    mechanisms: {A: [MECH_013, MECH_006], B: [MECH_001, MECH_004]}
+    effects: {A: [EFFECT_005, EFFECT_027], B: [EFFECT_001]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_026]
+    problems: {A: [PROBLEM_002, PROBLEM_005]}
+    needs: [NEED_002, NEED_009]
+    population: 6–18 岁学生近视群体；适用但不限于近视+散光初戴者（A）
+    age: 6–18 岁（A）
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_020, EXAM_028]
+    required_conditions: [单眼瞳距、单眼瞳高、镜架参数（衬片宽、高、鼻梁尺寸）, 处方在 SPH 0~-12、CYL≤-4、S+C≥-12 内]
+    suggested_conditions: [近视+散光初戴者（A）]
+    exclusion_conditions: [处方超出光度范围]
+    price_range_cny: [3280, 3280]
+    price_tier: P3
+    evidence_notes: 资料未说明具体微结构形式；MECH_001/MECH_004 为依据同专利号的归纳（B）。
+    sources: [SRC_001#p32, SRC_001#p33]
+    version: v0.1.0
+    open_questions: [Q_006, Q_007]
+
+  - id: PRODUCT_NIKON_001
+    brand: 尼康 Nikon
+    series: 控优点
+    name: 尼康控优点镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [D.O.T. 点扩散近视控制技术, 高透高洁UV]
+    official_claims:
+      - "独特的微点设计使光线轻微发散，从而降低对比度并减少对视网膜双极细胞的过度刺激（SRC_001#p37）"
+      - "65%儿童首年近视度数无明显加深；连续两年全天配戴延缓近视进展平均达59%（SRC_001#p38，临床试验）"
+      - "建议6岁及以上儿童配戴，对低年龄段6-7岁的儿童（该年龄段的近视进展速度最快）尤为有效（SRC_001#p38）"
+    key_params: {文献: "英国眼科学期刊、IMI 近视管理白皮书（2023）等", 认证: 欧盟CE}
+    mechanisms: {A: [MECH_007]}
+    effects: {A: [EFFECT_003, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 6 岁及以上儿童（A，建议）
+    age: "≥6 岁（建议）"
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_020, EXAM_028]
+    required_conditions: [镜片光度、单眼瞳距/瞳高, 处方在 SKU 光度范围内]
+    suggested_conditions: [镜框高度≥30mm（A，建议）, 连续全天配戴（A，研究条件）]
+    exclusion_conditions: [处方超出光度范围, "<6 岁（资料为'建议'，排除或降权待确认，Q_023）"]
+    price_range_cny: [3980, 4980]
+    price_tier: P3
+    evidence_notes: 临床数据来源页未给出研究注册号与样本细节（claim_type=品牌宣称引用临床试验）。
+    sources: [SRC_001#p36, SRC_001#p37, SRC_001#p38, SRC_001#p39]
+    version: v0.1.0
+    open_questions: [Q_006, Q_023]
+
+  - id: PRODUCT_NIKON_002
+    brand: 尼康 Nikon
+    series: 控优点
+    name: 尼康控优点 2.0 镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [D.O.T. 点扩散近视控制技术]
+    official_claims:
+      - "采用D.O.T.点扩散近视控制技术，降低对比度，延缓近视进展（SRC_001#p40）"
+    key_params: {与控优点差异: 资料未提供}
+    mechanisms: {A: [MECH_007]}
+    effects: {A: [EFFECT_003, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 资料未提供（推测同控优点，未写明）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [镜片光度、单眼瞳距/瞳高, 处方在 SPH 0~-8、CYL≤-2 内]
+    suggested_conditions: [镜框高度≥30mm（A，建议）]
+    exclusion_conditions: [处方超出光度范围]
+    price_range_cny: [3980, 3980]
+    price_tier: P3
+    evidence_notes: 与控优点 1.591 的价格、光度范围、产地完全相同，"2.0"升级内容资料未说明（Q_009）。
+    sources: [SRC_001#p40]
+    version: v0.1.0
+    open_questions: [Q_006, Q_009]
+
+  - id: PRODUCT_JY_001
+    brand: 睛鹰（技术：香港理工大学 DISC；代理：苏明达光学）
+    series: 睛鹰 MyoDISC
+    name: 睛鹰 MyoDISC 镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [DISC 专利技术, 多环离焦, 超精密纳米结构, 晴朗膜]
+    official_claims:
+      - "中央区直径8mm为足矫设计，成像在视网膜上；多环离焦区域，每个离焦环提供+3.50D离焦量；环间距1mm，环宽1mm（SRC_001#p54）"
+      - "临床数据表明，DISC 专利技术在离焦隐形眼镜上，近视管理效果达60%（SRC_001#p53）"
+      - "聚碳酸酯材料拥有良好的抗冲击性能（SRC_001#p54）"
+    key_params: {中央区: 8mm, 环带离焦量: +3.50D, 环宽/间距: 1mm/1mm, 材料: 聚碳酸酯 1.586（密度1.20）, 专利: "CN101090686A；HK30060394A"}
+    mechanisms: {A: [MECH_005, MECH_059, MECH_051], B: [MECH_023]}
+    effects: {A: [EFFECT_001, EFFECT_004, EFFECT_026, EFFECT_018]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002, VALUE_025, VALUE_017]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002, NEED_012]
+    population: 儿童青少年
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_008, EXAM_009]
+    required_conditions: [处方在 SPH +2.25~-8.00、CYL≤-4.00 内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围]
+    price_range_cny: [4390, 4390]
+    price_tier: P3
+    evidence_notes: 60% 效果数据来自 DISC 离焦**隐形眼镜**研究，并非本框架镜片的临床数据（Q_014）。
+    sources: [SRC_001#p53, SRC_001#p54, SRC_001#p55, SRC_001#p56]
+    version: v0.1.0
+    open_questions: [Q_006, Q_013, Q_014]
+
+  - id: PRODUCT_QS_001
+    brand: 全适（品牌主体资料未明确）
+    series: 全适·乐蕊
+    name: 全适·乐蕊 儿童近视管理镜片
+    product_type: 儿童青少年近视管理单光镜片
+    line: 儿童近视管理
+    official_tech_names: [L.A.R.I. 凹透镜匀光技术, 六边形全适网阵微结构, 钻朗膜]
+    official_claims:
+      - "在镜片前表面采用独特的微结构设计，光线经过折射后形成散焦面，实现降低视网膜周边对比度信号（SRC_001#p57）"
+      - "12个月研究结果表明……6~12岁年龄段，等效球镜度延缓增长率为68.7%（-0.21D），眼轴长度延缓增长率为51.4%（0.17mm）（SRC_001#p58，温医大 240 人研究一年期小结 ChiCTR2200057210）"
+      - "配戴舒适性与单焦点镜片没有显著差异（SRC_001#p58）"
+    key_params: {专利: "ZL202111230721.8；ZL202210676578.3；ZL202210676471.9", 研究: "240人，双盲，12个月"}
+    mechanisms: {A: [MECH_008]}
+    effects: {A: [EFFECT_003, EFFECT_004]}
+    functions: {A: [FUNC_001]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002]}
+    needs: [NEED_002]
+    population: 儿童近视；显著数据为 6–12 岁组（A）
+    age: 研究人群 6–12 岁
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002]
+    required_conditions: [处方在 SKU 光度范围内（库存 1.56：SPH 0~-6、CYL≤-2；定制 1.60：SPH 0~-9、CYL≤-3）]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [处方超出光度范围]
+    price_range_cny: [1980, 2980]
+    price_tier: P2
+    evidence_notes: 引用临床研究一年期小结。
+    sources: [SRC_001#p57, SRC_001#p58]
+    version: v0.1.0
+    open_questions: [Q_006, Q_013]
+
+  - id: PRODUCT_JJS_001
+    brand: 菁杰视（品牌主体资料未明确）
+    series: 菁杰视
+    name: 菁杰视 复合离焦镜片-Ultimate
+    product_type: 儿童青少年离焦单光镜片（近视设计 / 远视设计）
+    line: 儿童近视管理
+    official_tech_names: [D.S.E.D.T. 双面复合增强离焦技术, O.T.O.G.E. 光学引导正视化技术, V8炫钻膜]
+    official_claims:
+      - "近视设计：看远保证足够离焦量；看近减少调节，减少负球差（SRC_001#p51）"
+      - "远视设计：在镜片前表面设置波前像差区……镜片后表面修正传播方向（SRC_001#p51）"
+      - "建议配戴人群：轴性近视的人群；一只眼远视一只眼近视的人群；远视储备不足的人群（SRC_001#p52）"
+      - "注意事项：该镜片仅针对轴性屈光不正。在配戴该镜片的远视度数之前，必须在正规医院散瞳、检查角膜地形图、眼轴长度等项目（SRC_001#p52）"
+    key_params: {材料: 1.591 非球面（雾显 JJS PC）, 阿贝数: 31.0}
+    mechanisms: {A: [MECH_013, MECH_024], B: [MECH_001], C: [MECH_012]}
+    effects: {A: [EFFECT_001, EFFECT_004], C: [EFFECT_006]}
+    functions: {A: [FUNC_001], C: [FUNC_003]}
+    function_levels: {FUNC_001: 不分级}
+    values: [VALUE_002]
+    problems: {A: [PROBLEM_002, PROBLEM_003, PROBLEM_006], C: [PROBLEM_004]}
+    needs: [NEED_002]
+    population: 轴性近视；一眼远视一眼近视；远视储备不足（A）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_013, EXAM_018, EXAM_019, EXAM_031]
+    required_conditions: [仅针对轴性屈光不正（A）, "用于远视度数前：散瞳验光 + 角膜地形图 + 眼轴长度（A）", 处方在 SPH +4~-10、CYL≤-4、S+C≤-10 内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [非轴性屈光不正, 远视配戴未完成三项检查]
+    price_range_cny: [3280, 3280]
+    price_tier: P3
+    evidence_notes: 无临床数据；远视设计原理与效果资料不足（C）。"看近减少调节"对应 EFFECT_006 为 C（原理未说明）。
+    sources: [SRC_001#p49, SRC_001#p50, SRC_001#p51, SRC_001#p52]
+    version: v0.1.0
+    open_questions: [Q_006, Q_013]
+
+  # ============================ 儿童近距离调节辅助（渐进） ============================
+  - id: PRODUCT_ZEISS_004
+    brand: 蔡司 ZEISS
+    series: 成长悦 MyoKids Pro Asiana
+    name: 蔡司成长悦专业版渐进镜片
+    product_type: 儿童近视管理渐进镜片
+    line: 儿童近视管理
+    official_tech_names: [近视管理渐进镜片设计, 眼龄识别设计, 数码识别设计]
+    official_claims:
+      - "创新的近视管理渐进镜片设计，能根据不同视物距离减少调节力滞后（SRC_001#p46）"
+      - "蔡司眼龄识别设计，专为亚洲儿童定制，充分考虑他们的配戴位置和面部参数（SRC_001#p46）"
+      - "蔡司数码识别设计，支持儿童数字生活方式（SRC_001#p46）"
+    key_params: {下加光: "成品 +1.50；定制 +1.00~+2.50"}
+    mechanisms: {A: [MECH_011, MECH_032, MECH_036]}
+    effects: {A: [EFFECT_006, EFFECT_014, EFFECT_034]}
+    functions: {A: [FUNC_002, FUNC_016, FUNC_017], B: [FUNC_001]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_003, VALUE_010, VALUE_011]
+    problems: {A: [PROBLEM_011], B: [PROBLEM_002]}
+    needs: [NEED_006, NEED_014]
+    population: 亚洲儿童（A）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {A: [SCENE_001, SCENE_004], B: [SCENE_002]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_010, EXAM_028]
+    required_conditions: [屈光度（含 ADD）、单眼瞳高、单眼瞳距, 最小瞳高 14mm, 最小框高 24mm, "成品片仅单球镜"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高<14mm 或框高<24mm, 处方无 ADD, 处方超出光度范围]
+    price_range_cny: [980, 3280]
+    price_tier: P1
+    price_effective_from: 2025-01-01
+    evidence_notes: 资料未提供本产品临床数据；"近视管理"定位为品牌表述，FUNC_001 记 B。
+    sources: [SRC_001#p46]
+    version: v0.1.0
+    open_questions: [Q_006]
+
+  - id: PRODUCT_ESSILOR_002
+    brand: 依视路 essilor
+    series: 好学生
+    name: 依视路好学生镜片（精视好学生 / 好学生 × 标准型DFB / 绿宝贝A360）
+    product_type: 儿童渐进多焦镜片
+    line: 儿童近视管理
+    official_tech_names: [渐进多焦设计, 宇宙片, 蓝晶, 钻晶A4]
+    official_claims:
+      - "依视路好学生镜片为渐进多焦设计（SRC_001#p48）"
+      - "渐进多焦设计框架眼镜延缓近视进展方面的分析见《近视管理白皮书2019》（SRC_001#p48，引用专家共识/白皮书）"
+    key_params: {下加光: +1.50/+2.00, 最小配镜高度: 14.5mm, 版本差异: "精视 vs 非精视、标准型DFB vs 绿宝贝A360 的差异资料未说明（Q_012）"}
+    mechanisms: {A: [MECH_011], B: [MECH_032]}
+    effects: {A: [EFFECT_006, EFFECT_007]}
+    functions: {A: [FUNC_002], B: [FUNC_001, FUNC_016]}
+    function_levels: {FUNC_016: "标准型DFB L1；绿宝贝A360 L2（B，按万里路 A360 定义类推）"}
+    values: [VALUE_003]
+    problems: {A: [PROBLEM_011], B: [PROBLEM_002]}
+    needs: [NEED_006]
+    population: 资料未提供（产品名指向学生）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {B: [SCENE_002, SCENE_016]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_009]
+    required_conditions: [处方含 ADD（+1.50 或 +2.00）, 配镜高度≥14.5mm, 处方在 SKU 光度范围内]
+    suggested_conditions: [一片现片一片需定制时，建议两片均定制（A）]
+    exclusion_conditions: [配镜高度<14.5mm, 处方超出光度范围]
+    price_range_cny: [980, 3480]
+    price_tier: P1
+    evidence_notes: 仅引用白皮书对"渐进多焦设计框架眼镜"的类别分析，非本产品临床数据。
+    sources: [SRC_001#p47, SRC_001#p48]
+    version: v0.1.0
+    open_questions: [Q_006, Q_012]
+
+  # ============================ 成人：中近用 / 室内型 ============================
+  - id: PRODUCT_SAP_101
+    brand: SAP（思汉普）
+    series: 视悦智能
+    name: SAP 视悦智能镜片
+    product_type: 中近用（室内阅读/办公）镜片
+    line: 成人中近用
+    official_tech_names: [内表面非球面 + 内表面渐进设计, Freeform 自由曲面, 点阵精密加工]
+    official_claims:
+      - "单光花镜清晰视距只有约30-40cm……视悦智能镜片既能看近距离，又能看中距离，切换视距无需频繁摘扶眼镜（SRC_002#p2）"
+      - "视距成像 30-100cm；因个人年龄、物体大小、ADD大小，视距会略有差异；ADD越小，视距越大，ADD≤1.50D时视距通常能到200cm左右（SRC_002#p2）"
+      - "如果你需要长时间近距离用眼……建议您在验配一副渐进镜片的基础上，搭配一副视悦智能眼镜，专门用于看近、看中（SRC_002#p3）"
+    key_params: {覆盖范围: "30–100cm（ADD≤1.50D 时约至 200cm）", 设计基准: 近用处方（ADD 系统默认 +1.00D，下单无需填写）}
+    mechanisms: {A: [MECH_022, MECH_021, MECH_024, MECH_023]}
+    effects: {A: [EFFECT_008]}
+    functions: {A: [FUNC_011]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_005, VALUE_004]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005, NEED_003]
+    population: 出现老花、需要中近距离频繁切换的人（原不戴镜者；或已戴渐进、需长时间近距离用眼者作为第二副）（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_006, SYMPTOM_008, SYMPTOM_005]}
+    scenes: {A: [SCENE_003, SCENE_002, SCENE_001, SCENE_005]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_028]
+    required_conditions: [近用光度, 最小框高≥30mm, 处方在 SKU 光度范围内]
+    suggested_conditions: [已配渐进且长时间近距离用眼者作为第二副（A）]
+    exclusion_conditions: [框高<30mm, 以看远/驾驶为主要用途（B，覆盖范围不含远距离）]
+    price_range_cny: [680, 2080]
+    price_tier: P1
+    price_effective_from: 2025-01-01
+    evidence_notes: 覆盖距离为品牌宣称（claim_type=品牌宣称）。
+    sources: [SRC_002#p1, SRC_002#p2, SRC_002#p3, SRC_002#p4]
+    version: v0.1.0
+    open_questions: [Q_020]
+
+  - id: PRODUCT_HOYA_101
+    brand: 豪雅 HOYA
+    series: 新智阅
+    name: 豪雅新智阅 近近
+    product_type: 中近用（桌面近距离）镜片
+    line: 成人中近用
+    official_tech_names: [新智阅系列]
+    official_claims:
+      - "可视距离至1m，适合桌面工作（SRC_002#p6）"
+      - "细节清；视野宽：可满足办公、麻将、棋牌等多场景的使用；更高效：快速多屏切换（SRC_002#p7）"
+    key_params: {覆盖范围: 至约1m, 设计基准: 近用屈光度 + 近用单眼瞳距, 装配: 无最小框高要求}
+    mechanisms: {A: [MECH_022]}
+    effects: {A: [EFFECT_008]}
+    functions: {A: [FUNC_011]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_005]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005, NEED_003]
+    population: 老花且以桌面近距离工作为主（B）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {A: [SCENE_003, SCENE_005, SCENE_002]}
+    exams: [EXAM_001, EXAM_002, EXAM_024, EXAM_032]
+    required_conditions: [近用屈光度, 近用单眼瞳距, 处方在 SKU 光度范围内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [以看远/驾驶为主要用途（B）]
+    price_range_cny: [890, 2990]
+    price_tier: P1
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p5, SRC_002#p6, SRC_002#p7, SRC_002#p61]
+    version: v0.1.0
+    open_questions: [Q_020]
+
+  - id: PRODUCT_HOYA_102
+    brand: 豪雅 HOYA
+    series: 新智阅
+    name: 豪雅新智阅 中近
+    product_type: 中近用（室内型）渐进镜片
+    line: 成人中近用
+    official_tech_names: [新智阅系列]
+    official_claims:
+      - "可视距离至3m，适合室内使用（SRC_002#p6）"
+      - "宽视野：扩大中近距离视野；变形小：周边晃动变形小（SRC_002#p8）"
+    key_params: {覆盖范围: 至约3m, 设计基准: 远用屈光度 + ADD（0.75~3.50）, 装配点度数: "≈远用度数+ADD×40%（还原卡，SRC_002#p61）"}
+    mechanisms: {A: [MECH_022, MECH_020]}
+    effects: {A: [EFFECT_008, EFFECT_009]}
+    functions: {A: [FUNC_011, FUNC_012]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_005, VALUE_006]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005, NEED_003]
+    population: 老花且以室内活动为主（B）
+    age: 资料未提供
+    symptoms: {B: [SYMPTOM_009]}
+    scenes: {A: [SCENE_003, SCENE_005, SCENE_007, SCENE_006]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009]
+    required_conditions: ["远用屈光度、ADD（+0.75~+3.50）、远用单眼瞳距-1mm、双眼瞳高", "最小瞳高>22mm", "框高≥32mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高≤22mm 或框高<32mm, 以驾驶/看远为主要用途（B）]
+    price_range_cny: [1590, 3690]
+    price_tier: P2
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p5, SRC_002#p6, SRC_002#p8, SRC_002#p61]
+    version: v0.1.0
+    open_questions: [Q_020]
+
+  - id: PRODUCT_ZEISS_101
+    brand: 蔡司 ZEISS
+    series: 室内型 Officelens
+    name: 蔡司室内型三维博锐 2.0 镜片
+    product_type: 中近用（室内型）渐进镜片
+    line: 成人中近用
+    official_tech_names: [M.I.D.（最远中距离）光学设计, 可变渐进通道, 渐进通道双眼平衡, 美薄技术]
+    official_claims:
+      - "专为长时间专注用眼设计，提供中近视觉体验。适合ADD超过1.50D、需要频繁切换近距至中距视野的人群（SRC_002#p9）"
+      - "普通渐进镜片只能通过镜片中下方的区域对焦电脑屏幕……长时间的抬头姿势容易导致肩颈僵硬（SRC_002#p9）"
+      - "提供三种不同距离的清晰视野：阅读距离、工作距离、室内范围（SRC_002#p9）"
+    key_params: {M.I.D.类型: "2米型（近用型）/4米型（室内型）", FrameFit: "FF 0–6 = 渐进带 10–16mm"}
+    mechanisms: {A: [MECH_022, MECH_031, MECH_028, MECH_042]}
+    effects: {A: [EFFECT_008, EFFECT_015, EFFECT_012, EFFECT_027]}
+    functions: {A: [FUNC_011, FUNC_015, FUNC_020]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_005, VALUE_009, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005]
+    population: ADD 超过 1.50D、需频繁切换近距至中距视野的人群（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_007, SYMPTOM_004]}
+    scenes: {A: [SCENE_003, SCENE_002, SCENE_008]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009]
+    required_conditions: ["屈光度（含 ADD）、远用单眼瞳距、单眼瞳高、FF 值、M.I.D. 类型", "最小瞳高 14mm、最小框高 22mm（建议）", "M.I.D. 规则：ADD − 1/M.I.D. ≥ 0.75D"]
+    suggested_conditions: [ADD>1.50D（A）]
+    exclusion_conditions: [违反 M.I.D. 规则的类型组合, 以驾驶/看远为主要用途（B）]
+    price_range_cny: [3480, 5780]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称；M.I.D. 与 ADD 组合规则为蔡司内部数据（A）。
+    sources: [SRC_002#p9, SRC_002#p10]
+    version: v0.1.0
+    open_questions: [Q_020]
+
+  - id: PRODUCT_ZEISS_102
+    brand: 蔡司 ZEISS
+    series: 室内型 Officelens
+    name: 蔡司室内型臻锐镜片
+    product_type: 中近用（室内型）个性化渐进镜片
+    line: 成人中近用
+    official_tech_names: [个性化 M.I.D.（1–4米）, 个性化定制, 可变渐进通道, 渐进通道双眼平衡]
+    official_claims:
+      - "镜片定制参数要求：屈光度（含Add）、远用单眼瞳距、单眼瞳高、倾斜角、镜面角、后顶点距离、镜架尺寸、镜架类型、FrameFit值、个性化M.I.D.（最远中距离1米~4米）、近用阅读距离（SRC_002#p10）"
+    key_params: {M.I.D.: 个性化 1–4 米}
+    mechanisms: {A: [MECH_022, MECH_033, MECH_031, MECH_028, MECH_042]}
+    effects: {A: [EFFECT_008, EFFECT_014, EFFECT_015, EFFECT_012]}
+    functions: {A: [FUNC_011, FUNC_016, FUNC_015, FUNC_020]}
+    function_levels: {FUNC_016: L3}
+    values: [VALUE_005, VALUE_010, VALUE_009]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005]
+    population: 同室内型，且需要按个人参数定制
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_007, SYMPTOM_004]}
+    scenes: {A: [SCENE_003, SCENE_002, SCENE_008]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_028]
+    required_conditions: [倾斜角、镜面角、后顶点距离、镜架尺寸与类型、近用阅读距离等个人参数, "M.I.D. 规则：ADD − 1/M.I.D. ≥ 0.75D"]
+    suggested_conditions: [ADD>1.50D（A，系列定位）]
+    exclusion_conditions: [个人参数缺失, 违反 M.I.D. 规则]
+    price_range_cny: [5480, 11600]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p10]
+    version: v0.1.0
+    open_questions: [Q_020]
+
+  - id: PRODUCT_ESSILOR_101
+    brand: 依视路 essilor
+    series: 万里路 Varilux
+    name: 依视路万里路电脑专用镜片（DFB）
+    product_type: 中近用（电脑/办公）渐进镜片
+    line: 成人中近用
+    official_tech_names: [万里路电脑专用, DFB]
+    official_claims:
+      - "为希望提高办公效率的戴镜者设计的电脑专用镜片；轻易切换数码屏幕，提供更宽的中近距离视野（SRC_002#p18）"
+    key_params: {覆盖范围: 资料未提供, 下加光: +1.00~+2.50, 最小配镜高度: 13mm, 性能优异度: "★★★（品牌自评）"}
+    mechanisms: {A: [MECH_022]}
+    effects: {A: [EFFECT_008]}
+    functions: {A: [FUNC_011]}
+    function_levels: {FUNC_016: 资料未提供}
+    values: [VALUE_005]
+    problems: {A: [PROBLEM_008, PROBLEM_009]}
+    needs: [NEED_005]
+    population: 希望提高办公效率的戴镜者（A）
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: {A: [SCENE_003]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_009]
+    required_conditions: [处方含 ADD（+1.00~+2.50）, 配镜高度≥13mm, 处方在 SKU 光度范围内]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [ADD 超出 +1.00~+2.50, 以驾驶/看远为主要用途（B）]
+    price_range_cny: [1090, 4090]
+    price_tier: P1
+    evidence_notes: 品牌宣称；光度范围图跨列（Q_015）。
+    sources: [SRC_002#p17, SRC_002#p18, SRC_002#p65]
+    version: v0.1.0
+    open_questions: [Q_015, Q_020]
+
+  # ============================ 成人：渐进（SAP 底非） ============================
+  - id: PRODUCT_SAP_102
+    brand: SAP（思汉普）
+    series: 底非渐进
+    name: SAP 底非标准型镜片
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [内渐进内非球设计, 轻松聚焦技术, 数字化自由曲面]
+    official_claims:
+      - "专业的内面非球面+内面渐进设计……与 SAP 外渐进相比，扩大视野（SRC_002#p12, p13）"
+      - "采用动态视线追踪技术，综合考虑佩戴者与年龄相关的视觉需求，优化从远处到近处眼球在垂直方向的'注视偏移量'（SRC_002#p13）"
+      - "通过优化光学设计，对镜片散光进行修正……减少扭曲及摇晃效应（SRC_002#p13）"
+    key_params: {渐进通道: 11/13/15mm, 下加光: "标准 +1.00~+3.00；防蓝光型 +0.75~+3.50"}
+    mechanisms: {A: [MECH_020, MECH_021, MECH_024, MECH_023, MECH_040, MECH_031], B: [MECH_039]}
+    effects: {A: [EFFECT_007, EFFECT_033, EFFECT_009, EFFECT_010, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_013, FUNC_016]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_006, VALUE_007]
+    problems: {A: [PROBLEM_008, PROBLEM_010]}
+    needs: [NEED_004]
+    population: 看近困难、需兼顾远中近的人（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_005, SYMPTOM_009]}
+    scenes: {A: [SCENE_012, SCENE_003, SCENE_002]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: [屈光度（含 ADD）、单眼瞳距、单眼瞳高, 镜框高度≥28mm]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [框高<28mm, ADD 超出范围, 处方超出光度范围]
+    price_range_cny: [880, 2780]
+    price_tier: P1
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称；"以上与 SAP 外渐进设计镜片相比"为品牌内部对比。
+    sources: [SRC_002#p11, SRC_002#p12, SRC_002#p13, SRC_002#p59]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_SAP_103
+    brand: SAP（思汉普）
+    series: 底非渐进
+    name: SAP 底非舒享型镜片
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [内渐进内非球设计, 轻松聚焦技术, 数字化自由曲面, 优化内移量, 双眼面弯匹配技术]
+    official_claims:
+      - "舒享型通过对内移量优化，针对不同瞳距的顾客，优化看近内移量，使镜片更适配（SRC_002#p14）"
+      - "通过个性化基弯设计……使得两只镜片的前面弯相同，从而让整副镜片的外观效果更好（SRC_002#p14）"
+    key_params: {渐进通道: 11/13/15mm, 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_021, MECH_024, MECH_023, MECH_040, MECH_031, MECH_030, MECH_029]}
+    effects: {A: [EFFECT_007, EFFECT_033, EFFECT_009, EFFECT_010, EFFECT_014, EFFECT_029]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_013, FUNC_016, FUNC_021]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_006, VALUE_007, VALUE_010, VALUE_015]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_006]}
+    needs: [NEED_004, NEED_010]
+    population: 同标准型；左右眼光度不同者受益于面弯匹配（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_005]}
+    scenes: {A: [SCENE_012, SCENE_003, SCENE_002]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_017, EXAM_028]
+    required_conditions: [屈光度（含 ADD）、单眼瞳距、单眼瞳高, 框高≥28mm]
+    suggested_conditions: [左右眼光度不同（A）]
+    exclusion_conditions: [框高<28mm, 处方超出光度范围]
+    price_range_cny: [1180, 4180]
+    price_tier: P1
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称；功能相对标准型的增量为资料明示（A）。
+    sources: [SRC_002#p12, SRC_002#p14, SRC_002#p60]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_SAP_104
+    brand: SAP（思汉普）
+    series: 底非渐进
+    name: SAP 底非亚洲版镜片
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [均衡比例设计, 双眼视觉优化技术, 亚洲版设计, 镜框自由配, 以及舒享型全部技术]
+    official_claims:
+      - "综合以往硬性设计和软性设计的优点，采用均衡设计，使光度平缓变化，佩戴舒适，同时拥有宽大的远中近清晰区域（SRC_002#p15）"
+      - "左右光度不同，特别是屈光参差的顾客……通过优化双眼融像，让左右两侧视觉相对平衡，从而提升立体视觉质量（SRC_002#p15）"
+      - "依据亚洲人平均面部参数，提升佩戴舒适性；可以根据个人用眼习惯，定制渐进通道，适配更多镜框（SRC_002#p15）"
+    key_params: {渐进通道: "5/6/7/8/9/10/11mm（几何中心至近用区）", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_021, MECH_024, MECH_023, MECH_040, MECH_031, MECH_030, MECH_029, MECH_044, MECH_028, MECH_032]}
+    effects: {A: [EFFECT_007, EFFECT_033, EFFECT_009, EFFECT_010, EFFECT_014, EFFECT_029, EFFECT_012, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_013, FUNC_016, FUNC_021, FUNC_015, FUNC_020]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_006, VALUE_007, VALUE_010, VALUE_015, VALUE_009, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_006]}
+    needs: [NEED_004, NEED_010]
+    population: 同舒享型；屈光参差者受益于双眼视觉优化（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_005, SYMPTOM_009]}
+    scenes: {A: [SCENE_012, SCENE_003, SCENE_002]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_017, EXAM_028]
+    required_conditions: [屈光度（含 ADD）、单眼瞳距、单眼瞳高, "最小瞳高 14~20mm、最小框高 24~30mm（随通道）"]
+    suggested_conditions: [屈光参差（A）, 小框（A）]
+    exclusion_conditions: [瞳高/框高不满足所选通道, 处方超出光度范围]
+    price_range_cny: [1780, 5180]
+    price_tier: P2
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称；增量功能为资料明示（A）。
+    sources: [SRC_002#p12, SRC_002#p15, SRC_002#p60]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_SAP_105
+    brand: SAP（思汉普）
+    series: 底非渐进
+    name: SAP 底非尊享个化版镜片
+    product_type: 个性化渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [个性化定制, 瞳孔视觉优化技术, 波面光线优化, 调节力优化设计, 以及亚洲版全部技术]
+    official_claims:
+      - "镜片根据个人参数量身定制，佩戴更贴合（SRC_002#p16）"
+      - "将瞳孔周边的球面像差进行光学修正，让配戴者在低对比度环境下的视力敏锐度得到提升，减少白天和夜间度数变化带来的视觉差异（SRC_002#p16）"
+      - "波面光线优化技术……减少光线波动感，减少光晕感（SRC_002#p16）"
+    key_params: {定制参数: "屈光度（含ADD）、单眼瞳距、单眼瞳高、前倾角、镜眼距、镜面弯、近用距离"}
+    mechanisms: {A: [MECH_020, MECH_021, MECH_024, MECH_023, MECH_040, MECH_031, MECH_030, MECH_029, MECH_044, MECH_028, MECH_032, MECH_033, MECH_026, MECH_027], C: [MECH_043]}
+    effects: {A: [EFFECT_007, EFFECT_033, EFFECT_009, EFFECT_010, EFFECT_014, EFFECT_029, EFFECT_012, EFFECT_015, EFFECT_011, EFFECT_013]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_013, FUNC_016, FUNC_021, FUNC_015, FUNC_020, FUNC_014]}
+    function_levels: {FUNC_016: L3}
+    values: [VALUE_004, VALUE_006, VALUE_007, VALUE_010, VALUE_015, VALUE_009, VALUE_014, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_006, PROBLEM_012]}
+    needs: [NEED_004, NEED_010, NEED_007]
+    population: 同亚洲版，且接受个人参数测量
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_005, SYMPTOM_009, SYMPTOM_011, SYMPTOM_013]}
+    scenes: {A: [SCENE_012, SCENE_003, SCENE_002, SCENE_015]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_028]
+    required_conditions: [前倾角、镜眼距、镜面弯、近用距离等个人参数, "最小瞳高 14~20mm、最小框高 24~30mm"]
+    suggested_conditions: [夜间/弱光用眼多（B）]
+    exclusion_conditions: [个人参数缺失, 处方超出光度范围]
+    price_range_cny: [2380, 5980]
+    price_tier: P2
+    price_effective_from: 2025-06-01
+    evidence_notes: 品牌宣称；"调节力优化设计"光学效果资料不足（C）。
+    sources: [SRC_002#p12, SRC_002#p16]
+    version: v0.1.0
+    open_questions: []
+
+  # ============================ 成人：渐进（豪雅） ============================
+  - id: PRODUCT_HOYA_103
+    brand: 豪雅 HOYA
+    series: 新纵横·悦览
+    name: 豪雅悦览 S3
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [悦览系列 S3, 光智·X 变色, 可指定目的距离]
+    official_claims:
+      - "根据用眼习惯，优化中近视野范围；根据人眼生理特点，优化镜片周边光度分布，多方位提升清晰度；变形小，成像更真实（SRC_002#p20, p21）"
+    key_params: {渐进通道: 11/14mm, 下加光: 0.75~3.50, 可指定目的距离: 20~90cm, 隐形标记: "APP11–APP45（与锐适三维渐进相同）"}
+    mechanisms: {A: [MECH_020, MECH_031], B: [MECH_033]}
+    effects: {A: [EFFECT_007, EFFECT_008, EFFECT_009, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_016]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_005, VALUE_006]
+    problems: {A: [PROBLEM_008, PROBLEM_010]}
+    needs: [NEED_004]
+    population: 日常用眼、需远近调节的老花人群（A，系列定位"针对日常用眼"）
+    age: 资料未提供
+    symptoms: {B: [SYMPTOM_009]}
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_024]
+    required_conditions: ["屈光度（含ADD）、通道长度、远用单眼瞳距、双眼瞳高", "14mm：框高≥28mm、瞳高≥18mm；11mm：框高≥25mm、瞳高≥15mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足通道要求, 变色/蓝光款需要染色]
+    price_range_cny: [1490, 4990]
+    price_tier: P1
+    evidence_notes: 品牌宣称；与锐适三维渐进隐形标记相同（Q_008）。
+    sources: [SRC_002#p19, SRC_002#p20, SRC_002#p21, SRC_002#p62]
+    version: v0.1.0
+    open_questions: [Q_008]
+
+  - id: PRODUCT_HOYA_104
+    brand: 豪雅 HOYA
+    series: 新纵横·悦览
+    name: 豪雅悦览 S5
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [悦览系列 S5, 光智·X 变色]
+    official_claims:
+      - "移动中也能持续提供清晰，稳定视觉；远近切换，快速响应，精准定位；多种光线环境下，体验高清视觉，暗光源下视觉对比度提升（SRC_002#p20, p22）"
+    key_params: {渐进通道: 11/14mm, 下加光: 0.75~3.50, 隐形标记: DP11–DP45}
+    mechanisms: {A: [MECH_020, MECH_031], C: [MECH_038, MECH_026]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_010, EFFECT_011, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_013, FUNC_014]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_012, VALUE_007, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014, PROBLEM_012]}
+    needs: [NEED_004, NEED_011, NEED_007]
+    population: 资料未提供
+    age: 资料未提供
+    symptoms: {B: [SYMPTOM_014, SYMPTOM_011]}
+    scenes: {A: [SCENE_017, SCENE_015]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009]
+    required_conditions: ["屈光度（含ADD）、通道长度、远用单眼瞳距、双眼瞳高", "14mm：框高≥28mm、瞳高≥18mm；11mm：框高≥25mm、瞳高≥15mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足通道要求]
+    price_range_cny: [2090, 6090]
+    price_tier: P2
+    evidence_notes: 仅有效果宣称，未说明实现机制（机制记 C）。
+    sources: [SRC_002#p19, SRC_002#p20, SRC_002#p22]
+    version: v0.1.0
+    open_questions: [Q_008]
+
+  - id: PRODUCT_HOYA_105
+    brand: 豪雅 HOYA
+    series: 锐适 AMPLITUDE PLUS
+    name: 豪雅锐适三维渐进
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [锐适三维渐进, 唯频膜, 新兰御]
+    official_claims:
+      - "综合考虑了当代用眼环境的渐进设计产品，可以改善因调节力不足导致的看近不清的问题（SRC_002#p23）"
+      - "看远看近均可获得清晰视觉；远近视线切换更自然流畅；变形小，容易适应（SRC_002#p24）"
+    key_params: {渐进通道: 11/14mm, 下加光: 0.75~3.50, 可指定近用目的距离: 20~99cm, 隐形标记: "APP11–APP45（与悦览S3相同）"}
+    mechanisms: {A: [MECH_020, MECH_031], B: [MECH_033]}
+    effects: {A: [EFFECT_007, EFFECT_009, EFFECT_010, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_013, FUNC_016]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_006, VALUE_007]
+    problems: {A: [PROBLEM_008, PROBLEM_010], B: [PROBLEM_015]}
+    needs: [NEED_004, NEED_013]
+    population: 配戴渐进镜片人群（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_005]}
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_024]
+    required_conditions: ["14mm：框高≥28mm、瞳高≥18mm；11mm：框高≥25mm、瞳高≥17mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足通道要求, 新兰御款需要染色]
+    price_range_cny: [1380, 3780]
+    price_tier: P1
+    evidence_notes: 品牌宣称；与悦览S3 隐形标记、折射率、光度范围相同（Q_008）。
+    sources: [SRC_002#p23, SRC_002#p24, SRC_002#p25, SRC_002#p63]
+    version: v0.1.0
+    open_questions: [Q_008]
+
+  - id: PRODUCT_HOYA_106
+    brand: 豪雅 HOYA
+    series: 锐适 lifestyle
+    name: 豪雅锐适三维双面渐进
+    product_type: 双面复合渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [双面复合设计, 光智·X / 光智·X速 变色]
+    official_claims:
+      - "渐进镜片采用了双面复合设计，让配戴者自信从容地完成日常活动（SRC_002#p23）"
+    key_params: {渐进通道: 11/14mm, 下加光: 0.75~3.50, 可指定近用目的距离: 20~99cm, 隐形标记: B11–B47}
+    mechanisms: {A: [MECH_020, MECH_013, MECH_031], B: [MECH_033]}
+    effects: {A: [EFFECT_007, EFFECT_015], B: [EFFECT_009]}
+    functions: {A: [FUNC_010, FUNC_016], B: [FUNC_012]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004]
+    problems: {A: [PROBLEM_008, PROBLEM_010]}
+    needs: [NEED_004]
+    population: 资料未提供
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_024]
+    required_conditions: ["14mm：框高≥28mm、瞳高≥18mm；11mm：框高≥25mm、瞳高≥17mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足通道要求, 变色款需要染色]
+    price_range_cny: [3080, 14180]
+    price_tier: P3
+    evidence_notes: 介绍页 p24 技术图标文字 OCR 不完整，仅记录可确认部分。
+    sources: [SRC_002#p23, SRC_002#p24, SRC_002#p26, SRC_002#p63]
+    version: v0.1.0
+    open_questions: []
+
+  # ============================ 成人：渐进（蔡司） ============================
+  - id: PRODUCT_ZEISS_103
+    brand: 蔡司 ZEISS
+    series: 睐光 Progressive Light
+    name: 蔡司睐光 2.0 D 渐进镜片
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [快速聚焦设计, 瞳孔感光平衡2.0, 焕色视界X]
+    official_claims:
+      - "蔡司睐光2.0镜片，是初次配戴渐进的理想之选（SRC_002#p28）"
+      - "优化设计的屈光度渐进曲线，考虑了眼球垂直切换远近时的运动轨迹，旨在实现快速聚焦（SRC_002#p28）"
+      - "考虑各个年龄段实际瞳孔大小和进光量，优化区域光学设计，提升视觉品质（与蔡司普通渐进镜片相比）（SRC_002#p28）"
+    key_params: {通道: "标准（瞳高18/框高28）/短（14/24）", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_040, MECH_026]}
+    effects: {A: [EFFECT_007, EFFECT_010, EFFECT_011]}
+    functions: {A: [FUNC_010, FUNC_013, FUNC_014]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_007, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_015], B: [PROBLEM_012]}
+    needs: [NEED_004, NEED_013]
+    population: 初次配戴渐进者（A）；老视前期 35–45 岁起（A，引用专家共识）
+    age: 资料引用"35岁后便有机会出现老视"
+    symptoms: {A: [SYMPTOM_005, SYMPTOM_003], B: [SYMPTOM_015]}
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_020]
+    required_conditions: ["屈光度（含Add）、单眼瞳距、单眼瞳高、直径", "标准通道 瞳高≥18/框高≥28；短通道 14/24"]
+    suggested_conditions: [首次配渐进（A）]
+    exclusion_conditions: [瞳高/框高不满足通道要求]
+    price_range_cny: [1680, 6880]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称；"轻渐进/渐进两种设计"与 D/3D 的对应关系资料未说明（Q_011）。
+    sources: [SRC_002#p27, SRC_002#p28, SRC_002#p29, SRC_002#p64]
+    version: v0.1.0
+    open_questions: [Q_011]
+
+  - id: PRODUCT_ZEISS_104
+    brand: 蔡司 ZEISS
+    series: 睐光 Progressive Light
+    name: 蔡司睐光 2.0 3D 渐进镜片
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [快速聚焦设计, 瞳孔感光平衡2.0, 融像优化, 3D视觉]
+    official_claims:
+      - "产品特点图标：快速聚焦、轻松适应、远近适宜、融像优化、轻薄设计、3D视觉、瞳孔感光平衡（SRC_002#p30）"
+    key_params: {通道: "标准（18/28）/中（16/26）/短（14/24）", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_040, MECH_026, MECH_031], B: [MECH_028]}
+    effects: {A: [EFFECT_007, EFFECT_010, EFFECT_011, EFFECT_015], B: [EFFECT_012]}
+    functions: {A: [FUNC_010, FUNC_013, FUNC_014], B: [FUNC_015]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_007, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_015]}
+    needs: [NEED_004, NEED_013]
+    population: 同睐光2.0
+    age: 同睐光2.0
+    symptoms: {A: [SYMPTOM_005, SYMPTOM_003]}
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009]
+    required_conditions: ["屈光度（含Add）、单眼瞳距、单眼瞳高、直径", 瞳高/框高满足所选通道]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足通道要求]
+    price_range_cny: [2780, 9480]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 「融像优化/3D视觉」仅有图标无文字说明（B）。
+    sources: [SRC_002#p30]
+    version: v0.1.0
+    open_questions: [Q_011]
+
+  - id: PRODUCT_ZEISS_105
+    brand: 蔡司 ZEISS
+    series: 智锐纵横版 SmartLife Evol
+    name: 蔡司智锐纵横版 经典版渐进
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [智锐纵横旋转中心设计, 数码识别设计, 瞳孔感光平衡设计2.0, 1.53 Trivex]
+    official_claims:
+      - "符合40+及以上人士的视觉需求——不但能够适用移动互联场景下，视觉焦点在不同距离和方向间快速切换的动态视觉需求，而且能针对因眼睛调节能力下降造成的看近不能持久甚至看近不清楚问题提供光度支持（SRC_002#p36）"
+      - "智锐纵横旋转中心设计：根据配戴者眼球旋转中心优化处方——适配性高、提升视觉适宜度、视野宽阔（SRC_002#p35）"
+    key_params: {通道: "标准（瞳高16/框高26）/短（14/24）", 下加光: +0.75~+3.50, 出生日期: "自愿提供（考虑瞳孔与年龄变化）", 1.53: Trivex（阿贝数45、密度1.1、抗冲击）}
+    mechanisms: {A: [MECH_020, MECH_025, MECH_036, MECH_026]}
+    effects: {A: [EFFECT_007, EFFECT_009, EFFECT_034, EFFECT_011]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_017, FUNC_014], B: [FUNC_018]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_006, VALUE_011, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010], B: [PROBLEM_014]}
+    needs: [NEED_004, NEED_014]
+    population: 40 岁及以上（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005]}
+    scenes: {A: [SCENE_001, SCENE_004, SCENE_017]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_020, EXAM_028]
+    required_conditions: ["屈光度（含Add）、单眼瞳距、单眼瞳高、直径、镜框参数（框高/框宽/中梁距）、镜框类型", "标准通道 瞳高≥16/框高≥26；短通道 14/24"]
+    suggested_conditions: [提供出生日期（A，自愿）]
+    exclusion_conditions: [瞳高/框高不满足通道要求, 1.53/1.74 或变色款需要染色]
+    price_range_cny: [2880, 10880]
+    price_tier: P2
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称；动态视觉仅为产品特点文字表述，p35 矩阵未列动态光学（FUNC_018 记 B）。与"智锐经典版"差异见 Q_010。
+    sources: [SRC_002#p34, SRC_002#p35, SRC_002#p36, SRC_002#p64]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_106
+    brand: 蔡司 ZEISS
+    series: 智锐纵横版 SmartLife Evol
+    name: 蔡司智锐纵横版 亚洲版渐进
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [经典版全部 + 镜框识别设计, 视觉焦点优化设计, 亚洲人平均面部参数]
+    official_claims:
+      - "根据亚洲人平均面部参数而设计（SRC_002#p37）"
+      - "镜框识别设计：基于镜框近用位置优化设计，自由选择镜框；视觉焦点优化设计：考虑惯有的下旋视觉行为和适应新的近用区需求（SRC_002#p35）"
+    key_params: {通道: "FF 0–6（10–16mm）", 装配: "瞳高14~20、框高24~30", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_025, MECH_036, MECH_026, MECH_032, MECH_037, MECH_031]}
+    effects: {A: [EFFECT_007, EFFECT_009, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_017, FUNC_014, FUNC_016, FUNC_020], B: [FUNC_018]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_006, VALUE_011, VALUE_008, VALUE_010, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010]}
+    needs: [NEED_004, NEED_014]
+    population: 40 岁及以上亚洲配戴者（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005]}
+    scenes: {A: [SCENE_001, SCENE_004, SCENE_017]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: ["经典版参数 + FrameFit", "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足]
+    price_range_cny: [4280, 14280]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 1.74 列折射率印为 1.665（Q_002）。
+    sources: [SRC_002#p35, SRC_002#p37]
+    version: v0.1.0
+    open_questions: [Q_002, Q_010]
+
+  - id: PRODUCT_ZEISS_107
+    brand: 蔡司 ZEISS
+    series: 智锐纵横版 SmartLife Evol
+    name: 蔡司智锐纵横版 臻选版渐进
+    product_type: 个性化渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [亚洲版全部 + 3D面部识别设计]
+    official_claims:
+      - "根据配戴者的面部配戴参数优化（SRC_002#p38）"
+      - "3D面部识别设计：镜片可视区得到改善，并充分激发双眼立体视觉（SRC_002#p35）"
+    key_params: {个人参数: "倾斜角、镜面角、后顶点距离", 装配: "瞳高14~20、框高24~30"}
+    mechanisms: {A: [MECH_020, MECH_025, MECH_036, MECH_026, MECH_037, MECH_031, MECH_033]}
+    effects: {A: [EFFECT_007, EFFECT_009, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_017, FUNC_014, FUNC_016, FUNC_020], B: [FUNC_018]}
+    function_levels: {FUNC_016: L3}
+    values: [VALUE_004, VALUE_006, VALUE_011, VALUE_008, VALUE_010, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010]}
+    needs: [NEED_004, NEED_014]
+    population: 40 岁及以上，接受个人参数测量（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005]}
+    scenes: {A: [SCENE_001, SCENE_004, SCENE_017]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_028]
+    required_conditions: [倾斜角、镜面角、后顶点距离 + 亚洲版参数, "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [个人参数缺失, 瞳高/框高不满足]
+    price_range_cny: [6980, 28880]
+    price_tier: P4
+    price_effective_from: 2025-01-01
+    evidence_notes: 1.74 列折射率印为 1.665（Q_002）。
+    sources: [SRC_002#p35, SRC_002#p38]
+    version: v0.1.0
+    open_questions: [Q_002, Q_010]
+
+  - id: PRODUCT_ZEISS_108
+    brand: 蔡司 ZEISS
+    series: 智锐纵横版 SmartLife Evol
+    name: 蔡司智锐纵横版 个化版3.0 渐进
+    product_type: 个性化渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [臻选版全部 + 视觉增强设计（IAD）, 个性化识别设计（平衡型/中距型/近距型）, 个人隐形标记]
+    official_claims:
+      - "全新蔡司智锐设计，从海量设计中挑选三种个性化方案以供选择（SRC_002#p39）"
+      - "平衡型：满足日常活动中的视线焦点快速切换；中距型：适合驾驶，运动和使用笔记本电脑，60-90厘米的中视野更大；近距型：适合阅读，针线，手机和平板电脑，30-60厘米的近视野更大（SRC_002#p39，内部设计数据）"
+    key_params: {个人参数: "臻选版参数 + 近用距离 + 镜片类型", 隐形标记: 可雕刻 5 个字母}
+    mechanisms: {A: [MECH_020, MECH_025, MECH_036, MECH_026, MECH_037, MECH_031, MECH_033, MECH_035], B: [MECH_034]}
+    effects: {A: [EFFECT_007, EFFECT_009, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015, EFFECT_008]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_017, FUNC_014, FUNC_016, FUNC_020], B: [FUNC_018, FUNC_011, FUNC_019]}
+    function_levels: {FUNC_016: "L3（含使用偏好分型；是否达 L4 待确认，IAD 未见视觉行为测量输入）"}
+    values: [VALUE_004, VALUE_006, VALUE_011, VALUE_008, VALUE_010, VALUE_014, VALUE_005]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_009]}
+    needs: [NEED_004, NEED_014, NEED_005]
+    population: 40 岁及以上；按主要用途选型（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005]}
+    scenes: {A: [SCENE_010, SCENE_018, SCENE_003, SCENE_002, SCENE_019, SCENE_001, SCENE_004]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_028]
+    required_conditions: [臻选版参数 + 近用距离 + 镜片类型选择, "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: [以驾驶/笔记本为主选中距型；以阅读/手机为主选近距型（A）]
+    exclusion_conditions: [个人参数缺失]
+    price_range_cny: [17580, 62980]
+    price_tier: P5
+    price_effective_from: 2025-01-01
+    evidence_notes: 视野扩大比较为蔡司内部设计数据；与智锐个化版3.0 价格几乎相同（Q_010）。
+    sources: [SRC_002#p35, SRC_002#p39]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_109
+    brand: 蔡司 ZEISS
+    series: 智锐 SmartLife
+    name: 蔡司智锐 经典版渐进
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [智锐识别设计2.0（智能动态光学 / 年龄智能优化 / 清晰视觉 / 美薄镜片）, 数码识别设计, 瞳孔感光平衡设计2.0]
+    official_claims:
+      - "满足移动状态下的'动态视觉'需求，辅助视觉焦点在'手机屏幕与周围道路'的频繁切换（SRC_002#p32）"
+      - "针对不同年龄阶段的眼球生理机能……配戴者适应期更短（SRC_002#p32）"
+      - "根据近视眼球的双旋转中心做精准优化，缩短配戴者的适应期（SRC_002#p33）"
+      - "个性化减薄棱镜……在不影响视觉需求的情况下实现美薄（SRC_002#p33）"
+    key_params: {通道: "标准（瞳高16/框高26）/短（14/24）", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_025, MECH_042, MECH_036, MECH_026], B: [MECH_039]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_009, EFFECT_027, EFFECT_034, EFFECT_011]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_012, FUNC_017, FUNC_014, FUNC_040]}
+    function_levels: {FUNC_016: L1}
+    values: [VALUE_004, VALUE_012, VALUE_006, VALUE_011, VALUE_008, VALUE_026]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014]}
+    needs: [NEED_004, NEED_011, NEED_014]
+    population: 40 岁及以上（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005, SYMPTOM_003]}
+    scenes: {A: [SCENE_017, SCENE_001, SCENE_004]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_020, EXAM_028]
+    required_conditions: ["屈光度（含Add）、单眼瞳距、单眼瞳高、直径、镜框参数、镜框类型", "标准通道 瞳高≥16/框高≥26；短通道 14/24"]
+    suggested_conditions: [提供出生日期（A，自愿）]
+    exclusion_conditions: [瞳高/框高不满足通道要求]
+    price_range_cny: [3280, 11180]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p31, SRC_002#p32, SRC_002#p33, SRC_002#p40, SRC_002#p41]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_110
+    brand: 蔡司 ZEISS
+    series: 智锐 SmartLife
+    name: 蔡司智锐 亚洲版渐进
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [经典版全部 + 镜框识别设计, 视觉焦点优化设计, 亚洲人平均面部参数]
+    official_claims:
+      - "根据亚洲人平均面部参数而设计（SRC_002#p42）"
+    key_params: {通道: "FF 0–6（10–16mm）", 装配: "瞳高14~20、框高24~30"}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_025, MECH_042, MECH_036, MECH_026, MECH_032, MECH_037, MECH_031], B: [MECH_039]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_009, EFFECT_027, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_012, FUNC_017, FUNC_014, FUNC_040, FUNC_016, FUNC_020]}
+    function_levels: {FUNC_016: L2}
+    values: [VALUE_004, VALUE_012, VALUE_006, VALUE_011, VALUE_008, VALUE_026, VALUE_010, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014]}
+    needs: [NEED_004, NEED_011, NEED_014]
+    population: 40 岁及以上亚洲配戴者（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005, SYMPTOM_003]}
+    scenes: {A: [SCENE_017, SCENE_001, SCENE_004]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: ["经典版参数 + FrameFit", "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [瞳高/框高不满足]
+    price_range_cny: [4680, 14680]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p40, SRC_002#p42]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_111
+    brand: 蔡司 ZEISS
+    series: 智锐 SmartLife
+    name: 蔡司智锐 臻选版渐进
+    product_type: 个性化渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [亚洲版全部 + 3D面部识别设计]
+    official_claims:
+      - "根据配戴者的面部配戴参数优化（SRC_002#p43）"
+    key_params: {个人参数: "倾斜角、镜面角、后顶点距离"}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_025, MECH_042, MECH_036, MECH_026, MECH_037, MECH_031, MECH_033], B: [MECH_039]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_009, EFFECT_027, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_012, FUNC_017, FUNC_014, FUNC_040, FUNC_016, FUNC_020]}
+    function_levels: {FUNC_016: L3}
+    values: [VALUE_004, VALUE_012, VALUE_006, VALUE_011, VALUE_008, VALUE_026, VALUE_010, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014]}
+    needs: [NEED_004, NEED_011, NEED_014]
+    population: 40 岁及以上，接受个人参数测量（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005, SYMPTOM_003]}
+    scenes: {A: [SCENE_017, SCENE_001, SCENE_004]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_028]
+    required_conditions: [倾斜角、镜面角、后顶点距离 + 亚洲版参数, "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [个人参数缺失]
+    price_range_cny: [8280, 31180]
+    price_tier: P4
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p40, SRC_002#p43]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_112
+    brand: 蔡司 ZEISS
+    series: 智锐 SmartLife
+    name: 蔡司智锐 个化版3.0 渐进
+    product_type: 个性化渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [臻选版全部 + 视觉增强设计（IAD）, 个性化识别设计（平衡型/中距型/近距型）, 个人隐形标记]
+    official_claims:
+      - "全新蔡司增强设计，从海量设计中挑选个性化方案（SRC_002#p44）"
+      - "中距型：60-90厘米中视野更大；近距型：30-60厘米近视野更大（与平衡型比，内部设计数据）（SRC_002#p44）"
+    key_params: {个人参数: "臻选版参数 + 近用距离 + 镜片类型"}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_025, MECH_042, MECH_036, MECH_026, MECH_037, MECH_031, MECH_033, MECH_035], B: [MECH_039, MECH_034]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_009, EFFECT_027, EFFECT_034, EFFECT_011, EFFECT_014, EFFECT_015, EFFECT_008]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_012, FUNC_017, FUNC_014, FUNC_040, FUNC_016, FUNC_020], B: [FUNC_011, FUNC_019]}
+    function_levels: {FUNC_016: "L3（含使用偏好分型；是否达 L4 待确认）"}
+    values: [VALUE_004, VALUE_012, VALUE_006, VALUE_011, VALUE_008, VALUE_026, VALUE_010, VALUE_014, VALUE_005]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014, PROBLEM_009]}
+    needs: [NEED_004, NEED_011, NEED_014, NEED_005]
+    population: 40 岁及以上；按主要用途选型（A）
+    age: "40+（A）"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_005, SYMPTOM_003]}
+    scenes: {A: [SCENE_017, SCENE_010, SCENE_018, SCENE_003, SCENE_002, SCENE_019, SCENE_001, SCENE_004]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_028]
+    required_conditions: [臻选版参数 + 近用距离 + 镜片类型选择]
+    suggested_conditions: [以驾驶/笔记本为主选中距型；以阅读/手机为主选近距型（A）]
+    exclusion_conditions: [个人参数缺失]
+    price_range_cny: [17580, 62980]
+    price_tier: P5
+    price_effective_from: 2025-01-01
+    evidence_notes: 内部设计数据对比。
+    sources: [SRC_002#p40, SRC_002#p44]
+    version: v0.1.0
+    open_questions: [Q_010]
+
+  - id: PRODUCT_ZEISS_113
+    brand: 蔡司 ZEISS
+    series: 驾驶型 DriveSafe Asiana
+    name: 蔡司驾驶型渐进镜片
+    product_type: 驾驶专用渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [钻立方极光膜, 瞳孔感光设计, 镜框随心选, 驾驶用眼设计]
+    official_claims:
+      - "蔡司钻立方极光膜减弱路面强光带来的不适感，使驾驶轻松（SRC_002#p46）"
+      - "定制镜片采用瞳孔感光平衡设计，在弱光环境下保持清晰视觉质量（SRC_002#p46）"
+      - "针对驾驶用眼设计，焦点切换压力小，快速看清道路、导航面板、后视镜和侧视镜（SRC_002#p46）"
+      - "适合驾驶和生活日常使用，可全天配戴（SRC_002#p46）"
+    key_params: {通道: "FF 0–6（10–16mm）", 装配: "瞳高14~20、框高24~30", 下加光: +0.75~+3.50}
+    mechanisms: {A: [MECH_020, MECH_041, MECH_026, MECH_057, MECH_031], B: [MECH_032]}
+    effects: {A: [EFFECT_007, EFFECT_010, EFFECT_011, EFFECT_022, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_019, FUNC_014, FUNC_037, FUNC_020], B: [FUNC_016]}
+    function_levels: {FUNC_016: "L2（B，依据英文名 Asiana）"}
+    values: [VALUE_004, VALUE_013, VALUE_008, VALUE_021, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_012, PROBLEM_013]}
+    needs: [NEED_004, NEED_007]
+    population: 需要驾驶的老花人群（A）
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_010, SYMPTOM_011], B: [SYMPTOM_003]}
+    scenes: {A: [SCENE_010, SCENE_015]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_028]
+    required_conditions: ["屈光度（含Add）、单眼瞳距、单眼瞳高、镜架尺寸、直径、FF 值", "瞳高 14~20mm、框高 24~30mm"]
+    suggested_conditions: [经常驾驶、夜间或弱光驾驶（A）]
+    exclusion_conditions: [需要染色（不可染色）, 瞳高/框高不满足]
+    price_range_cny: [5580, 12880]
+    price_tier: P3
+    price_effective_from: 2025-01-01
+    evidence_notes: 品牌宣称；极光膜原理资料未提供。
+    sources: [SRC_002#p45, SRC_002#p46]
+    version: v0.1.0
+    open_questions: []
+
+  # ============================ 成人：渐进（依视路万里路） ============================
+  - id: PRODUCT_ESSILOR_102
+    brand: 依视路 essilor
+    series: 万里路 Varilux
+    name: 依视路万里路舒适型 MAX（普适版 / A360；可选全视线 GEN S）
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [近500种头部位置, 15种基础设计+个性化验光处方优化, AI 镜像人, 全视线 GEN S]
+    official_claims:
+      - "近500种头部位置自如切换，仍保持清晰敏锐的视觉（SRC_002#p52，依视路虚拟模型测算）"
+      - "拓展46%的有效视觉区域（与万里路舒适型3.0相比）（SRC_002#p52）"
+      - "94%的新戴镜者轻松适应，乐于配戴（SRC_002#p51，第三方试戴调研 n=53）"
+      - "看近困难可能会提前到大约40岁就出现；使用智能手机时眼屏距离通常仅有33.8厘米（SRC_002#p51，引用文献）"
+    key_params: {最小配镜高度: 17/14/12mm, 下加光: "标准 +0.75~+3.50；短/超短 +0.75~+3.00（GEN S 标准通道 +0.75~+3.00）", 性能优异度: "★★★☆（品牌自评）"}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_031], B: [MECH_032]}
+    effects: {A: [EFFECT_007, EFFECT_033, EFFECT_016, EFFECT_015]}
+    functions: {A: [FUNC_010, FUNC_012, FUNC_018], B: [FUNC_016]}
+    function_levels: {FUNC_016: "普适版 L1；A360 L2"}
+    values: [VALUE_004, VALUE_006, VALUE_012]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_009, PROBLEM_015]}
+    needs: [NEED_004, NEED_013, NEED_005]
+    population: 长时间近距离/数码用眼的渐进配戴者；新戴镜者（A）
+    age: 资料引用"约40岁起可能出现看近困难"
+    symptoms: {A: [SYMPTOM_004, SYMPTOM_007], B: [SYMPTOM_015]}
+    scenes: {A: [SCENE_001, SCENE_003]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009]
+    required_conditions: [单眼瞳距、单眼瞳高, 配镜高度满足所选通道（17/14/12mm）]
+    suggested_conditions: [首次配渐进（A）]
+    exclusion_conditions: [配镜高度不足, ADD 超出所选通道范围]
+    price_range_cny: [1290, 7890]
+    price_tier: P1
+    evidence_notes: 比较数据为依视路内部模拟或第三方调研（claim_type=品牌内部数据）。
+    sources: [SRC_002#p47, SRC_002#p48, SRC_002#p49, SRC_002#p50, SRC_002#p51, SRC_002#p52, SRC_002#p66]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_ESSILOR_103
+    brand: 依视路 essilor
+    series: 万里路 Varilux
+    name: 依视路万里路睿视 3.0（A360 / F360；可选全视线 GEN S）
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [WAVE 2.0, Binocular Booster（双眼验光处方平衡技术）, 全视线 GEN S]
+    official_claims:
+      - "使用了WAVE2.0技术，该技术消减了镜片的高阶像差，提供敏锐的视觉（SRC_002#p53）"
+      - "通过Binocular Booster（双眼验光处方平衡技术），使视觉可以轻松地无缝转换（SRC_002#p53）"
+    key_params: {最小配镜高度: "A360 17/14mm；F360 18/16/14mm", 性能优异度: "★★★★（品牌自评）"}
+    mechanisms: {A: [MECH_020, MECH_027, MECH_028, MECH_031], B: [MECH_032, MECH_033]}
+    effects: {A: [EFFECT_007, EFFECT_013, EFFECT_012]}
+    functions: {A: [FUNC_010, FUNC_015, FUNC_016], B: [FUNC_014]}
+    function_levels: {FUNC_016: "A360 L2；F360 L3"}
+    values: [VALUE_004, VALUE_009]
+    problems: {A: [PROBLEM_008, PROBLEM_010], B: [PROBLEM_006]}
+    needs: [NEED_004, NEED_010]
+    population: 资料未提供
+    age: 资料未提供
+    symptoms: 资料未提供
+    scenes: 资料未提供
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024]
+    required_conditions: ["A360：单眼瞳距、瞳高", "F360+：另需镜眼距、前倾角、镜架面弯、习惯阅读距离"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [F360 个人参数缺失, 配镜高度不足]
+    price_range_cny: [2990, 11090]
+    price_tier: P2
+    evidence_notes: 品牌宣称。
+    sources: [SRC_002#p49, SRC_002#p53]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_ESSILOR_104
+    brand: 依视路 essilor
+    series: 万里路 Varilux
+    name: 依视路万里路睿视智辉（A360 / 商务版 / 豪华版；可选全视线 GEN S）
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [Pupilizer（动态瞳孔）镜片技术, 全视线 GEN S]
+    official_claims:
+      - "采用全新Pupilizer（动态瞳孔）镜片技术，视觉锐利度和对比度显著提升（与睿视3.0相比，Eurosyn 2024，n=79）（SRC_002#p54）"
+      - "无论光线如何变幻，始终更加清晰（对比万里路系列上一代镜片）（SRC_002#p54）"
+    key_params: {上市: "2025年5月；GEN S 2025年7月（以通知为准）", 最小配镜高度: "A360 17/14mm；商务/豪华 14–18mm"}
+    mechanisms: {A: [MECH_020, MECH_026], B: [MECH_032, MECH_033, MECH_034]}
+    effects: {A: [EFFECT_007, EFFECT_011]}
+    functions: {A: [FUNC_010, FUNC_014, FUNC_016]}
+    function_levels: {FUNC_016: "A360 L2；商务版 L3；豪华版 L4"}
+    values: [VALUE_004, VALUE_008]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_012]}
+    needs: [NEED_004, NEED_007]
+    population: 资料未提供
+    age: 资料未提供
+    symptoms: {B: [SYMPTOM_011]}
+    scenes: {B: [SCENE_015]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_025, EXAM_032]
+    required_conditions: ["商务版：镜眼距、前倾角、镜架面弯、习惯阅读距离", "豪华版：另需近用瞳距、NVB（VOX/ER2 plus）"]
+    suggested_conditions: [弱光/光线变化环境用眼多（B）]
+    exclusion_conditions: [对应版本个人参数/NVB 缺失, 配镜高度不足]
+    price_range_cny: [3000, 14900]
+    price_tier: P3
+    evidence_notes: 对比基准为睿视3.0；是否保留睿视3.0 的 WAVE2.0/Binocular Booster 资料未说明。
+    sources: [SRC_002#p49, SRC_002#p54]
+    version: v0.1.0
+    open_questions: []
+
+  - id: PRODUCT_ESSILOR_105
+    brand: 依视路 essilor
+    series: 万里路 Varilux XR
+    name: 依视路万里路 XR 系列（普适版 / 商务版 / 豪华版 / 旗舰版；可选全视线 GEN S）
+    product_type: 渐进多焦镜片
+    line: 成人渐进
+    official_tech_names: [XR-motion, 双眼映射图, 聚点精准定位, 近用视觉习惯 NVB, ERCD, 主视眼]
+    official_claims:
+      - "XR-motion技术可基于配戴者的视觉行为……提升双眼视觉；聚点精准定位：通过视线下旋角度模型确定渐进带长度，在14mm至18mm范围内，可精确至0.1mm（SRC_002#p55）"
+      - "视觉空间分辨率提升+49%（与万里路X系列对比，依视路内部模拟）（SRC_002#p56）"
+      - "XR豪华版……根据配戴者的视觉行为，专门扩展近用视野宽度；近用视野宽度可增加25%（与XR普适版相比）（SRC_002#p57）"
+    key_params: {渐进带: "14–18mm 自动（0.1mm）", 最小配镜高度: "普适 18/14mm；其余 14–18mm", 性能优异度: "★★★★★（品牌自评）"}
+    mechanisms: {A: [MECH_020, MECH_038, MECH_028, MECH_031], B: [MECH_033, MECH_034, MECH_025]}
+    effects: {A: [EFFECT_007, EFFECT_016, EFFECT_012, EFFECT_015], B: [EFFECT_014, EFFECT_008]}
+    functions: {A: [FUNC_010, FUNC_018, FUNC_015, FUNC_016, FUNC_020]}
+    function_levels: {FUNC_016: "普适版 L1；商务版 L3；豪华版 L4（NVB）；旗舰版 L4（NVB+主视眼+ERCD）"}
+    values: [VALUE_004, VALUE_012, VALUE_009, VALUE_010, VALUE_014]
+    problems: {A: [PROBLEM_008, PROBLEM_010, PROBLEM_014]}
+    needs: [NEED_004, NEED_011]
+    population: 资料未提供
+    age: 资料未提供
+    symptoms: {A: [SYMPTOM_014]}
+    scenes: {A: [SCENE_017, SCENE_010, SCENE_003, SCENE_001]}
+    exams: [EXAM_001, EXAM_002, EXAM_005, EXAM_008, EXAM_009, EXAM_021, EXAM_022, EXAM_023, EXAM_024, EXAM_025, EXAM_026, EXAM_027, EXAM_032]
+    required_conditions: ["商务版：镜眼距、前倾角、镜架面弯、习惯阅读距离", "豪华版：+近用瞳距、NVB（必须 VOX 或 ER2 plus 测量）", "旗舰版：+主视眼、ERCD"]
+    suggested_conditions: 资料未提供
+    exclusion_conditions: [门店无 VOX/ER2 plus 设备时不可选豪华/旗舰版, 个人参数缺失]
+    price_range_cny: [6000, 84440]
+    price_tier: P4
+    evidence_notes: 比较数据为依视路内部模拟或品牌委托研究。
+    sources: [SRC_002#p49, SRC_002#p55, SRC_002#p56, SRC_002#p57, SRC_002#p58]
+    version: v0.1.0
+    open_questions: []

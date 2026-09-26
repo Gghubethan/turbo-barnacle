@@ -1,0 +1,144 @@
+# 消费者解释话术库：每条专业结论同时给出消费者版本。
+# 要求：初中生能懂、不堆技术名词、不夸大、不承诺治疗、不制造焦虑、描述真实可感知体验。
+# must_include：必须同时说出的限定语；avoid：禁止使用的说法。
+copy:
+  - id: COPY_001
+    target: FUNC_001
+    professional: 通过周边视网膜近视性离焦 / 降低周边对比度 / 环带光信号等光学设计，旨在延缓儿童近视进展与眼轴增长。
+    consumer: 镜片中间负责让孩子看清楚，周围有一圈特殊设计，会给眼睛一个"别长得太快"的信号，帮助减慢近视加深的速度。
+    must_include: [每个孩子效果不一样, 需要每天坚持戴够时间, 要定期回来测眼轴和度数]
+    avoid: [治好近视, 近视不再加深, 控制住近视, 保证有效, 摘不掉眼镜会越来越严重]
+    evidence: A
+  - id: COPY_002
+    target: EFFECT_003
+    professional: 降低周边视网膜成像对比度。
+    consumer: 镜片上有很多肉眼几乎看不见的小点，让周边看到的画面柔和一点，这是另一种帮助减慢近视加深的思路。
+    must_include: [中间看东西仍然清楚]
+    avoid: [毛玻璃, 看不清]
+    evidence: A
+  - id: COPY_003
+    target: FUNC_002
+    professional: 近用区附加正度数，减少近距离调节需求/调节滞后。
+    consumer: 镜片下面一小块专门帮孩子看书写字，看近的时候眼睛不用那么使劲。
+    must_include: [需要验光师判断是否适合]
+    avoid: [解决近视]
+    evidence: A
+  - id: COPY_004
+    target: FUNC_010
+    professional: 渐进多焦设计，远中近连续光度过渡。
+    consumer: 一副眼镜，往前看看远，稍微往下看看电脑，再往下看手机和书，不用来回摘眼镜。
+    must_include: [刚开始需要几天适应]
+    avoid: [完全没有适应期]
+    evidence: A
+  - id: COPY_005
+    target: FUNC_011
+    professional: 中近用（室内型）设计，扩大中近距离视野，以缩小/取消远用区为代价。
+    consumer: 专门为看电脑、看书、打牌这些近一点的事设计，看得更宽更轻松，头不用一直抬着找清楚的位置。
+    must_include: [主要在室内用, 开车和看远不适合用这副]
+    avoid: [什么都能看]
+    evidence: A
+  - id: COPY_006
+    target: FUNC_012
+    professional: 减少渐进镜片周边像差与变形。
+    consumer: 眼睛往旁边看时，画面会更自然、晃动感更少，不需要频繁转头找清晰的地方。
+    must_include: []
+    avoid: [完全没有变形]
+    evidence: A
+  - id: COPY_007
+    target: FUNC_013
+    professional: 优化视线在远近之间切换的路径（注视偏移量）。
+    consumer: 从看远切到看近时，眼睛更快找到清楚的位置。
+    must_include: []
+    avoid: []
+    evidence: A
+  - id: COPY_008
+    target: FUNC_014
+    professional: 针对大瞳孔（弱光）条件优化成像质量。
+    consumer: 天黑或光线暗的时候，瞳孔会变大，这种设计让那时候看东西也尽量保持清楚。
+    must_include: []
+    avoid: [夜视]
+    evidence: A
+  - id: COPY_009
+    target: FUNC_015
+    professional: 减小左右镜片光学差异，优化双眼融像。
+    consumer: 两只眼睛度数差得多时，让两只眼睛看到的画面更一致，看东西更协调。
+    must_include: []
+    avoid: []
+    evidence: A
+  - id: COPY_010
+    target: FUNC_016
+    professional: 按配戴参数个性化设计（L1–L4）。
+    consumer: 我们会量一量眼镜戴在你脸上的角度和距离，镜片按你的数据来做，戴起来更贴合、更容易适应。
+    must_include: [需要多量几个数据]
+    avoid: [独一无二, 最好的]
+    evidence: A
+  - id: COPY_011
+    target: FUNC_017
+    professional: 优化约 35cm 数码设备距离的近用区位置与大小。
+    consumer: 看手机、平板时，用自然的低头姿势就能看清，不用把手机举高或仰着头。
+    must_include: []
+    avoid: []
+    evidence: A
+  - id: COPY_012
+    target: FUNC_018
+    professional: 针对移动场景优化镜片光学分布。
+    consumer: 边走路边看手机、再抬头看路，视线切换更稳，不用停下来调整。
+    must_include: []
+    avoid: []
+    evidence: A
+  - id: COPY_013
+    target: FUNC_019
+    professional: 针对驾驶视点（道路/导航/后视镜）优化视区。
+    consumer: 开车时看路、看导航、看后视镜，来回切换更轻松。
+    must_include: []
+    avoid: [保证驾驶安全]
+    evidence: A
+  - id: COPY_014
+    target: FUNC_036
+    professional: 光致变色，随紫外线强度自动变深/褪色。
+    consumer: 在户外会自动变深挡强光，回到室内又变回透明，不用来回换眼镜。
+    must_include: [变色快慢和温度、光线有关]
+    avoid: []
+    evidence: A
+  - id: COPY_015
+    target: FUNC_037
+    professional: 减弱强光/眩光刺激。
+    consumer: 晚上对面的车灯、路灯没那么刺眼。
+    must_include: []
+    avoid: [完全消除眩光]
+    evidence: A
+  - id: COPY_016
+    target: FUNC_033
+    professional: 过滤部分短波蓝光，符合 GB/T 38120-2019 光安全要求。
+    consumer: 能挡掉一部分蓝光，符合国家相关标准要求。
+    must_include: []
+    avoid: [防近视, 保护视网膜不受伤害, 治疗眼疲劳]
+    evidence: A
+  - id: COPY_017
+    target: FUNC_035
+    professional: 银离子抗菌膜，对特定菌种抑菌率（SGS 报告）。
+    consumer: 镜片表面对几种常见细菌有抑制作用。
+    must_include: []
+    avoid: [防止眼部感染, 杀菌]
+    evidence: A
+  - id: COPY_018
+    target: FUNC_040
+    professional: 高折射率/厚度优化使镜片更薄更轻。
+    consumer: 镜片更薄更轻，戴着不压鼻子，看起来也更好看。
+    must_include: []
+    avoid: []
+    evidence: A
+  - id: COPY_019
+    target: FUNC_039
+    professional: 高抗冲材料（PC/Trivex）。
+    consumer: 孩子跑跳、运动时磕碰到，镜片不容易碎。
+    must_include: []
+    avoid: [摔不坏]
+    evidence: A
+  - id: COPY_020
+    target: FUNC_021
+    professional: 左右镜片前表面弯度匹配。
+    consumer: 两只眼度数不一样时，两片镜片看起来弧度一样，更美观。
+    must_include: []
+    avoid: []
+    evidence: A

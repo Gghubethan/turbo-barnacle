@@ -1,0 +1,259 @@
+# 技术机制字典（L1：怎么实现的）。parent 表示上下位；品牌名称见 brand_terms.yaml。
+# 编号段：001–019 儿童近视管理 / 020–049 渐进与单光设计 / 050–069 膜层与材料
+mechanisms:
+  # ---------- 儿童近视管理 ----------
+  - id: MECH_001
+    name: 微透镜阵列近视离焦（正度数微透镜）
+    description: 在镜片表面或基片内分布大量正度数小透镜，使周边光线聚焦于视网膜前；中央保留单光矫正区。
+    attributes: [微透镜数量, 圈数, 微透镜离焦量, 中央区直径, 离焦区直径, 填充率, 所在表面]
+    evidence: A
+    sources: [SRC_001#p8, SRC_001#p10, SRC_001#p14, SRC_001#p16, SRC_001#p19]
+  - id: MECH_002
+    name: 高非球微透镜阵列
+    parent: MECH_001
+    description: 微透镜为高度非球面，在视网膜前形成"非聚焦光束带"（依视路 H.A.L.T.）。
+    notes: SAP 青护小圆片、星视佳 Pro 使用相同"非聚焦光束带"措辞，但未写明微透镜为高非球面，不归入本机制。
+    evidence: A
+    sources: [SRC_001#p26]
+  - id: MECH_003
+    name: 环带微柱镜结构
+    description: 周边功能区为同心环带微柱镜（蔡司 C.A.R.E.），资料称形成"动态光信号"刺激视网膜；给出环带微柱镜等效球镜加光量。
+    notes: 资料未将其表述为"近视离焦"，不与 MECH_001 视为同一机制。
+    evidence: A
+    sources: [SRC_001#p29, SRC_001#p30]
+  - id: MECH_004
+    name: 周边渐变正度数（减少周边远视离焦）
+    description: 镜片中央为处方度数，周边区域正度数逐渐增加，把周边远视离焦转为近视离焦。
+    aliases: [周边离焦设计, 周边视力控制]
+    evidence: A
+    sources: [SRC_001#p44, SRC_001#p42, SRC_001#p8, SRC_001#p12]
+  - id: MECH_005
+    name: 同心环带离焦（整环正度数）
+    description: 中央单光区外为若干整圈正度数环带（非点状微透镜）。
+    evidence: A
+    sources: [SRC_001#p54, SRC_001#p35]
+  - id: MECH_006
+    name: 周边散光离焦刺激
+    description: 镜片内表面附加散光离焦补偿，刺激视网膜周边区域散光离焦。
+    evidence: A
+    sources: [SRC_001#p12, SRC_001#p33]
+  - id: MECH_007
+    name: 光散射微点（降低对比度）
+    description: 镜片上分布数千个散射微点，使进入眼睛的光线轻微散射，降低周边视网膜成像对比度。
+    evidence: A
+    sources: [SRC_001#p37, SRC_001#p35]
+  - id: MECH_008
+    name: 凹透镜阵列匀光（负度数微结构散焦）
+    description: 前表面六边形排列的凹透镜微结构，光线折射后形成散焦面，降低视网膜周边对比度信号。
+    notes: 与 MECH_007 解决同一问题（降低对比度），但物理实现不同（折射散焦 vs 散射）。
+    evidence: A
+    sources: [SRC_001#p57]
+  - id: MECH_009
+    name: 微结构内置于基片
+    description: 微透镜置于镜片基片内部，表面平整。
+    evidence: A
+    sources: [SRC_001#p10]
+  - id: MECH_010
+    name: 扇形/非对称离焦区布局
+    description: 依据儿童水平视线切换多、上下切换少的特点，离焦区呈扇形/非对称分布。
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p42]
+  - id: MECH_011
+    name: 儿童渐进多焦（近用附加）
+    description: 下方近用区附加正度数（资料中 ADD +1.00~+2.50D），近距离注视时减少调节需求。
+    evidence: A
+    sources: [SRC_001#p46, SRC_001#p48]
+  - id: MECH_012
+    name: 前表面波前像差区（光学引导正视化）
+    description: 菁杰视远视设计：前表面设波前像差区、后表面修正传播方向。资料描述不足以判断光学原理。
+    evidence: C
+    sources: [SRC_001#p51]
+  - id: MECH_013
+    name: 前后表面复合设计
+    description: 前后两个表面分别承担不同光学功能（如前表面微透镜 + 后表面周边离焦 / 渐进分布于双面）。
+    evidence: A
+    sources: [SRC_001#p8, SRC_001#p12, SRC_001#p33, SRC_001#p51, SRC_002#p23]
+
+  # ---------- 渐进与单光设计 ----------
+  - id: MECH_020
+    name: 渐进多焦设计
+    description: 从远用区到近用区光度连续增加（下加光 ADD）。
+    evidence: A
+    sources: [SRC_002#p3, SRC_002#p12]
+  - id: MECH_021
+    name: 内表面（后表面）渐进
+    parent: MECH_020
+    description: 渐进曲面做在镜片后表面；SAP 称与外渐进相比扩大视野。
+    evidence: A
+    sources: [SRC_002#p12, SRC_002#p13]
+  - id: MECH_022
+    name: 中近用（室内/办公）渐进设计
+    parent: MECH_020
+    description: 牺牲或取消远用区，扩大中近区；以"最远清晰距离"区分类型。
+    attributes: [最远清晰距离, 设计基准(近用处方/远用处方+ADD)]
+    aliases: [职业渐进, 递减镜, 室内型]
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p6, SRC_002#p9, SRC_002#p18]
+  - id: MECH_023
+    name: 自由曲面数字化加工
+    description: 点阵精密加工/自由成型，按处方逐片车房加工。属于实现其他设计的工艺手段。
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p13, SRC_002#p33]
+  - id: MECH_024
+    name: 非球面/内非球面设计
+    description: 对镜片散光进行修正，使多角度达到非球面成像效果。
+    evidence: A
+    sources: [SRC_002#p13, SRC_001#p35]
+  - id: MECH_025
+    name: 眼球旋转中心优化
+    description: 按眼球旋转中心（或近视眼双旋转中心、ERCD）优化处方分布。
+    evidence: A
+    sources: [SRC_002#p35, SRC_002#p33, SRC_002#p58, SRC_001#p29]
+  - id: MECH_026
+    name: 瞳孔尺寸适配设计
+    description: 考虑不同年龄/光照下瞳孔大小变化，对瞳孔周边区域的光学（如球面像差）进行优化。
+    evidence: A
+    sources: [SRC_002#p28, SRC_002#p16, SRC_002#p54]
+  - id: MECH_027
+    name: 高阶像差/波前优化
+    description: 对镜片前后表面光学点做修正，消减高阶像差。
+    evidence: A
+    sources: [SRC_002#p16, SRC_002#p53]
+  - id: MECH_028
+    name: 双眼平衡设计
+    description: 设计单片镜片时同时考虑双眼处方与配戴情况，减小左右镜片光学差异，优化融像。
+    evidence: A
+    sources: [SRC_002#p15, SRC_002#p53, SRC_002#p55, SRC_002#p9]
+  - id: MECH_029
+    name: 双眼前表面弯度匹配
+    description: 左右光度不同时，通过个性化基弯使两片前表面弯度相同。
+    evidence: A
+    sources: [SRC_002#p14, SRC_001#p35]
+  - id: MECH_030
+    name: 近用内移量个性化
+    description: 按瞳距优化看近内移量。
+    evidence: A
+    sources: [SRC_002#p14]
+  - id: MECH_031
+    name: 渐进通道长度可选/自动适配
+    description: 渐进带长度可选（如 11/13/15mm、FF 值 10–16mm、标准/中/短通道）或按模型自动确定（14–18mm，精确到 0.1mm）。
+    evidence: A
+    sources: [SRC_002#p13, SRC_002#p15, SRC_002#p21, SRC_002#p9, SRC_002#p55]
+  - id: MECH_032
+    name: 人群平均配戴参数优化
+    description: 以人群（如亚洲人）平均配戴位置与面部参数作为固定值优化设计。
+    evidence: A
+    sources: [SRC_002#p49, SRC_002#p15, SRC_002#p37, SRC_001#p46]
+  - id: MECH_033
+    name: 个人配戴参数定制
+    description: 按个人实测前倾角/镜眼距（后顶点距离）/镜面弯/近用距离等参数定制。
+    evidence: A
+    sources: [SRC_002#p16, SRC_002#p38, SRC_002#p10, SRC_002#p49]
+  - id: MECH_034
+    name: 个人视觉行为参数定制
+    description: 加入近用视觉行为（NVB）、主视眼、ERCD 或"个人视觉行为和要求"进行设计。
+    evidence: A
+    sources: [SRC_002#p49, SRC_002#p57, SRC_002#p58, SRC_002#p35]
+  - id: MECH_035
+    name: 使用偏好分型设计
+    description: 按主要用途选择设计类型（平衡型/中距型/近距型），调整中/近视野分配。
+    evidence: A
+    sources: [SRC_002#p39, SRC_002#p44]
+  - id: MECH_036
+    name: 数码近用区优化
+    description: 调整镜片下方近用区的位置和大小，针对约 35cm 数码设备距离。
+    evidence: A
+    sources: [SRC_002#p35, SRC_001#p46]
+  - id: MECH_037
+    name: 镜框/视觉焦点识别
+    description: 基于镜框近用位置与惯有下旋视觉行为计算新的近用视觉区域。
+    evidence: A
+    sources: [SRC_002#p35, SRC_002#p40]
+  - id: MECH_038
+    name: 动态视觉优化设计
+    description: 按移动场景（视线在屏幕与路面间切换、头部位置变化）优化镜片光学分布。
+    evidence: A
+    sources: [SRC_002#p32, SRC_002#p55, SRC_002#p52]
+  - id: MECH_039
+    name: 年龄相关设计优化
+    description: 按配戴者年龄阶段（调节能力、瞳孔）调整设计。资料未说明具体光学改变。
+    evidence: B
+    sources: [SRC_002#p32, SRC_002#p13]
+  - id: MECH_040
+    name: 视线路径（注视偏移量）优化
+    description: 考虑眼球在垂直方向远近切换的运动轨迹，优化光度渐进曲线/注视偏移量。
+    evidence: A
+    sources: [SRC_002#p13, SRC_002#p28]
+  - id: MECH_041
+    name: 驾驶视点分区设计
+    description: 针对道路、导航面板、后视镜、侧视镜等驾驶视点优化视区。
+    evidence: A
+    sources: [SRC_002#p46]
+  - id: MECH_042
+    name: 厚度优化
+    description: 个性化减薄棱镜、按镜架形状优化面弯，或双面设计降低边缘厚度。
+    evidence: A
+    sources: [SRC_002#p33, SRC_001#p8, SRC_001#p12]
+  - id: MECH_043
+    name: 调节优化设计（远用区周边光学点）
+    description: SAP 称针对远用区周边光学点优化，使其更贴合眼球运动所需调节。
+    evidence: C
+    sources: [SRC_002#p16]
+  - id: MECH_044
+    name: 均衡比例设计（软硬设计折中）
+    description: 综合硬性与软性渐进设计，光度平缓变化并保持较宽远中近区。
+    evidence: A
+    sources: [SRC_002#p15]
+
+  # ---------- 膜层与材料 ----------
+  - id: MECH_050
+    name: 多层减反射膜
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p20]
+  - id: MECH_051
+    name: 疏水/防污顶膜
+    aliases: [易洁膜, 臻洁膜, 晴朗膜, 钻晶膜洁]
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p42, SRC_001#p54, SRC_001#p27]
+  - id: MECH_052
+    name: 加硬耐磨膜
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p29, SRC_001#p27]
+  - id: MECH_053
+    name: 蓝光过滤膜/材料
+    evidence: A
+    sources: [SRC_001#p8, SRC_002#p4, SRC_001#p27]
+  - id: MECH_054
+    name: 防雾膜
+    evidence: A
+    sources: [SRC_002#p18, SRC_002#p53]
+  - id: MECH_055
+    name: 银离子抗菌膜
+    evidence: A
+    sources: [SRC_001#p20]
+  - id: MECH_056
+    name: 光致变色
+    aliases: [光智·X, 焕色视界X, 全视线 GEN S]
+    evidence: A
+    sources: [SRC_001#p21, SRC_002#p21, SRC_002#p29, SRC_002#p52]
+  - id: MECH_057
+    name: 强光减弱膜
+    description: 蔡司钻立方极光膜，资料称减弱路面强光带来的不适感；膜层原理资料未提供。
+    evidence: A
+    sources: [SRC_002#p46]
+  - id: MECH_058
+    name: 紫外线阻隔（材料+背面减反）
+    evidence: A
+    sources: [SRC_001#p27, SRC_001#p29, SRC_001#p42]
+  - id: MECH_059
+    name: 高抗冲材料（PC / Trivex）
+    evidence: A
+    sources: [SRC_001#p33, SRC_001#p54, SRC_002#p34, SRC_001#p26]
+  - id: MECH_060
+    name: 高折射率材料
+    evidence: A
+    sources: [SRC_001#p10]
+  - id: MECH_061
+    name: 高阿贝数材料
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p35, SRC_002#p34]

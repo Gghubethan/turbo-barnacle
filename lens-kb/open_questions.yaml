@@ -1,0 +1,143 @@
+# 待确认问题库：只收录会影响建模/规则/数据正确性的问题。
+# priority：P0 阻塞规则或数据可用性 / P1 影响关系或话术 / P2 数据完整性
+# status：open / answered / closed
+questions:
+  - id: Q_001
+    priority: P0
+    status: open
+    topic: 价格冲突
+    question: 新乐学守护版建议零售价：SRC_001 p22 标 ¥4980，p23 标 ¥3980（同一价目页的两个版本），以哪个为准？
+    affects: [SKU_HOYA_001_01, RULE_045]
+    type: CONFLICT
+  - id: Q_002
+    priority: P1
+    status: open
+    topic: 资料印刷疑点
+    question: 蔡司智锐纵横版亚洲版（EPA74）、臻选版（SES74）的 1.74 列折射率印为 1.665，是否应为 1.738？
+    affects: [PRODUCT_ZEISS_106, PRODUCT_ZEISS_107]
+  - id: Q_003
+    priority: P0
+    status: open
+    topic: 资料版本与价格有效期
+    question: 蔡司手册有效期至 2025-12-31，SAP/依视路价格为 2025 年版本，SRC_002 含未处理的校对批注（工作稿）。当前（2026-09）是否有更新版价目？本批价格能否作为门店现行价？
+    affects: [skus.csv 全部价格]
+  - id: Q_004
+    priority: P0
+    status: open
+    topic: 儿童近视风险阈值
+    question: AL/CR 诊断界值（资料无数值）、AL 百分位风险阈值、6–10 岁以外年龄段 ΔAL 阈值，业务/临床是否给出？ΔAL≥0.2mm/年（6–10 岁）能否直接作为自动触发条件？
+    affects: [RULE_002, RULE_003, EXAM_013, EXAM_014, EXAM_016]
+  - id: Q_005
+    priority: P0
+    status: open
+    topic: 通用业务阈值
+    question: 需确认：近视判定 SE 阈值、屈光参差阈值、高度数阈值、"高频"电脑/手机/棋牌使用时长、"经常驾驶/夜间驾驶"频度。
+    affects: [RULE_001, RULE_005, RULE_006, RULE_007, RULE_009, RULE_011, RULE_036, RULE_040]
+  - id: Q_006
+    priority: P0
+    status: open
+    topic: 儿童近视管理产品排序
+    question: 各品牌疗效数据来自不同研究（指标有"进展减缓%""相对正视眼有效率""常戴镜者亚组"等），模型当前设为不分级、不排序。业务是否同意？若需排序，按什么依据？
+    affects: [FUNC_001, RULE_030, RULE_065]
+  - id: Q_007
+    priority: P1
+    status: open
+    topic: 疑似同源产品
+    question: Shamir 睛童与 SAP 星视佳双面复合：同专利号、同折射率/阿贝数、同光度范围。是否同一镜片设计/同一供应来源？
+    affects: [PREL_001]
+  - id: Q_008
+    priority: P1
+    status: open
+    topic: 疑似同源产品
+    question: 豪雅悦览 S3 与锐适三维渐进的隐形标记完全相同（APP11–APP45），是否同一设计、仅膜层与命名不同？
+    affects: [PREL_016]
+  - id: Q_009
+    priority: P1
+    status: open
+    topic: 升级内容缺失
+    question: 尼康控优点 2.0 相比控优点升级了什么？（资料中价格、光度、产地完全相同）
+    affects: [PRODUCT_NIKON_002, PREL_015]
+  - id: Q_010
+    priority: P1
+    status: open
+    topic: 系列定位
+    question: 蔡司"智锐"与"智锐纵横版"的差异与定位（各自"新升级"项不同；纵横版经典/亚洲/臻选更便宜；1.53 Trivex 介绍在智锐章节但只有纵横版有 SKU）。
+    affects: [PRODUCT_ZEISS_105..112, PREL_034..037]
+  - id: Q_011
+    priority: P2
+    status: open
+    topic: 命名对应
+    question: 蔡司睐光2.0"轻渐进/渐进两种设计"分别对应价目中的"2.0 D"还是"2.0 3D"？
+    affects: [PRODUCT_ZEISS_103, PRODUCT_ZEISS_104]
+  - id: Q_012
+    priority: P2
+    status: open
+    topic: 命名对应
+    question: 依视路"精视好学生"与"好学生"的差异；"标准型 DFB"与"绿宝贝 A360"的设计差异。
+    affects: [PRODUCT_ESSILOR_002]
+  - id: Q_013
+    priority: P2
+    status: open
+    topic: 品牌主体
+    question: 菁杰视、全适·乐蕊、睛鹰的品牌/供应商主体；星佳贝是否为 SAP 品牌（仅依据脚注推断）。
+    affects: [PRODUCT_JJS_001, PRODUCT_QS_001, PRODUCT_JY_001, PRODUCT_SAP_006]
+  - id: Q_014
+    priority: P1
+    status: open
+    topic: 话术合规
+    question: 睛鹰 MyoDISC 引用的"60%"来自 DISC 离焦隐形眼镜研究，非本框架镜片数据，门店话术能否引用？
+    affects: [PRODUCT_JY_001, RULE_071]
+  - id: Q_015
+    priority: P2
+    status: open
+    topic: 数据归属
+    question: 依视路万里路电脑专用 1.591/1.597/1.665 的光度范围图跨列，各自范围是多少？
+    affects: [PRODUCT_ESSILOR_101]
+  - id: Q_016
+    priority: P2
+    status: open
+    topic: 价格层级口径
+    question: 价格层级 P1–P5（<1500 / 1500–2999 / 3000–5999 / 6000–14999 / ≥15000，按最低价 SKU）是否符合业务口径？
+    affects: [products.yaml price_tier]
+  - id: Q_017
+    priority: P1
+    status: open
+    topic: 适用人群
+    question: 蔡司成长乐研究整体差异无统计学意义，仅 6–12 岁且父母至少一方近视亚组显著。推荐时是否限定该人群？
+    affects: [PRODUCT_ZEISS_003]
+  - id: Q_018
+    priority: P1
+    status: open
+    topic: 话术合规
+    question: 星趣控 67% 为每日配戴>12h 常戴镜者亚组；5 年期第 3 年起为模拟对照。门店话术引用口径？
+    affects: [PRODUCT_ESSILOR_001, RULE_071]
+  - id: Q_019
+    priority: P2
+    status: open
+    topic: 症状→问题
+    question: 儿童"阅读跳行漏字""远近切换反应慢""学习难持久"对应哪些视功能检查与问题？资料只作为筛查引导。
+    affects: [SYMPTOM_002, SYMPTOM_003, SYMPTOM_004, EXAM_012]
+  - id: Q_020
+    priority: P1
+    status: open
+    topic: 使用限制
+    question: 室内/中近用镜片（视悦智能、新智阅、蔡司室内型、万里路电脑专用）是否明确不得用于驾驶/看远？资料仅写"适合室内/桌面使用"。
+    affects: [RULE_056, REL（FUNC_011 conflicts_with SCENE_010/012）]
+  - id: Q_021
+    priority: P2
+    status: open
+    topic: 参考数据印刷疑点
+    question: SRC_001 p3 女童 3 岁 AL P5 印刷值 20.08（与 P25 21.25 间距异常），是否为 20.80？
+    affects: [reference/axial_length_percentiles.csv]
+  - id: Q_022
+    priority: P2
+    status: open
+    topic: 建模确认
+    question: 本批在"用户问题"与"标准功能"之间新增了 NEED_（功能需求）层，是否认可？
+    affects: [dictionaries/needs.yaml, rules.yaml]
+  - id: Q_023
+    priority: P2
+    status: open
+    topic: 规则口径
+    question: 控优点"建议 6 岁及以上"——对 <6 岁是排除还是降权？
+    affects: [RULE_054]

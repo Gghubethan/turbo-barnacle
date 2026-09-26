@@ -1,0 +1,186 @@
+# 标准功能字典：跨品牌统一的"能力"标签，商品匹配主键。
+# 编号段：001–009 近视管理/儿童视功能 / 010–029 视觉设计 / 030–049 膜层与材料
+# scope: design=设计层（写在 PRODUCT）  sku=随膜层/材料/选项变化（写在 SKU.extra_functions）  both=两者皆可（如 UV/轻薄 既可来自设计也可来自材料）
+functions:
+  - id: FUNC_001
+    name: 儿童近视管理光学设计
+    category: 近视管理
+    scope: design
+    definition: 通过周边离焦、降低对比度、环带信号等光学手段，旨在延缓儿童青少年近视进展/眼轴增长。
+    realized_by_effects: [EFFECT_001, EFFECT_002, EFFECT_003, EFFECT_005, EFFECT_032]
+    levels: 不分级
+    level_note: 各品牌疗效数据来自不同研究（样本、年龄、时长、对照、指标定义均不同），不可横向比较，不按疗效或价格分级（Q_006）。
+    compliance: 只能表述为"延缓/管理近视进展"，不得表述为"治疗/治愈/控制住近视"；须附"效果因人而异、需坚持配戴、定期复查"。
+    evidence: A
+  - id: FUNC_002
+    name: 儿童近距离调节辅助（近附加）
+    category: 近视管理
+    scope: design
+    definition: 近用区附加正度数，减少儿童近距离用眼时的调节需求/调节滞后。
+    realized_by_effects: [EFFECT_006]
+    levels: 资料不足，不分级
+    evidence: A
+  - id: FUNC_003
+    name: 儿童远视正视化引导设计
+    category: 近视管理
+    scope: design
+    definition: 菁杰视"远视设计"宣称的能力，光学原理与证据资料不足。
+    realized_by_effects: []
+    levels: 不分级
+    evidence: C
+  - id: FUNC_010
+    name: 远中近连续矫正（渐进多焦）
+    category: 老视/视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_007]
+    evidence: A
+  - id: FUNC_011
+    name: 中近距离视觉优化（室内/办公型）
+    category: 老视/视觉设计
+    scope: design
+    definition: 扩大中近距离视野，以缩小或取消远用区为代价。
+    parameters: {coverage: 产品属性"最远清晰距离"（如 ~1m / ~2m / ~3m / ~4m / 1–4m 个性化）}
+    realized_by_effects: [EFFECT_008]
+    evidence: A
+  - id: FUNC_012
+    name: 周边视野优化（减少周边像差/变形）
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_009, EFFECT_033]
+    levels: 不分级（仅有品牌内部对比数据，跨品牌不可比）
+    evidence: A
+  - id: FUNC_013
+    name: 远近切换流畅性优化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_010]
+    evidence: A
+  - id: FUNC_014
+    name: 弱光视觉优化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_011, EFFECT_013]
+    evidence: A
+  - id: FUNC_015
+    name: 双眼视觉平衡优化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_012]
+    evidence: A
+  - id: FUNC_016
+    name: 配戴参数个性化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_014]
+    levels:
+      L1: {name: 基础, adds: 仅用处方 + 单眼瞳距/瞳高，其余配戴参数为固定默认值}
+      L2: {name: 增强, adds: "相比 L1：采用人群平均配戴参数（如亚洲版）或局部个性化（按瞳距优化内移量、可指定近用目的距离）"}
+      L3: {name: 高级优化, adds: "相比 L2：按个人实测配戴参数定制（前倾角、镜眼距/后顶点距离、镜面弯、近用距离等）"}
+      L4: {name: 高度个性化, adds: "相比 L3：再加入个人视觉行为参数（NVB 近用视觉行为 / 主视眼 / ERCD），需专用设备测量"}
+    level_evidence: A（各产品所需定制参数为资料明示）
+    evidence: A
+  - id: FUNC_017
+    name: 数码设备近用优化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_034]
+    evidence: A
+  - id: FUNC_018
+    name: 动态视觉优化
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_016]
+    evidence: A
+  - id: FUNC_019
+    name: 驾驶视觉优化
+    category: 视觉设计
+    scope: design
+    definition: 针对驾驶视点（道路/导航/仪表/后视镜）的视区与切换优化。
+    realized_by_effects: [EFFECT_010]
+    evidence: A
+  - id: FUNC_020
+    name: 镜框适配（渐进通道/近用区随镜框优化）
+    category: 视觉设计
+    scope: design
+    realized_by_effects: [EFFECT_015]
+    evidence: A
+  - id: FUNC_021
+    name: 双眼外观一致（面弯匹配）
+    category: 外观
+    scope: design
+    realized_by_effects: [EFFECT_029]
+    evidence: A
+  - id: FUNC_030
+    name: 减反射
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_017]
+    evidence: A
+  - id: FUNC_031
+    name: 易清洁防污
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_018]
+    evidence: A
+  - id: FUNC_032
+    name: 耐磨
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_019, EFFECT_031]
+    evidence: A
+  - id: FUNC_033
+    name: 蓝光防护
+    category: 膜层/材料
+    scope: sku
+    realized_by_effects: [EFFECT_020]
+    compliance: 资料仅称符合 GB/T 38120-2019 光安全要求 / QB/T 2506-2017 蓝光防护要求；不得宣称治疗或预防眼病。
+    evidence: A
+  - id: FUNC_034
+    name: 防雾
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_024]
+    evidence: A
+  - id: FUNC_035
+    name: 抗菌
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_025]
+    compliance: 仅可按检测报告表述"对特定细菌抑菌率"，不得延伸为预防眼部感染。
+    evidence: A
+  - id: FUNC_036
+    name: 光致变色（室内外自动调光）
+    category: 材料/膜层
+    scope: sku
+    realized_by_effects: [EFFECT_021]
+    evidence: A
+  - id: FUNC_037
+    name: 强光/眩光减弱
+    category: 膜层
+    scope: sku
+    realized_by_effects: [EFFECT_022]
+    evidence: A
+  - id: FUNC_038
+    name: 紫外线防护
+    category: 材料/膜层
+    scope: both
+    realized_by_effects: [EFFECT_023]
+    evidence: A
+  - id: FUNC_039
+    name: 抗冲击安全
+    category: 材料
+    scope: sku
+    realized_by_effects: [EFFECT_026]
+    evidence: A
+  - id: FUNC_040
+    name: 轻薄（厚度/重量优化）
+    category: 材料/设计
+    scope: both
+    realized_by_effects: [EFFECT_027]
+    evidence: A
+  - id: FUNC_041
+    name: 低色散（高阿贝数材料）
+    category: 材料
+    scope: sku
+    realized_by_effects: [EFFECT_028]
+    evidence: A

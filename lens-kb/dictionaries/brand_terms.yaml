@@ -1,0 +1,94 @@
+# 品牌术语映射表：品牌名称 → 标准机制/效果/功能。品牌名称本身不作为标准功能。
+# term_type：技术名称 / 营销名称 / 设计方法 / 膜层名称 / 材料名称 / 版本名称
+terms:
+  # ---------------- SAP（思汉普） ----------------
+  - {id: TERM_001, brand: SAP, term: 多点离焦技术, term_type: 技术名称, maps_to: [MECH_001, EFFECT_001, FUNC_001], evidence: A, sources: [SRC_001#p10, SRC_001#p14]}
+  - {id: TERM_002, brand: SAP, term: 双面复合设计 / 双面技术：多点离焦+周边离焦复合叠加, term_type: 技术名称, maps_to: [MECH_013, MECH_001, MECH_004], evidence: A, sources: [SRC_001#p8, SRC_001#p12]}
+  - {id: TERM_003, brand: SAP, term: 散光补偿（内表面散光离焦补偿）, term_type: 技术名称, maps_to: [MECH_006, EFFECT_005], evidence: A, sources: [SRC_001#p12]}
+  - {id: TERM_004, brand: SAP, term: 内置设计, term_type: 技术名称, maps_to: [MECH_009, EFFECT_031], evidence: A, sources: [SRC_001#p10]}
+  - {id: TERM_005, brand: SAP, term: 扇形设计 / 非对称+扇形设计, term_type: 技术名称, maps_to: [MECH_010, EFFECT_030], evidence: A, sources: [SRC_001#p10, SRC_001#p42]}
+  - {id: TERM_006, brand: SAP, term: 周边离焦设计技术（青护全焦点）, term_type: 技术名称, maps_to: [MECH_004, EFFECT_002], evidence: A, sources: [SRC_001#p42]}
+  - {id: TERM_007, brand: SAP, term: 星点动态离焦技术（星光扩散点 + 环带同心离焦）, term_type: 技术名称, maps_to: [MECH_007, MECH_005, EFFECT_003, EFFECT_001], evidence: A, sources: [SRC_001#p35], notes: "名称含'动态'，但资料描述为静态散射点+环带离焦，未描述任何动态机制"}
+  - {id: TERM_008, brand: SAP, term: 优像平衡, term_type: 技术名称, maps_to: [MECH_029, MECH_028, EFFECT_029, EFFECT_012], evidence: A, sources: [SRC_001#p35]}
+  - {id: TERM_009, brand: SAP, term: 内渐进内非球设计, term_type: 技术名称, maps_to: [MECH_021, MECH_024], evidence: A, sources: [SRC_002#p13]}
+  - {id: TERM_010, brand: SAP, term: 轻松聚焦技术, term_type: 营销名称, maps_to: [MECH_040, EFFECT_010, FUNC_013], evidence: A, sources: [SRC_002#p13], notes: 资料解释为"动态视线追踪，优化垂直方向注视偏移量"}
+  - {id: TERM_011, brand: SAP, term: 数字化自由曲面 / Freeform 自由曲面, term_type: 技术名称, maps_to: [MECH_023], evidence: A, sources: [SRC_002#p13, SRC_002#p4]}
+  - {id: TERM_012, brand: SAP, term: 优化内移量, term_type: 技术名称, maps_to: [MECH_030, EFFECT_014], evidence: A, sources: [SRC_002#p14]}
+  - {id: TERM_013, brand: SAP, term: 双眼面弯匹配技术, term_type: 技术名称, maps_to: [MECH_029, EFFECT_029, FUNC_021], evidence: A, sources: [SRC_002#p14]}
+  - {id: TERM_014, brand: SAP, term: 均衡比例设计, term_type: 技术名称, maps_to: [MECH_044, EFFECT_009], evidence: A, sources: [SRC_002#p15]}
+  - {id: TERM_015, brand: SAP, term: 双眼视觉优化技术, term_type: 技术名称, maps_to: [MECH_028, EFFECT_012, FUNC_015], evidence: A, sources: [SRC_002#p15]}
+  - {id: TERM_016, brand: SAP, term: 镜框自由配, term_type: 营销名称, maps_to: [MECH_031, EFFECT_015, FUNC_020], evidence: A, sources: [SRC_002#p15]}
+  - {id: TERM_017, brand: SAP, term: 亚洲版设计, term_type: 设计方法, maps_to: [MECH_032], evidence: A, sources: [SRC_002#p15]}
+  - {id: TERM_018, brand: SAP, term: 个性化定制（尊享个化版）, term_type: 技术名称, maps_to: [MECH_033, FUNC_016], evidence: A, sources: [SRC_002#p16]}
+  - {id: TERM_019, brand: SAP, term: 瞳孔视觉优化技术, term_type: 技术名称, maps_to: [MECH_026, EFFECT_011, FUNC_014], evidence: A, sources: [SRC_002#p16]}
+  - {id: TERM_020, brand: SAP, term: 波面光线优化, term_type: 技术名称, maps_to: [MECH_027, EFFECT_013], evidence: A, sources: [SRC_002#p16]}
+  - {id: TERM_021, brand: SAP, term: 调节力优化设计, term_type: 技术名称, maps_to: [MECH_043], evidence: C, sources: [SRC_002#p16], notes: 光学效果资料不足}
+  - {id: TERM_022, brand: SAP, term: 易洁膜 / 臻洁膜 / 多层复合膜, term_type: 膜层名称, maps_to: [MECH_050, MECH_051, MECH_052, FUNC_030, FUNC_031, FUNC_032], evidence: A, sources: [SRC_001#p42, SRC_001#p10], notes: "SAP 自评星级：多层复合膜 < 易洁膜 < 臻洁膜（SRC_001#p42），为品牌内部对比"}
+  # ---------------- 豪雅 ----------------
+  - {id: TERM_030, brand: 豪雅, term: D.I.M.S. 多区正向光学离焦, term_type: 技术名称, maps_to: [MECH_001, EFFECT_001, FUNC_001], evidence: A, sources: [SRC_001#p19], notes: 资料写明 396 个点状正向离焦区；未写明单个微透镜离焦量}
+  - {id: TERM_031, brand: 豪雅, term: 抗菌膜层（Ag+ 银离子）, term_type: 膜层名称, maps_to: [MECH_055, EFFECT_025, FUNC_035], evidence: A, sources: [SRC_001#p20]}
+  - {id: TERM_032, brand: 豪雅, term: 光智·X / 光智·X速 变色, term_type: 材料名称, maps_to: [MECH_056, EFFECT_021, FUNC_036], evidence: A, sources: [SRC_001#p21, SRC_002#p21, SRC_002#p26]}
+  - {id: TERM_033, brand: 豪雅, term: 唯钻膜 / 豪钻膜 / 唯频膜（VP）/ 唯钻膜（HVLL）, term_type: 膜层名称, maps_to: [MECH_050, MECH_051, MECH_052, FUNC_030, FUNC_031, FUNC_032], evidence: B, sources: [SRC_002#p7, SRC_002#p25], notes: 资料未说明各膜层性能差异}
+  - {id: TERM_034, brand: 豪雅, term: 蓝光防护 / 新兰御, term_type: 膜层名称, maps_to: [MECH_053, FUNC_033], evidence: A, sources: [SRC_002#p7, SRC_002#p25]}
+  - {id: TERM_035, brand: 豪雅, term: METS 美薄 / METS 增厚配比重, term_type: 版本名称, maps_to: [MECH_042, FUNC_040], evidence: A, sources: [SRC_002#p7], notes: 付费加工服务，非镜片设计}
+  - {id: TERM_036, brand: 豪雅, term: 指定（近用）目的距离 20–90cm / 20–99cm, term_type: 技术名称, maps_to: [MECH_033, FUNC_016], evidence: A, sources: [SRC_002#p21, SRC_002#p25], notes: 局部个性化，归 FUNC_016 L2}
+  # ---------------- 依视路 ----------------
+  - {id: TERM_040, brand: 依视路, term: H.A.L.T. 高非球微透镜星控技术, term_type: 技术名称, maps_to: [MECH_002, EFFECT_001, FUNC_001], evidence: A, sources: [SRC_001#p26]}
+  - {id: TERM_041, brand: 依视路, term: 钻晶膜洁 / 钻晶膜岩 / 钻晶A4 / 钻晶膜致 / 蓝晶 / 白晶, term_type: 膜层名称, maps_to: [MECH_050, MECH_051, MECH_052, FUNC_030, FUNC_031, FUNC_032], evidence: B, sources: [SRC_001#p27, SRC_002#p52], notes: "资料：膜岩=耐刮划+耐污；A4 含蓝光过滤；膜致/白晶/蓝晶性能差异资料未提供"}
+  - {id: TERM_042, brand: 依视路, term: 钻晶A4（蓝光过滤技术）, term_type: 膜层名称, maps_to: [MECH_053, FUNC_033], evidence: A, sources: [SRC_001#p27]}
+  - {id: TERM_043, brand: 依视路, term: 宇宙片（1.591）, term_type: 材料名称, maps_to: [MECH_059, FUNC_039], evidence: A, sources: [SRC_001#p27], notes: 资料称"超轻、抗冲击"}
+  - {id: TERM_044, brand: 依视路, term: 全视线 GEN S 动态感光, term_type: 材料名称, maps_to: [MECH_056, EFFECT_021, FUNC_036], evidence: A, sources: [SRC_002#p52]}
+  - {id: TERM_045, brand: 依视路, term: WAVE 2.0, term_type: 技术名称, maps_to: [MECH_027, EFFECT_013], evidence: A, sources: [SRC_002#p53]}
+  - {id: TERM_046, brand: 依视路, term: Binocular Booster（双眼验光处方平衡）, term_type: 技术名称, maps_to: [MECH_028, EFFECT_012, FUNC_015], evidence: A, sources: [SRC_002#p53]}
+  - {id: TERM_047, brand: 依视路, term: Pupilizer 动态瞳孔, term_type: 技术名称, maps_to: [MECH_026, EFFECT_011, FUNC_014], evidence: A, sources: [SRC_002#p54]}
+  - {id: TERM_048, brand: 依视路, term: XR-motion / 视觉动态响应, term_type: 技术名称, maps_to: [MECH_038, MECH_034, EFFECT_016, FUNC_018], evidence: A, sources: [SRC_002#p55, SRC_002#p56]}
+  - {id: TERM_049, brand: 依视路, term: 双眼映射图, term_type: 技术名称, maps_to: [MECH_028, EFFECT_012], evidence: A, sources: [SRC_002#p55]}
+  - {id: TERM_050, brand: 依视路, term: 聚点精准定位（渐进带 14–18mm，精确至 0.1mm）, term_type: 技术名称, maps_to: [MECH_031, EFFECT_015], evidence: A, sources: [SRC_002#p55]}
+  - {id: TERM_051, brand: 依视路, term: 生命光学 / AI 镜像人, term_type: 设计方法, maps_to: [], evidence: A, sources: [SRC_002#p48, SRC_002#p51], notes: 描述研发方法，不产生独立功能标签}
+  - {id: TERM_052, brand: 依视路, term: 普适版 / A360 / F360+ / 商务版 / 豪华版 / 旗舰版, term_type: 版本名称, maps_to: [MECH_032, MECH_033, MECH_034, FUNC_016], evidence: A, sources: [SRC_002#p49], notes: 按所需验配参数对应 FUNC_016 L1/L2/L3/L4}
+  - {id: TERM_053, brand: 依视路, term: 近用视觉习惯 NVB / ERCD / 主视眼, term_type: 技术名称, maps_to: [MECH_034, MECH_025], evidence: A, sources: [SRC_002#p57, SRC_002#p58]}
+  - {id: TERM_054, brand: 依视路, term: 性能优异度 ★ 星级, term_type: 营销名称, maps_to: [], evidence: A, sources: [SRC_002#p18, SRC_002#p52, SRC_002#p53, SRC_002#p55], notes: 品牌自评，不作为功能等级依据}
+  - {id: TERM_055, brand: 依视路, term: E-SPF / 双面防紫外, term_type: 技术名称, maps_to: [MECH_058, FUNC_038], evidence: A, sources: [SRC_001#p27]}
+  - {id: TERM_056, brand: 依视路, term: 防雾片 / 钻晶A4/防雾, term_type: 膜层名称, maps_to: [MECH_054, FUNC_034], evidence: A, sources: [SRC_002#p18, SRC_002#p53]}
+  # ---------------- 蔡司 ----------------
+  - {id: TERM_060, brand: 蔡司, term: C.A.R.E. 技术（环带微柱镜）, term_type: 技术名称, maps_to: [MECH_003, EFFECT_032, FUNC_001], evidence: A, sources: [SRC_001#p29, SRC_001#p30]}
+  - {id: TERM_061, brand: 蔡司, term: 周边视力控制技术（MyoVision）, term_type: 技术名称, maps_to: [MECH_004, EFFECT_002, EFFECT_001, FUNC_001], evidence: A, sources: [SRC_001#p44]}
+  - {id: TERM_062, brand: 蔡司, term: 融合设计（成长怡）, term_type: 营销名称, maps_to: [MECH_004, MECH_003], evidence: A, sources: [SRC_001#p31]}
+  - {id: TERM_063, brand: 蔡司, term: 眼龄识别设计（成长悦）, term_type: 技术名称, maps_to: [MECH_032], evidence: A, sources: [SRC_001#p46], notes: 资料解释为"专为亚洲儿童定制，考虑配戴位置和面部参数"}
+  - {id: TERM_064, brand: 蔡司, term: 数码识别设计, term_type: 技术名称, maps_to: [MECH_036, EFFECT_034, FUNC_017], evidence: A, sources: [SRC_002#p35, SRC_001#p46]}
+  - {id: TERM_065, brand: 蔡司, term: 自由环面设计 + 眼球旋转中心测量（小乐圆定制片）, term_type: 技术名称, maps_to: [MECH_025, MECH_023], evidence: A, sources: [SRC_001#p29]}
+  - {id: TERM_066, brand: 蔡司, term: 钻立方铂金膜 DP / 爱动膜 DVK / 绿晶膜 DVC / 鎏金膜 DG / 莲花膜 LT, term_type: 膜层名称, maps_to: [MECH_050, MECH_051, MECH_052, FUNC_030, FUNC_031, FUNC_032], evidence: B, sources: [SRC_001#p29, SRC_002#p29], notes: 资料仅对铂金膜说明"很耐磨、高透光、防撞击"；其余膜层差异资料未提供}
+  - {id: TERM_067, brand: 蔡司, term: 钻立方防蓝光膜 BP / 防蓝光 Plus+ 铂金膜防卫版 BL+DV / BL+BP, term_type: 膜层名称, maps_to: [MECH_053, FUNC_033], evidence: A, sources: [SRC_002#p9, SRC_002#p36]}
+  - {id: TERM_068, brand: 蔡司, term: 钻立方极光膜 DD, term_type: 膜层名称, maps_to: [MECH_057, EFFECT_022, FUNC_037], evidence: A, sources: [SRC_002#p46]}
+  - {id: TERM_069, brand: 蔡司, term: 焕色视界X, term_type: 材料名称, maps_to: [MECH_056, EFFECT_021, FUNC_036], evidence: A, sources: [SRC_002#p29]}
+  - {id: TERM_070, brand: 蔡司, term: 双重防UV / 太阳镜级别 UV 防护, term_type: 营销名称, maps_to: [MECH_058, EFFECT_023, FUNC_038], evidence: A, sources: [SRC_001#p29]}
+  - {id: TERM_071, brand: 蔡司, term: M.I.D.（最远中距离）光学设计, term_type: 技术名称, maps_to: [MECH_022, EFFECT_008, FUNC_011], evidence: A, sources: [SRC_002#p9, SRC_002#p10]}
+  - {id: TERM_072, brand: 蔡司, term: FrameFit（FF 值 0–6 = 渐进带 10–16mm）/ 可变渐进通道, term_type: 技术名称, maps_to: [MECH_031, EFFECT_015], evidence: A, sources: [SRC_002#p9]}
+  - {id: TERM_073, brand: 蔡司, term: 快速聚焦设计, term_type: 营销名称, maps_to: [MECH_040, EFFECT_010, FUNC_013], evidence: A, sources: [SRC_002#p28]}
+  - {id: TERM_074, brand: 蔡司, term: 瞳孔感光平衡设计（2.0）, term_type: 技术名称, maps_to: [MECH_026, EFFECT_011, FUNC_014], evidence: A, sources: [SRC_002#p28, SRC_002#p35]}
+  - {id: TERM_075, brand: 蔡司, term: 融像优化 / 3D 视觉（睐光2.0 3D）, term_type: 营销名称, maps_to: [MECH_028, EFFECT_012], evidence: B, sources: [SRC_002#p30], notes: 仅有图标，无文字说明}
+  - {id: TERM_076, brand: 蔡司, term: 智锐识别设计2.0（智能动态光学 / 年龄智能优化 / 清晰视觉 / 美薄镜片）, term_type: 营销名称, maps_to: [MECH_038, MECH_039, MECH_025, MECH_042], evidence: A, sources: [SRC_002#p32, SRC_002#p33, SRC_002#p40]}
+  - {id: TERM_077, brand: 蔡司, term: 智锐纵横旋转中心设计, term_type: 技术名称, maps_to: [MECH_025, EFFECT_009], evidence: A, sources: [SRC_002#p35]}
+  - {id: TERM_078, brand: 蔡司, term: 视觉增强设计（IAD）, term_type: 技术名称, maps_to: [MECH_034], evidence: B, sources: [SRC_002#p35], notes: "资料称'根据配戴者的个人视觉行为和要求进行优化'，但所需参数中无视觉行为测量，实际输入为近用距离与设计类型选择"}
+  - {id: TERM_079, brand: 蔡司, term: 镜框识别设计 / 视觉焦点优化设计, term_type: 技术名称, maps_to: [MECH_037, EFFECT_015, FUNC_020], evidence: A, sources: [SRC_002#p35, SRC_002#p40]}
+  - {id: TERM_080, brand: 蔡司, term: 3D 面部识别设计, term_type: 技术名称, maps_to: [MECH_033, EFFECT_014, FUNC_016], evidence: A, sources: [SRC_002#p35]}
+  - {id: TERM_081, brand: 蔡司, term: 个性化识别设计（平衡型/中距型/近距型）, term_type: 技术名称, maps_to: [MECH_035, EFFECT_008], evidence: A, sources: [SRC_002#p39]}
+  - {id: TERM_082, brand: 蔡司, term: 驾驶用眼设计, term_type: 技术名称, maps_to: [MECH_041, EFFECT_010, FUNC_019], evidence: A, sources: [SRC_002#p46]}
+  - {id: TERM_083, brand: 蔡司, term: 1.53 Trivex 材料, term_type: 材料名称, maps_to: [MECH_059, MECH_061, FUNC_039, FUNC_041], evidence: A, sources: [SRC_002#p34], notes: "资料：阿贝数 45、密度 1.1、抗冲击"}
+  # ---------------- 尼康 ----------------
+  - {id: TERM_090, brand: 尼康, term: D.O.T. 点扩散近视控制技术, term_type: 技术名称, maps_to: [MECH_007, EFFECT_003, FUNC_001], evidence: A, sources: [SRC_001#p37]}
+  - {id: TERM_091, brand: 尼康, term: 高透高洁UV, term_type: 膜层名称, maps_to: [MECH_050, MECH_051, MECH_058], evidence: B, sources: [SRC_001#p39]}
+  # ---------------- Shamir ----------------
+  - {id: TERM_095, brand: Shamir, term: 双面复合设计（睛童）, term_type: 技术名称, maps_to: [MECH_013, MECH_006, EFFECT_005, FUNC_001], evidence: A, sources: [SRC_001#p33]}
+  - {id: TERM_096, brand: Shamir, term: 碧慧膜, term_type: 膜层名称, maps_to: [], evidence: C, sources: [SRC_001#p33], notes: 膜层性能资料未提供}
+  # ---------------- 睛鹰 ----------------
+  - {id: TERM_100, brand: 睛鹰, term: DISC 专利技术 / 多环离焦, term_type: 技术名称, maps_to: [MECH_005, EFFECT_001, FUNC_001], evidence: A, sources: [SRC_001#p53, SRC_001#p54]}
+  - {id: TERM_101, brand: 睛鹰, term: 超精密纳米结构, term_type: 营销名称, maps_to: [MECH_023], evidence: B, sources: [SRC_001#p54]}
+  - {id: TERM_102, brand: 睛鹰, term: 晴朗膜, term_type: 膜层名称, maps_to: [MECH_051, FUNC_031], evidence: A, sources: [SRC_001#p54]}
+  # ---------------- 全适·乐蕊 ----------------
+  - {id: TERM_105, brand: 全适, term: L.A.R.I. 凹透镜匀光技术 / 六边形全适网阵微结构, term_type: 技术名称, maps_to: [MECH_008, EFFECT_003, FUNC_001], evidence: A, sources: [SRC_001#p57]}
+  - {id: TERM_106, brand: 全适, term: 钻朗膜, term_type: 膜层名称, maps_to: [], evidence: C, sources: [SRC_001#p58], notes: 膜层性能资料未提供}
+  # ---------------- 菁杰视 ----------------
+  - {id: TERM_110, brand: 菁杰视, term: D.S.E.D.T. 双面复合增强离焦技术, term_type: 技术名称, maps_to: [MECH_013, MECH_001, FUNC_001], evidence: B, sources: [SRC_001#p51], notes: 资料有"微结构"描述但未说明为微透镜/环带}
+  - {id: TERM_111, brand: 菁杰视, term: O.T.O.G.E. 光学引导正视化技术, term_type: 技术名称, maps_to: [MECH_012, FUNC_003], evidence: C, sources: [SRC_001#p51]}
+  - {id: TERM_112, brand: 菁杰视, term: V8 炫钻膜, term_type: 膜层名称, maps_to: [], evidence: C, sources: [SRC_001#p52], notes: 膜层性能资料未提供}

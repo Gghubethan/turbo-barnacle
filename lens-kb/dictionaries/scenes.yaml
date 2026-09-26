@@ -1,0 +1,125 @@
+# 使用场景标签库（L4）。type: distance=按视距 / environment=光环境 / activity=复合活动
+# distance_band: D1=30–40cm  D2=40–100cm  D3=1–3m  D4=3m+
+scenes:
+  - id: SCENE_001
+    name: 手机
+    type: distance
+    distance_band: D1
+    notes: 依视路资料称使用智能手机时眼屏距离通常约 33.8cm（SRC_002#p51，引用研究）；蔡司数码识别设计针对约 35cm（SRC_002#p35）。
+    evidence: A
+    sources: [SRC_002#p51, SRC_002#p35]
+  - id: SCENE_002
+    name: 阅读/书报/写作业
+    type: distance
+    distance_band: D1
+    aliases: [看书, 读写作业]
+    evidence: A
+    sources: [SRC_001#p18, SRC_002#p3]
+  - id: SCENE_003
+    name: 电脑办公
+    type: distance
+    distance_band: D2
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p3, SRC_002#p18]
+  - id: SCENE_004
+    name: 平板
+    type: distance
+    distance_band: D2
+    notes: 默认框架归 40–100cm；蔡司个化版"近距型"将平板与阅读并列于 30–60cm（SRC_002#p39），实际距离因人而异。
+    evidence: A
+    sources: [SRC_002#p39]
+  - id: SCENE_005
+    name: 棋牌/麻将
+    type: distance
+    distance_band: D2
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p6]
+  - id: SCENE_006
+    name: 看电视
+    type: distance
+    distance_band: D3
+    evidence: A
+    sources: [SRC_002#p48]
+  - id: SCENE_007
+    name: 家务/室内走动
+    type: distance
+    distance_band: D3
+    aliases: [厨艺, 室内活动]
+    evidence: A
+    sources: [SRC_002#p6, SRC_002#p48]
+  - id: SCENE_008
+    name: 室内交流/聚会
+    type: distance
+    distance_band: D3
+    evidence: A
+    sources: [SRC_002#p3]
+  - id: SCENE_009
+    name: 会议/讲课
+    type: distance
+    distance_band: D4
+    evidence: A
+    sources: [SRC_002#p48]
+  - id: SCENE_010
+    name: 驾驶
+    type: activity
+    distance_band: D4
+    notes: 复合视距：道路(3m+) + 导航/仪表盘(中距) + 后视镜/侧视镜；蔡司个化版"中距型"称适合看汽车仪表盘（60–90cm 中视野）。
+    evidence: A
+    sources: [SRC_002#p46, SRC_002#p39, SRC_002#p50]
+  - id: SCENE_011
+    name: 户外活动
+    type: distance
+    distance_band: D4
+    aliases: [旅游, 爬山, 骑行, 跑步, 钓鱼]
+    evidence: A
+    sources: [SRC_001#p21, SRC_002#p48]
+  - id: SCENE_012
+    name: 看远（通用）
+    type: distance
+    distance_band: D4
+    aliases: [远眺, 观景]
+    evidence: A
+    sources: [SRC_002#p13]
+  - id: SCENE_013
+    name: 户外强光环境
+    type: environment
+    evidence: A
+    sources: [SRC_001#p21, SRC_002#p21]
+  - id: SCENE_014
+    name: 室内外频繁切换
+    type: environment
+    evidence: A
+    sources: [SRC_001#p21]
+  - id: SCENE_015
+    name: 夜间/弱光环境
+    type: environment
+    aliases: [阴雨, 大雾, 黄昏]
+    evidence: A
+    sources: [SRC_002#p46, SRC_002#p16, SRC_002#p54]
+  - id: SCENE_016
+    name: 课堂学习（看黑板↔看书本切换）
+    type: activity
+    distance_band: D1+D4
+    notes: 儿童专用复合场景。
+    evidence: A
+    sources: [SRC_001#p1]
+  - id: SCENE_017
+    name: 移动中看屏（通勤、边走边看手机与路面）
+    type: activity
+    notes: 动态视觉场景；蔡司/依视路均单列此需求。
+    evidence: A
+    sources: [SRC_002#p32, SRC_002#p50]
+  - id: SCENE_018
+    name: 运动
+    type: activity
+    aliases: [乒乓球, 球类]
+    evidence: A
+    sources: [SRC_002#p34, SRC_002#p39]
+  - id: SCENE_019
+    name: 精细近距离手工
+    type: distance
+    distance_band: D1
+    aliases: [针线, 十字绣, 折纸]
+    notes: 资料未给具体距离，暂归 D1。
+    evidence: A
+    sources: [SRC_002#p39, SRC_002#p48]

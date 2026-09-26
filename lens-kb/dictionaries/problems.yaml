@@ -1,0 +1,68 @@
+# 用户问题标签库：由验光/检查/症状/场景综合判断出的"视觉问题或用眼负担"，是需求的来源。
+problems:
+  - id: PROBLEM_001
+    name: 近视
+    evidence: A
+    sources: [SRC_001#p18]
+  - id: PROBLEM_002
+    name: 儿童青少年近视进展（度数/眼轴持续增长）
+    parent: PROBLEM_001
+    notes: 资料以"AL 增长量对照安全增长参考值"判断屈光发育是否正常、近视管理是否有效（SRC_001#p2）。
+    evidence: A
+    sources: [SRC_001#p2, SRC_001#p4, SRC_001#p6]
+  - id: PROBLEM_003
+    name: 近视发生风险升高（未近视儿童：远视储备不足 / 眼轴偏长 / 轴率比偏高）
+    notes: 资料："即将近视的孩子（已经没有远视储备的）"；"AL/CR 大于界值，疑似远视储备量耗尽，12 岁以下应睫状肌麻痹验光确证"。
+    evidence: A
+    sources: [SRC_001#p18, SRC_001#p5, SRC_001#p3]
+  - id: PROBLEM_004
+    name: 儿童远视（轴性）
+    notes: 仅菁杰视资料涉及"远视设计"，机制与效果资料不足。
+    evidence: C
+    sources: [SRC_001#p51, SRC_001#p52]
+  - id: PROBLEM_005
+    name: 散光
+    evidence: A
+    sources: [SRC_001#p12, SRC_001#p33]
+  - id: PROBLEM_006
+    name: 屈光参差（左右眼度数差异较大）
+    evidence: A
+    sources: [SRC_002#p15, SRC_001#p35]
+  - id: PROBLEM_007
+    name: 高度屈光不正（镜片偏厚重）
+    evidence: A
+    sources: [SRC_001#p10]
+  - id: PROBLEM_008
+    name: 老视（调节力下降，看近需附加光度）
+    notes: 资料引用专家共识："老视前期 35–45 岁，老视早期 45–52 岁，>52 岁为绝对性老视"（SRC_002#p28）；依视路称看近困难可能提前到约 40 岁（SRC_002#p51）。
+    evidence: A
+    sources: [SRC_002#p12, SRC_002#p28, SRC_002#p51]
+  - id: PROBLEM_009
+    name: 中近距离高频用眼负担
+    evidence: A
+    sources: [SRC_002#p3, SRC_002#p9, SRC_002#p51]
+  - id: PROBLEM_010
+    name: 远中近多距离频繁切换负担
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p12]
+  - id: PROBLEM_011
+    name: 儿童近距离调节滞后
+    notes: 仅蔡司成长悦提及"减少调节力滞后"；判定方法与阈值资料未提供。
+    evidence: A
+    sources: [SRC_001#p46]
+  - id: PROBLEM_012
+    name: 弱光/夜间视觉质量下降
+    evidence: A
+    sources: [SRC_002#p46, SRC_002#p16, SRC_002#p28]
+  - id: PROBLEM_013
+    name: 强光/眩光干扰
+    evidence: A
+    sources: [SRC_002#p46, SRC_001#p21]
+  - id: PROBLEM_014
+    name: 移动场景下视觉稳定性不足
+    evidence: A
+    sources: [SRC_002#p32, SRC_002#p50]
+  - id: PROBLEM_015
+    name: 渐进镜片适应困难（周边变形/初戴）
+    evidence: B
+    sources: [SRC_002#p13, SRC_002#p28, SRC_002#p51]

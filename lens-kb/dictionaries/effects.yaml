@@ -1,0 +1,140 @@
+# 光学效果字典（L2：改变了什么光学/物理表现）。禁止写营销价值。
+effects:
+  - id: EFFECT_001
+    name: 周边视网膜近视性离焦（光线聚焦于视网膜前）
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p14, SRC_001#p19, SRC_001#p26, SRC_001#p44, SRC_001#p35, SRC_001#p53]
+  - id: EFFECT_002
+    name: 减少周边视网膜远视性离焦
+    evidence: A
+    sources: [SRC_001#p44, SRC_001#p42]
+  - id: EFFECT_003
+    name: 降低（周边）视网膜成像对比度
+    evidence: A
+    sources: [SRC_001#p37, SRC_001#p35, SRC_001#p57]
+  - id: EFFECT_004
+    name: 中央光学区单光清晰成像
+    evidence: A
+    sources: [SRC_001#p26, SRC_001#p29, SRC_001#p44]
+  - id: EFFECT_005
+    name: 周边视网膜散光离焦刺激
+    evidence: A
+    sources: [SRC_001#p12, SRC_001#p33]
+  - id: EFFECT_006
+    name: 近距离注视时附加正度数（减少调节需求/调节滞后）
+    evidence: A
+    sources: [SRC_001#p46]
+  - id: EFFECT_007
+    name: 远中近连续光度过渡
+    evidence: A
+    sources: [SRC_002#p3]
+  - id: EFFECT_008
+    name: 中近距离可用视野扩大（覆盖范围见产品属性）
+    evidence: A
+    sources: [SRC_002#p2, SRC_002#p3, SRC_002#p6, SRC_002#p9, SRC_002#p18]
+  - id: EFFECT_009
+    name: 镜片周边像散/变形减少
+    evidence: A
+    sources: [SRC_002#p6, SRC_002#p13, SRC_002#p20]
+  - id: EFFECT_010
+    name: 远近切换视线路径优化（视线下移量/头部调整减少）
+    evidence: A
+    sources: [SRC_002#p13, SRC_002#p28, SRC_002#p46]
+  - id: EFFECT_011
+    name: 大瞳孔（弱光）条件下成像质量提升
+    evidence: A
+    sources: [SRC_002#p16, SRC_002#p28, SRC_002#p54]
+  - id: EFFECT_012
+    name: 左右镜片光学差异减小（融像负担降低）
+    evidence: A
+    sources: [SRC_002#p15, SRC_002#p55]
+  - id: EFFECT_013
+    name: 高阶像差/光晕减少
+    evidence: A
+    sources: [SRC_002#p16, SRC_002#p53]
+  - id: EFFECT_014
+    name: 视区分布与个人配戴位置/视觉习惯匹配
+    evidence: A
+    sources: [SRC_002#p14, SRC_002#p16, SRC_002#p49, SRC_002#p57]
+  - id: EFFECT_015
+    name: 近用区/渐进通道与所选镜框匹配
+    evidence: A
+    sources: [SRC_002#p15, SRC_002#p35]
+  - id: EFFECT_016
+    name: 移动中视区光学稳定
+    evidence: A
+    sources: [SRC_002#p32, SRC_002#p55]
+  - id: EFFECT_017
+    name: 镜片表面反射降低、透光率提高
+    evidence: A
+    sources: [SRC_001#p10]
+  - id: EFFECT_018
+    name: 污渍/水附着减少
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p54]
+  - id: EFFECT_019
+    name: 表面耐磨性提高
+    evidence: A
+    sources: [SRC_001#p10, SRC_001#p29]
+  - id: EFFECT_020
+    name: 部分短波蓝光被过滤
+    evidence: A
+    sources: [SRC_001#p8, SRC_002#p4]
+  - id: EFFECT_021
+    name: 随紫外线强度自动变深/褪色
+    evidence: A
+    sources: [SRC_001#p21]
+  - id: EFFECT_022
+    name: 强光刺激降低
+    evidence: A
+    sources: [SRC_002#p46]
+  - id: EFFECT_023
+    name: 紫外线阻隔
+    evidence: A
+    sources: [SRC_001#p20, SRC_001#p29, SRC_001#p42]
+  - id: EFFECT_024
+    name: 镜面起雾减少
+    evidence: A
+    sources: [SRC_002#p18]
+  - id: EFFECT_025
+    name: 镜片表面抑菌
+    evidence: A
+    sources: [SRC_001#p20]
+  - id: EFFECT_026
+    name: 抗冲击、不易碎
+    evidence: A
+    sources: [SRC_001#p29, SRC_001#p54, SRC_002#p34]
+  - id: EFFECT_027
+    name: 镜片厚度/重量降低
+    evidence: A
+    sources: [SRC_001#p8, SRC_001#p10, SRC_002#p33, SRC_002#p34]
+  - id: EFFECT_028
+    name: 色散降低（高阿贝数）
+    evidence: A
+    sources: [SRC_001#p10, SRC_002#p34]
+  - id: EFFECT_029
+    name: 左右镜片外观弯度一致
+    evidence: A
+    sources: [SRC_002#p14, SRC_001#p35]
+  - id: EFFECT_030
+    name: 水平方向清晰区更宽（扇形布局）
+    notes: 资料写明扇形视像区的设计依据（水平视线切换多），"水平清晰区更宽"为归纳。
+    evidence: B
+    sources: [SRC_001#p10, SRC_001#p42]
+  - id: EFFECT_031
+    name: 微结构不外露、表面平整
+    evidence: A
+    sources: [SRC_001#p10]
+  - id: EFFECT_032
+    name: 周边环带"动态光信号"刺激视网膜（微柱镜）
+    notes: 蔡司对 C.A.R.E. 的专用表述，未与 EFFECT_001 等同。
+    evidence: A
+    sources: [SRC_001#p29, SRC_001#p31]
+  - id: EFFECT_033
+    name: 渐进镜片整体可用视野扩大
+    evidence: A
+    sources: [SRC_002#p12, SRC_002#p52]
+  - id: EFFECT_034
+    name: 约 35cm 数码设备距离视区位置/大小优化
+    evidence: A
+    sources: [SRC_002#p35]
