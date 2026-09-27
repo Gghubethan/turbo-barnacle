@@ -34,6 +34,7 @@
 
 - **[Obsidian 接入 AI API 方案（专项）](docs/obsidian-ai-integration.md)** —— 插件选型、工作流设计、笔记结构规范、AI 任务路由、关键决策点、分阶段落地。
 - **[落地路径：iOS + Windows + Obsidian Sync](docs/setup-ios-windows.md)** —— 收敛后的确定方案，含捷径捕获、Copilot 配置、Windows pipeline 脚本骨架，可直接照做。
+- **[knowledge/ — vault 就绪笔记](knowledge/README.md)** —— 已三分完成、可直接拷进 vault 的结构化笔记；当前为宝岛眼镜 MOC 入职与「镜片功能标准化与自动推荐」项目（入口 `60_MOC/宝岛眼镜-MOC赋能中心.md`）。
 - **[NotebookLM → Obsidian](docs/notebooklm-to-obsidian.md)** —— 把 NotebookLM 的 AI 产出一键抓进 vault（Chrome/Edge 扩展 + Local REST API，附兜底与安全注意）。
 
 ## 路线图

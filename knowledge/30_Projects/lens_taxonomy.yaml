@@ -1,0 +1,132 @@
+# 镜片功能标签体系 —— 机器可读草案 v0.1
+# 与《镜片功能标签体系-草案.md》同步维护。品牌/系列名按会议转写记录，verified: false 表示待核。
+version: 0.1
+updated: 2026-09-27
+
+audiences:
+  - id: youth
+    label: 青少儿
+    age: {max: 18}
+    handbook: 青少儿手册
+  - id: adult
+    label: 成人
+    age: {min: 19, max: 44}
+    handbook: 成人手册
+  - id: presbyopic
+    label: 中壮年
+    age: {min: 45}
+    handbook: 中壮年手册
+
+# 功能类别：一个功能一个标签；plain 字段是给顾客看的「说人话」
+functions:
+  - id: single_vision_basic
+    label: 普通单光
+    plain: 看清楚就行的基础款
+  - id: single_vision_peripheral
+    label: 功能型单光-周边视野优化
+    plain: 边上看出去不变形、不晕
+  - id: eye_strain
+    label: 视疲劳
+    plain: 看手机电脑到下午眼睛累、干、涩
+  - id: myopia_control
+    label: 近视防控
+    plain: 让孩子度数长慢一点
+  - id: progressive
+    label: 渐进/看远看近
+    plain: 一副眼镜远近都能看
+  - id: near_reading
+    label: 老花/看近
+    plain: 看手机小字看不清
+  - id: photochromic
+    label: 变色
+    plain: 室内外一副搞定
+  - id: sunglasses
+    label: 太阳镜
+    plain: 户外防晒、开车
+
+# 设计工艺：用于解释「为什么好」
+designs:
+  - id: freeform_single
+    label: 自由曲面-单面
+    plain: 镜片一面按度数精细研磨
+  - id: freeform_double
+    label: 自由曲面-双面
+    plain: 前后两面都精细研磨，边缘更清晰、更薄
+    aliases: [双面自由非球面, 自由双面曲面]
+  - id: optimization_points
+    label: 优化点数
+    plain: 研磨时计算的点数，本质是研磨方式；单独数字对顾客无意义
+
+# 运营分档：与功能标签解耦，可按地区覆盖
+tiers: [基础版, 主推, 标星]
+channels: [线上O2O, 线下套餐]
+
+# 品牌系列 → 统一标签（同义词表）
+series:
+  - brand: SAP
+    name: 锐界单光
+    verified: false
+    functions: [single_vision_peripheral]
+    designs: [freeform_double, optimization_points]
+    notes: 5000+ 优化点；线下 1399（7 折）；线上未上；分级高于豪雅新明锐
+    tier: 基础版
+  - brand: 豪雅
+    name: 新明锐 N3
+    verified: false
+    functions: [single_vision_peripheral]
+    designs: [freeform_single]
+    notes: 线上团单 5 折；1.60 约 1400 / 1.67 约 1999（转写，待核）
+  - brand: 爱赞
+    name: 背手（转写）
+    verified: false
+    functions: [single_vision_peripheral]
+    tier: 基础版
+  - brand: 蔡司
+    name: 泽锐
+    verified: false
+    functions: [single_vision_peripheral]
+  - brand: 依视路
+    name: 星趣控 2.0
+    verified: false
+    functions: [myopia_control]
+  - brand: 明月
+    name: 待补
+    verified: false
+    functions: []
+    notes: BI「需求归类 2」标签为空，待补
+  - brand: 伊格尔
+    name: 1.5 单光
+    verified: false
+    functions: [single_vision_basic]
+    notes: 线下 399 套餐用片
+  - brand: 贝罗
+    name: 单光（防蓝光）
+    verified: false
+    functions: [single_vision_basic]
+    notes: 线上 299 套餐用片
+  - brand: 自营
+    name: 视疲劳系列
+    verified: false
+    functions: [eye_strain]
+    notes: 老品，互动屏素材优化被新品项目搁置
+
+# 验光单 → 功能类别 推荐规则（第一版；阈值待与验光师确认）
+rules:
+  - when: {audience: youth}
+    recommend: myopia_control
+  - when: {audience: presbyopic, complaint: near_difficulty}
+    recommend: [near_reading, progressive]
+  - when: {complaint: prolonged_near_work}
+    recommend: eye_strain
+  - when: {visual_function: accommodation_insufficient}
+    recommend: eye_strain
+  - when: {high_power: true}
+    recommend: single_vision_peripheral
+  - when: {complaint: [peripheral_distortion, driving, design_work]}
+    recommend: single_vision_peripheral
+  - default: single_vision_basic
+
+ranking: [tier, gross_margin, price_band]
+output:
+  candidates: 2-3
+  explain: 用白话复述触发规则的验光单项目
